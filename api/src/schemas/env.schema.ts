@@ -1,0 +1,14 @@
+import * as z from "zod";
+import 'dotenv/config'
+
+const envVariables = z.object({
+    NODE_ENV: z.string(),
+    PORT: z.number(),
+    DATABASE_URL: z.string(),
+    JWT_SECRET_KEY: z.string(),
+    CLOUDINARY_CLOUD_NAME: z.string(),
+    CLOUDINARY_API_KEY: z.string(),
+    CLOUDINARY_API_SECRET: z.string(),
+})
+
+export const env = envVariables.parse(process.env)
