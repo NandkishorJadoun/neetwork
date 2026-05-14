@@ -12,8 +12,8 @@ app.get("/", (_req, res) => res.json({ message: "Server is running..." }))
 app.use("/auth", authRouter)
 
 // TODO: Fix the Error Handler
-app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
+app.use((err: unknown, _req: Request, _res: Response, _next: NextFunction) => {
     console.error(err)
- })
+})
 
 export default app;
