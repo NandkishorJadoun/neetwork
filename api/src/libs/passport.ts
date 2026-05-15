@@ -1,7 +1,5 @@
-import bcrypt from "bcryptjs";
 import passport from "passport"
 import { ExtractJwt, Strategy as JWTStrategy } from "passport-jwt"
-import { Strategy as LocalStrategy } from "passport-local";
 import { Strategy as GitHubStrategy, type Profile } from 'passport-github2';
 import type { VerifyCallback } from 'passport-oauth2';
 import { prisma } from "./prisma.js"
@@ -15,49 +13,36 @@ passport.use(
     },
         async (_accessToken: string, _refreshToken: string, profile: Profile, cb: VerifyCallback) => {
             try {
-                return cb(null, profile)
-            } catch (err) {
-                return cb(err)
-            }
-        }
-    ));
 
-passport.use(
-    new LocalStrategy(
-        {
-            usernameField: "email",
-            passwordField: "password",
-        },
-        async (email, password, cb) => {
-            try {
-                const user = await prisma.user.findUnique({
-                    where: { email }
-                });
-
-                if (!user) {
-                    return cb(null, false, {
-                        message: "Email is not registered."
-                    });
+                if (!profile.username) {
+                    return cb(new Error("Username is undefined"))
                 }
 
-                const match = await bcrypt.compare(password, user.password)
+                const avatarUrl = `https://avatars.githubusercontent.com/u/${profile.id}`
 
-                if (!match) {
-                    return cb(null, false, {
-                        message: "Invalid password."
-                    })
-                }
+                const user = await prisma.user.upsert({
+                    where: { githubId: profile.id },
+                    update: {},
+                    create: {
+                        githubId: profile.id,
+                        username: profile.username,
+                        fullname: profile.displayName,
+                        avatar: avatarUrl,
+                    },
+                    select: {
+                        id: true
+                    }
+                })
 
                 return cb(null, user, {
                     message: "Logged in successfully"
                 });
 
-            } catch (error) {
-                return cb(error);
+            } catch (err) {
+                return cb(err)
             }
         }
-    )
-);
+    ));
 
 passport.use(
     new JWTStrategy(
@@ -68,14 +53,8 @@ passport.use(
         async (jwtPayload, cb) => {
             try {
                 const user = await prisma.user.findUnique({
-                    where: {
-                        id: jwtPayload.id,
-                    },
-                    select: {
-                        id: true,
-                        email: true,
-                        username: true,
-                    }
+                    where: { id: jwtPayload.id, },
+                    select: { id: true, }
                 });
 
                 return user ? cb(null, user) : cb(null, false)

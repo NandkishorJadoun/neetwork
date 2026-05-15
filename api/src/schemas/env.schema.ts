@@ -3,7 +3,7 @@ import 'dotenv/config'
 
 const envVariables = z.object({
     NODE_ENV: z.string(),
-    PORT: z.number(),
+    PORT: z.coerce.number(),
     DATABASE_URL: z.string(),
     JWT_SECRET_KEY: z.string(),
     GITHUB_CLIENT_ID: z.string(),
