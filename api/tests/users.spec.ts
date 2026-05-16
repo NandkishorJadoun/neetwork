@@ -1,24 +1,23 @@
 import app from '../src/app'
-import { expect, describe, it, beforeAll, afterAll } from 'vitest'
+import { expect, describe, it, beforeAll, afterAll, afterEach, beforeEach } from 'vitest'
 import request from "supertest"
 import { prisma } from "../src/libs/prisma"
-import { createMockUser } from "../src/scripts/mock-users"
+import { createMockUser, createMockPost } from "../src/scripts/mock-data"
 import { env } from '../src/schemas/env.schema'
 import jwt from "jsonwebtoken"
 
-const fakeUsers = Array.from({ length: 10 }).map(() => createMockUser());
+const mockUsers = Array.from({ length: 10 }).map(() => createMockUser());
 
-beforeAll(async () => await prisma.user.createMany({ data: fakeUsers }))
-afterAll(async () => {
-    await prisma.follow.deleteMany({})
-    await prisma.user.deleteMany({})
-})
+beforeAll(async () => await prisma.user.createMany({ data: mockUsers }))
+afterAll(async () => await prisma.user.deleteMany({}))
 
 describe("GET /users", () => {
-    it("show all users since user haven't send anyone a follow request yet", async () => {
-        const user = fakeUsers[0]
-        const token = jwt.sign({ id: user.id }, env.JWT_SECRET_KEY);
+    afterEach(async () => await prisma.follow.deleteMany({}))
 
+    const [userA, userB] = mockUsers;
+    const token = jwt.sign({ id: userA.id }, env.JWT_SECRET_KEY);
+
+    it("show all users since user haven't send anyone a follow request yet", async () => {
         const res = await request(app).get("/users").set('Authorization', `Bearer ${token}`)
 
         expect(res.status).toBe(200)
@@ -26,15 +25,11 @@ describe("GET /users", () => {
     })
 
     it("show all users who exist on the platform but user haven't send follow request yet", async () => {
-        const [userA, userB] = fakeUsers;
-
         // userA followed userB
-
         await prisma.follow.create({
             data: { fromId: userA.id, toId: userB.id }
         })
 
-        const token = jwt.sign({ id: userA.id }, env.JWT_SECRET_KEY);
         const res = await request(app).get("/users").set('Authorization', `Bearer ${token}`)
 
         expect(res.status).toBe(200)
@@ -43,10 +38,10 @@ describe("GET /users", () => {
 })
 
 describe("GET /users/:userId", () => {
-    it("will send 404 if user don't exist", async () => {
-        const [user] = fakeUsers
-        const token = jwt.sign({ id: user.id }, env.JWT_SECRET_KEY);
+    const [userA, userB] = mockUsers;
+    const token = jwt.sign({ id: userA.id }, env.JWT_SECRET_KEY);
 
+    it("will send 404 if user don't exist", async () => {
         // fetching user from id that dont exist
         const userId = "FakeUserId"
         const res = await request(app).get(`/users/${userId}`).set('Authorization', `Bearer ${token}`)
@@ -56,12 +51,68 @@ describe("GET /users/:userId", () => {
     })
 
     it("will send the user info", async () => {
-        const [userA, userB] = fakeUsers;
-
-        const token = jwt.sign({ id: userA.id }, env.JWT_SECRET_KEY);
         const res = await request(app).get(`/users/${userB.id}`).set('Authorization', `Bearer ${token}`)
 
         expect(res.status).toBe(200)
         expect(res.body.user).toEqual(userB)
     })
 })
+
+describe("GET /users/:userId/posts", () => {
+    afterEach(async () => await prisma.post.deleteMany({}))
+
+    const [userA, userB] = mockUsers;
+    const token = jwt.sign({ id: userA.id }, env.JWT_SECRET_KEY);
+
+    it("will send all the user's posts", async () => {
+        const mockPosts = Array.from({ length: 2 }).map(() => createMockPost(userB.id));
+        await prisma.post.createMany({ data: mockPosts })
+        const res = await request(app).get(`/users/${userB.id}/posts`).set('Authorization', `Bearer ${token}`)
+
+        expect(res.status).toBe(200)
+        expect(res.body.posts.length).toEqual(2)
+    })
+})
+
+describe("POST /users/:userId/follow-request", () => {
+    afterEach(async () => await prisma.follow.deleteMany({}))
+
+    const [userA, userB] = mockUsers;
+    const token = jwt.sign({ id: userA.id }, env.JWT_SECRET_KEY);
+
+    it("will send a follow request", async () => {
+        const res = await request(app).post(`/users/${userB.id}/follow-request`).set('Authorization', `Bearer ${token}`)
+
+        expect(res.status).toBe(200)
+        expect(res.body.followRequest.fromId).toEqual(userA.id)
+        expect(res.body.followRequest.toId).toEqual(userB.id)
+        expect(res.body.followRequest.status).toEqual("PENDING")
+    })
+
+    it("will send 409 status for sending multiple follow request to a user", async () => {
+        await request(app).post(`/users/${userB.id}/follow-request`).set('Authorization', `Bearer ${token}`)
+        const res = await request(app).post(`/users/${userB.id}/follow-request`).set('Authorization', `Bearer ${token}`)
+
+        expect(res.status).toBe(409)
+    })
+})
+
+describe("DELETE /users/:userId/follow-request", () => {
+    const [userA, userB] = mockUsers;
+    const token = jwt.sign({ id: userA.id }, env.JWT_SECRET_KEY);
+
+    beforeEach(async () => await prisma.follow.create({ data: { fromId: userA.id, toId: userB.id } }))
+    afterEach(async () => await prisma.follow.deleteMany({}))
+
+    it("will delete the sent follow request", async () => {
+        const res = await request(app).delete(`/users/${userB.id}/follow-request`).set('Authorization', `Bearer ${token}`)
+        expect(res.status).toBe(204)
+    })
+
+    it("will send 404 status if no record found for delete operation", async () => {
+        await request(app).delete(`/users/${userB.id}/follow-request`).set('Authorization', `Bearer ${token}`)
+        const res = await request(app).delete(`/users/${userB.id}/follow-request`).set('Authorization', `Bearer ${token}`)
+        expect(res.status).toBe(404)
+    })
+})
+
