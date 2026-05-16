@@ -10,3 +10,11 @@ export const createMockUser = () => {
         about: faker.lorem.sentence(),
     };
 };
+
+export const createMockPost = (authorId: string) => {
+    return {
+        id: faker.string.uuid(),
+        text: faker.lorem.sentence(),
+        userId: authorId,
+    }
+}
