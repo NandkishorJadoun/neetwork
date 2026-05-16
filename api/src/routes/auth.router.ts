@@ -15,7 +15,7 @@ authRouter.get('/github/callback', async (req, res) => {
             if (err || !user) {
                 return res.status(401).json({ message: "Failed Authorization" })
             }
-            const token = jwt.sign(user.id, env.JWT_SECRET_KEY);
+            const token = jwt.sign({ id: user.id }, env.JWT_SECRET_KEY);
             return res.json({ user, token });
         })(req, res)
 })
