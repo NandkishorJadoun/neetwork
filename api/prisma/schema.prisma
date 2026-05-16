@@ -43,6 +43,8 @@ model Comment {
   userId     String
   post       Post     @relation(fields: [postId], references: [id])
   postId     String
+
+  @@map("comments")
 }
 
 model Like {
@@ -51,6 +53,9 @@ model Like {
   userId String
   post   Post   @relation(fields: [postId], references: [id])
   postId String
+
+  @@unique([userId, postId])
+  @@map("likes")
 }
 
 model Follow {
@@ -60,6 +65,9 @@ model Follow {
   status     Status @default(PENDING)
   fromId     String
   toId       String
+
+  @@unique([fromId, toId])
+  @@map("follows")
 }
 
 enum Status {
