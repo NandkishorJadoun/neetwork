@@ -2,6 +2,7 @@ import cors from "cors";
 import express, { json, urlencoded, type Express, type Request, type Response, type NextFunction } from "express";
 import { authRouter } from "./routes/auth.router.js";
 import { usersRouter } from "./routes/users.router.js";
+import { profileRouter } from "./routes/profile.router.js";
 import multer from "multer";
 import { UploadValidationError } from "./utils/UploadValidationError.js";
 
@@ -14,6 +15,7 @@ app.use(urlencoded({ extended: false }))
 app.get("/", (_req, res) => res.json({ message: "Server is running..." }))
 app.use("/auth", authRouter)
 app.use("/users", usersRouter)
+app.use("/me", profileRouter)
 
 app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
     if (err instanceof multer.MulterError || err instanceof UploadValidationError) {
