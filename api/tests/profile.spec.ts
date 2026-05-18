@@ -117,3 +117,69 @@ describe("GET /me/follow-requests", () => {
         expect(res.body.followRequests.length).toBe(0)
     })
 })
+
+describe("PATCH /me/follow-requests/:userId", () => {
+    const [userA, userB] = mockUsers;
+    const token = jwt.sign({ id: userA.id }, env.JWT_SECRET_KEY);
+
+    // UserB sends a follow request to userA
+    beforeEach(async () => await prisma.follow.create({ data: { fromId: userB.id, toId: userA.id } }))
+    afterEach(async () => await prisma.follow.deleteMany({}))
+
+    it("should successfully accept a pending follow request and update its status to ACCEPTED", async () => {
+        const res = await request(app).patch(`/me/follow-requests/${userB.id}`).set('Authorization', `Bearer ${token}`)
+
+        expect(res.status).toBe(200)
+        expect(res.body.follower.status).toBe("ACCEPTED")
+    })
+
+    it("should respond with 404 Not Found when attempting to accept a follow request that does not exist", async () => {
+        const userId = "FakeUserId"
+        const res = await request(app).patch(`/me/follow-requests/${userId}`).set('Authorization', `Bearer ${token}`)
+        expect(res.status).toBe(404)
+        expect(res.body.message).toBe("No record found")
+    })
+})
+
+describe("DELETE /me/follow-requests/:userId", () => {
+    const [userA, userB] = mockUsers;
+    const token = jwt.sign({ id: userA.id }, env.JWT_SECRET_KEY);
+
+    // UserB sends a follow request to userA
+    beforeEach(async () => await prisma.follow.create({ data: { fromId: userB.id, toId: userA.id } }))
+    afterEach(async () => await prisma.follow.deleteMany({}))
+
+    it("should successfully reject/delete a pending follow request and return 204 No Content", async () => {
+        const res = await request(app).delete(`/me/follow-requests/${userB.id}`).set('Authorization', `Bearer ${token}`)
+
+        expect(res.status).toBe(204)
+    })
+
+    it("should respond with 404 Not Found when attempting to reject a follow request that does not exist", async () => {
+        const userId = "FakeUserId"
+        const res = await request(app).delete(`/me/follow-requests/${userId}`).set('Authorization', `Bearer ${token}`)
+        expect(res.status).toBe(404)
+        expect(res.body.message).toBe("No record found")
+    })
+})
+
+describe("DELETE /me/followers/:userId", () => {
+    const [userA, userB] = mockUsers;
+    const token = jwt.sign({ id: userA.id }, env.JWT_SECRET_KEY);
+
+    // UserB follows userA
+    beforeEach(async () => await prisma.follow.create({ data: { fromId: userB.id, toId: userA.id, status: "ACCEPTED" } }))
+    afterEach(async () => await prisma.follow.deleteMany({}))
+
+    it("should successfully remove an existing follower from the user's follower list and return 204 No Content", async () => {
+        const res = await request(app).delete(`/me/followers/${userB.id}`).set('Authorization', `Bearer ${token}`)
+        expect(res.status).toBe(204)
+    })
+
+    it("should respond with 404 Not Found when attempting to remove a follower who is not actually following the user", async () => {
+        const userId = "FakeUserId"
+        const res = await request(app).delete(`/me/followers/${userId}`).set('Authorization', `Bearer ${token}`)
+        expect(res.status).toBe(404)
+        expect(res.body.message).toBe("No record found")
+    })
+})

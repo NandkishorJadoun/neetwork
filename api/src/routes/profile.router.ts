@@ -5,6 +5,7 @@ import { ZodError } from "zod";
 import { PatchFormDataSchema } from "../schemas/user.schema.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { prisma } from "../libs/prisma.js"
+import { Prisma } from "@prisma/client";
 
 export const profileRouter: Router = express.Router();
 
@@ -78,6 +79,105 @@ profileRouter.get("/follow-requests", async (req, res, next) => {
         return res.status(200).json({ followRequests })
 
     } catch (error) {
+        next(error)
+    }
+})
+
+profileRouter.patch("/follow-requests/:userId", async (req, res, next) => {
+    if (!req.user) {
+        return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const toId = req.user.id
+    const fromId = req.params.userId;
+
+    if (Array.isArray(fromId) || !fromId) {
+        return res.status(400).json({ message: "Invalid User ID" })
+    }
+
+    try {
+        const follower = await prisma.follow.update({
+            where: {
+                fromId_toId: { fromId, toId },
+                status: "PENDING"
+            },
+            data: {
+                status: "ACCEPTED"
+            }
+        })
+
+        return res.status(200).json({ follower })
+
+    } catch (error) {
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+            if (error.code === "P2025") {
+                return res.status(404).json({ message: "No record found" })
+            }
+        }
+        next(error)
+    }
+})
+
+profileRouter.delete("/follow-requests/:userId", async (req, res, next) => {
+    if (!req.user) {
+        return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const toId = req.user.id
+    const fromId = req.params.userId;
+
+    if (Array.isArray(fromId) || !fromId) {
+        return res.status(400).json({ message: "Invalid User ID" })
+    }
+
+    try {
+        await prisma.follow.delete({
+            where: {
+                fromId_toId: { fromId, toId },
+                status: "PENDING"
+            },
+        })
+
+        return res.status(204).send()
+
+    } catch (error) {
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+            if (error.code === "P2025") {
+                return res.status(404).json({ message: "No record found" })
+            }
+        }
+        next(error)
+    }
+})
+
+profileRouter.delete("/followers/:userId", async (req, res, next) => {
+    if (!req.user) {
+        return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const toId = req.user.id
+    const fromId = req.params.userId;
+
+    if (Array.isArray(fromId) || !fromId) {
+        return res.status(400).json({ message: "Invalid User ID" })
+    }
+
+    try {
+        await prisma.follow.delete({
+            where: {
+                fromId_toId: { fromId, toId },
+                status: "ACCEPTED"
+            },
+        })
+
+        return res.status(204).send()
+
+    } catch (error) {
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+            if (error.code === "P2025") {
+                return res.status(404).json({ message: "No record found" })
+            }
+        }
         next(error)
     }
 })
