@@ -185,3 +185,36 @@ usersRouter.delete("/:userId/follow-request", async (req, res, next) => {
     }
 
 })
+
+usersRouter.delete("/:userId/follow", async (req, res, next) => {
+    if (!req.user) {
+        return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const fromId = req.user.id;
+    const toId = req.params.userId;
+
+    if (Array.isArray(toId) || !toId) {
+        return res.status(400).json({ message: "Invalid User ID" })
+    }
+
+    try {
+        await prisma.follow.delete({
+            where: {
+                fromId_toId: { fromId, toId },
+                status: "ACCEPTED"
+            }
+        })
+
+        return res.status(204).send()
+
+    } catch (error) {
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+            if (error.code === "P2025") {
+                return res.status(404).json({ message: "No record found for delete operation" })
+            }
+        }
+        next(error)
+    }
+
+})
