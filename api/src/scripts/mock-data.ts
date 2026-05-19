@@ -16,5 +16,6 @@ export const createMockPost = (authorId: string) => {
         id: faker.string.uuid(),
         text: faker.lorem.sentence(),
         userId: authorId,
+        created_at: faker.date.anytime().toISOString()
     }
 }

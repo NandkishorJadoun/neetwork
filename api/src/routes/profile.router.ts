@@ -2,7 +2,7 @@ import express, { Router } from "express"
 import { passport } from "../libs/passport.js";
 import { upload } from "../libs/multer.js";
 import { ZodError } from "zod";
-import { PatchFormDataSchema } from "../schemas/user.schema.js";
+import { PatchFormDataSchema } from "../schemas/form-validation.schema.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { prisma } from "../libs/prisma.js"
 import { Prisma } from "@prisma/client";

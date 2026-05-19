@@ -1,7 +1,7 @@
 import * as z from "zod"
 
 export const PatchFormDataSchema = z.object({
-     fullname: z
+    fullname: z
         .string()
         .trim()
         .nonempty({ message: "Name field can't be empty" })
@@ -11,7 +11,15 @@ export const PatchFormDataSchema = z.object({
     about: z
         .string()
         .trim()
-        .max(100, { message: "About field must be at most 100 characters long" })
+        .max(100, { message: "About must be at most 100 characters long" })
         .transform((val) => (val.length === 0 ? null : val))
         .nullable()
+})
+
+export const PostFormSchema = z.object({
+    content: z
+        .string()
+        .trim()
+        .nonempty({ message: "Post cannot be empty" })
+        .max(280, { message: "Post must be at most 280 characters" })
 })
