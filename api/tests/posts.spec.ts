@@ -105,7 +105,7 @@ describe("DELETE /posts/:postId", () => {
   const [user] = mockUsers;
   const token = jwt.sign({ id: user.id }, env.JWT_SECRET_KEY);
 
-  afterEach(async () => await prisma.post.deleteMany({}))
+  afterEach(async () => await prisma.comment.deleteMany({}))
 
   it("should respond with 404 Not Found when attempting to delete a post that does not exist", async () => {
     const postId = "FakePostId"
@@ -122,6 +122,100 @@ describe("DELETE /posts/:postId", () => {
 
     const res = await request(app)
       .delete(`/posts/${post.id}`)
+      .set('Authorization', `Bearer ${token}`)
+
+    expect(res.status).toBe(204)
+  })
+})
+
+describe("POST /posts/:postId", () => {
+  const [user] = mockUsers;
+  const [post] = mockPosts;
+  const token = jwt.sign({ id: user.id }, env.JWT_SECRET_KEY);
+
+  afterEach(async () => await prisma.comment.deleteMany({}))
+
+  it("should send 422 status with validation object error when comment cant get past schema validation", async () => {
+    const res = await request(app)
+      .post(`/posts/${post.id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ content: "" })
+
+    expect(res.status).toBe(422)
+    expect(res.body.errors).toContainEqual({ fieldName: "content", message: "Comment cannot be empty" })
+  })
+
+  it("should create and successfully return comment with status 201 Created", async () => {
+    const res = await request(app)
+      .post(`/posts/${post.id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ content: "This is a comment!" })
+
+    expect(res.status).toBe(201)
+    expect(res.body.comment.text).toEqual("This is a comment!")
+  })
+})
+
+describe("POST /posts/:postId/like", () => {
+  const [user] = mockUsers;
+  const [post] = mockPosts;
+  const token = jwt.sign({ id: user.id }, env.JWT_SECRET_KEY);
+
+  afterEach(async () => await prisma.like.deleteMany({}))
+
+  it("should send 201 status when liking the post", async () => {
+    const res = await request(app)
+      .post(`/posts/${post.id}/like`)
+      .set('Authorization', `Bearer ${token}`)
+
+    expect(res.status).toBe(201)
+  })
+
+  it("should send 409 status for liking the post multiple times", async () => {
+
+    await prisma.like.create({
+      data: {
+        userId: user.id,
+        postId: post.id
+      }
+    })
+
+    const res = await request(app)
+      .post(`/posts/${post.id}/like`)
+      .set('Authorization', `Bearer ${token}`)
+
+    expect(res.status).toBe(409)
+    expect(res.body.message).toBe("You can't like a post multiple times.")
+  })
+})
+
+describe("DELETE /posts/:postId/like", () => {
+  const [user] = mockUsers;
+  const [post] = mockPosts;
+  const token = jwt.sign({ id: user.id }, env.JWT_SECRET_KEY);
+
+  beforeEach(async () => await prisma.like.create({
+    data: {
+      postId: post.id,
+      userId: user.id
+    }
+  }))
+
+  afterEach(async () => await prisma.like.deleteMany({}))
+
+  it("will send 404 status if no record found for delete operation", async () => {
+    const postId = "FakePostId"
+    const res = await request(app)
+      .delete(`/posts/${postId}/like`)
+      .set('Authorization', `Bearer ${token}`)
+
+    expect(res.status).toBe(404)
+    expect(res.body.message).toBe("No record found.")
+  })
+
+  it("should successfully remove the like from the post and send 204 status", async () => {
+    const res = await request(app)
+      .delete(`/posts/${post.id}/like`)
       .set('Authorization', `Bearer ${token}`)
 
     expect(res.status).toBe(204)

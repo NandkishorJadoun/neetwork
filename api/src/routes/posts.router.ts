@@ -2,7 +2,7 @@ import express, { Router } from "express"
 import { passport } from "../libs/passport.js";
 import { prisma } from "../libs/prisma.js"
 import { ZodError } from "zod";
-import { PostFormSchema } from "../schemas/form-validation.schema.js";
+import { CommentFormSchema, PostFormSchema } from "../schemas/form-validation.schema.js";
 import { Prisma } from "@prisma/client";
 
 export const postsRouter: Router = express.Router();
@@ -137,6 +137,100 @@ postsRouter.delete("/:postId", async (req, res, next) => {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === "P2025") {
         return res.status(404).json({ message: "No record found" })
+      }
+    }
+    next(error)
+  }
+})
+
+postsRouter.post("/:postId", async (req, res, next) => {
+  const { body, user, params } = req;
+
+  if (Array.isArray(params.postId) || !params.postId) {
+    return res.status(400).json({ message: "Invalid Post ID" })
+  }
+
+  if (!user) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  try {
+    const commentForm = CommentFormSchema.parse(body)
+
+    const comment = await prisma.comment.create({
+      data: {
+        text: commentForm.content,
+        userId: user.id,
+        postId: params.postId,
+      }
+    })
+
+    return res.status(201).json({ comment })
+
+  } catch (error) {
+    if (error instanceof ZodError) {
+      return res.status(422).json({ errors: error.issues.map(issue => Object({ fieldName: issue.path[0], message: issue.message })) })
+    }
+    next(error)
+  }
+})
+
+postsRouter.post("/:postId/like", async (req, res, next) => {
+  const { user, params } = req;
+
+  if (Array.isArray(params.postId) || !params.postId) {
+    return res.status(400).json({ message: "Invalid Post ID" })
+  }
+
+  if (!user) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  try {
+    await prisma.like.create({
+      data: {
+        userId: user.id,
+        postId: params.postId,
+      }
+    })
+
+    return res.status(201).send()
+
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === "P2002") {
+        return res.status(409).json({ message: "You can't like a post multiple times." })
+      }
+    }
+    next(error)
+  }
+})
+
+postsRouter.delete("/:postId/like", async (req, res, next) => {
+  const { user, params } = req;
+
+  if (Array.isArray(params.postId) || !params.postId) {
+    return res.status(400).json({ message: "Invalid Post ID" })
+  }
+
+  if (!user) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  const { postId } = params;
+  const userId = user.id;
+
+  try {
+    await prisma.like.delete({
+      where: { userId_postId: { userId, postId } }
+    })
+
+    return res.status(204).send()
+
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === "P2025") {
+        return res.status(404).json({ message: "No record found." })
       }
     }
     next(error)

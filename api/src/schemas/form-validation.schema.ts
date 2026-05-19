@@ -23,3 +23,11 @@ export const PostFormSchema = z.object({
         .nonempty({ message: "Post cannot be empty" })
         .max(280, { message: "Post must be at most 280 characters" })
 })
+
+export const CommentFormSchema = z.object({
+    content: z
+        .string()
+        .trim()
+        .nonempty({ message: "Comment cannot be empty" })
+        .max(280, { message: "Comment must be at most 280 characters" })
+})

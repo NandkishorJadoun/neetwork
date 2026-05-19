@@ -19,3 +19,13 @@ export const createMockPost = (authorId: string) => {
         created_at: faker.date.anytime().toISOString()
     }
 }
+
+export const createMockComment = (postId: string, authorId: string) => {
+    return {
+        postId: postId,
+        userId: authorId,
+        id: faker.string.uuid(),
+        data: faker.lorem.sentence(),
+        created_at: faker.date.anytime().toISOString()
+    }
+}
