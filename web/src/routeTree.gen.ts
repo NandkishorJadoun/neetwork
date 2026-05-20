@@ -13,7 +13,14 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as LayoutRouteImport } from './routes/_layout'
 import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
 import { Route as LoginCallbackRouteImport } from './routes/login_.callback'
+import { Route as LayoutProfileRouteImport } from './routes/_layout/profile'
+import { Route as LayoutHomeRouteImport } from './routes/_layout/home'
+import { Route as LayoutFollowUsersRouteImport } from './routes/_layout/follow-users'
+import { Route as LayoutFollowRequestsRouteImport } from './routes/_layout/follow-requests'
+import { Route as LayoutCreatePostRouteImport } from './routes/_layout/create-post'
 import { Route as LayoutAboutRouteImport } from './routes/_layout/about'
+import { Route as LayoutHomeIndexRouteImport } from './routes/_layout/home/index'
+import { Route as LayoutHomeFollowingRouteImport } from './routes/_layout/home/following'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -34,44 +41,127 @@ const LoginCallbackRoute = LoginCallbackRouteImport.update({
   path: '/login/callback',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LayoutProfileRoute = LayoutProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutHomeRoute = LayoutHomeRouteImport.update({
+  id: '/home',
+  path: '/home',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutFollowUsersRoute = LayoutFollowUsersRouteImport.update({
+  id: '/follow-users',
+  path: '/follow-users',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutFollowRequestsRoute = LayoutFollowRequestsRouteImport.update({
+  id: '/follow-requests',
+  path: '/follow-requests',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutCreatePostRoute = LayoutCreatePostRouteImport.update({
+  id: '/create-post',
+  path: '/create-post',
+  getParentRoute: () => LayoutRoute,
+} as any)
 const LayoutAboutRoute = LayoutAboutRouteImport.update({
   id: '/about',
   path: '/about',
   getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutHomeIndexRoute = LayoutHomeIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => LayoutHomeRoute,
+} as any)
+const LayoutHomeFollowingRoute = LayoutHomeFollowingRouteImport.update({
+  id: '/following',
+  path: '/following',
+  getParentRoute: () => LayoutHomeRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof LayoutIndexRoute
   '/login': typeof LoginRoute
   '/about': typeof LayoutAboutRoute
+  '/create-post': typeof LayoutCreatePostRoute
+  '/follow-requests': typeof LayoutFollowRequestsRoute
+  '/follow-users': typeof LayoutFollowUsersRoute
+  '/home': typeof LayoutHomeRouteWithChildren
+  '/profile': typeof LayoutProfileRoute
   '/login/callback': typeof LoginCallbackRoute
+  '/home/following': typeof LayoutHomeFollowingRoute
+  '/home/': typeof LayoutHomeIndexRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/about': typeof LayoutAboutRoute
+  '/create-post': typeof LayoutCreatePostRoute
+  '/follow-requests': typeof LayoutFollowRequestsRoute
+  '/follow-users': typeof LayoutFollowUsersRoute
+  '/profile': typeof LayoutProfileRoute
   '/login/callback': typeof LoginCallbackRoute
   '/': typeof LayoutIndexRoute
+  '/home/following': typeof LayoutHomeFollowingRoute
+  '/home': typeof LayoutHomeIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_layout': typeof LayoutRouteWithChildren
   '/login': typeof LoginRoute
   '/_layout/about': typeof LayoutAboutRoute
+  '/_layout/create-post': typeof LayoutCreatePostRoute
+  '/_layout/follow-requests': typeof LayoutFollowRequestsRoute
+  '/_layout/follow-users': typeof LayoutFollowUsersRoute
+  '/_layout/home': typeof LayoutHomeRouteWithChildren
+  '/_layout/profile': typeof LayoutProfileRoute
   '/login_/callback': typeof LoginCallbackRoute
   '/_layout/': typeof LayoutIndexRoute
+  '/_layout/home/following': typeof LayoutHomeFollowingRoute
+  '/_layout/home/': typeof LayoutHomeIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/about' | '/login/callback'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/about'
+    | '/create-post'
+    | '/follow-requests'
+    | '/follow-users'
+    | '/home'
+    | '/profile'
+    | '/login/callback'
+    | '/home/following'
+    | '/home/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/login' | '/about' | '/login/callback' | '/'
+  to:
+    | '/login'
+    | '/about'
+    | '/create-post'
+    | '/follow-requests'
+    | '/follow-users'
+    | '/profile'
+    | '/login/callback'
+    | '/'
+    | '/home/following'
+    | '/home'
   id:
     | '__root__'
     | '/_layout'
     | '/login'
     | '/_layout/about'
+    | '/_layout/create-post'
+    | '/_layout/follow-requests'
+    | '/_layout/follow-users'
+    | '/_layout/home'
+    | '/_layout/profile'
     | '/login_/callback'
     | '/_layout/'
+    | '/_layout/home/following'
+    | '/_layout/home/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -110,6 +200,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginCallbackRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_layout/profile': {
+      id: '/_layout/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof LayoutProfileRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/home': {
+      id: '/_layout/home'
+      path: '/home'
+      fullPath: '/home'
+      preLoaderRoute: typeof LayoutHomeRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/follow-users': {
+      id: '/_layout/follow-users'
+      path: '/follow-users'
+      fullPath: '/follow-users'
+      preLoaderRoute: typeof LayoutFollowUsersRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/follow-requests': {
+      id: '/_layout/follow-requests'
+      path: '/follow-requests'
+      fullPath: '/follow-requests'
+      preLoaderRoute: typeof LayoutFollowRequestsRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/create-post': {
+      id: '/_layout/create-post'
+      path: '/create-post'
+      fullPath: '/create-post'
+      preLoaderRoute: typeof LayoutCreatePostRouteImport
+      parentRoute: typeof LayoutRoute
+    }
     '/_layout/about': {
       id: '/_layout/about'
       path: '/about'
@@ -117,16 +242,54 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutAboutRouteImport
       parentRoute: typeof LayoutRoute
     }
+    '/_layout/home/': {
+      id: '/_layout/home/'
+      path: '/'
+      fullPath: '/home/'
+      preLoaderRoute: typeof LayoutHomeIndexRouteImport
+      parentRoute: typeof LayoutHomeRoute
+    }
+    '/_layout/home/following': {
+      id: '/_layout/home/following'
+      path: '/following'
+      fullPath: '/home/following'
+      preLoaderRoute: typeof LayoutHomeFollowingRouteImport
+      parentRoute: typeof LayoutHomeRoute
+    }
   }
 }
 
+interface LayoutHomeRouteChildren {
+  LayoutHomeFollowingRoute: typeof LayoutHomeFollowingRoute
+  LayoutHomeIndexRoute: typeof LayoutHomeIndexRoute
+}
+
+const LayoutHomeRouteChildren: LayoutHomeRouteChildren = {
+  LayoutHomeFollowingRoute: LayoutHomeFollowingRoute,
+  LayoutHomeIndexRoute: LayoutHomeIndexRoute,
+}
+
+const LayoutHomeRouteWithChildren = LayoutHomeRoute._addFileChildren(
+  LayoutHomeRouteChildren,
+)
+
 interface LayoutRouteChildren {
   LayoutAboutRoute: typeof LayoutAboutRoute
+  LayoutCreatePostRoute: typeof LayoutCreatePostRoute
+  LayoutFollowRequestsRoute: typeof LayoutFollowRequestsRoute
+  LayoutFollowUsersRoute: typeof LayoutFollowUsersRoute
+  LayoutHomeRoute: typeof LayoutHomeRouteWithChildren
+  LayoutProfileRoute: typeof LayoutProfileRoute
   LayoutIndexRoute: typeof LayoutIndexRoute
 }
 
 const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutAboutRoute: LayoutAboutRoute,
+  LayoutCreatePostRoute: LayoutCreatePostRoute,
+  LayoutFollowRequestsRoute: LayoutFollowRequestsRoute,
+  LayoutFollowUsersRoute: LayoutFollowUsersRoute,
+  LayoutHomeRoute: LayoutHomeRouteWithChildren,
+  LayoutProfileRoute: LayoutProfileRoute,
   LayoutIndexRoute: LayoutIndexRoute,
 }
 
