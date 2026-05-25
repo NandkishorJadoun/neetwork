@@ -21,7 +21,6 @@ usersRouter.get("/", async (req, res, next) => {
                     none: { fromId: id }
                 }
             },
-            include: { followers: true }
         })
 
         return res.status(200).json({ users })
@@ -41,6 +40,27 @@ usersRouter.get("/:userId", async (req, res, next) => {
         const user = await prisma.user.findUnique({
             where: {
                 id: userId,
+            },
+            include: {
+                _count: {
+                    select: {
+                        followers: {
+                            where: {
+                                status: "ACCEPTED"
+                            }
+                        },
+                        followings: {
+                            where: {
+                                status: "ACCEPTED"
+                            }
+                        },
+                    }
+                },
+                followers: {
+                    where: {
+                        fromId: userId,
+                    }
+                }
             }
         })
 

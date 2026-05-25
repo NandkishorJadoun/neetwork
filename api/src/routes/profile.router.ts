@@ -74,6 +74,15 @@ profileRouter.get("/follow-requests", async (req, res, next) => {
     try {
         const followRequests = await prisma.follow.findMany({
             where: { toId: id, status: "PENDING" },
+            include: {
+                sender: {
+                    select: {
+                        avatar: true,
+                        username: true,
+                        fullname: true,
+                    }
+                }
+            }
         })
 
         return res.status(200).json({ followRequests })

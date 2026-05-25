@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "vitest",
-    "dev": "NODE_ENV=development pnpx tsx watch src/server.ts",
+    "dev": "pnpx tsx watch src/server.ts",
     "typecheck": "tsc",
     "build": "prisma generate && tsc",
     "start": "node ./dist/server.js"

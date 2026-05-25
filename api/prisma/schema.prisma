@@ -59,12 +59,12 @@ model Like {
 }
 
 model Follow {
-  id         String @id @default(cuid())
-  senderId   User   @relation(fields: [fromId], references: [id], name: "followings")
-  receiverId User   @relation(fields: [toId], references: [id], name: "followers")
-  status     Status @default(PENDING)
-  fromId     String
-  toId       String
+  id       String @id @default(cuid())
+  sender   User   @relation(fields: [fromId], references: [id], name: "followings")
+  receiver User   @relation(fields: [toId], references: [id], name: "followers")
+  status   Status @default(PENDING)
+  fromId   String
+  toId     String
 
   @@unique([fromId, toId])
   @@map("follows")

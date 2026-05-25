@@ -13,9 +13,9 @@ authRouter.get('/github/callback', async (req, res) => {
     passport.authenticate('github', { session: false },
         (err: unknown, user: Profile) => {
             if (err || !user) {
-                return res.status(401).json({ message: "Failed Authorization" })
+                return res.redirect(`${env.FRONTEND_URL}/auth`)
             }
             const token = jwt.sign({ id: user.id }, env.JWT_SECRET_KEY);
-            return res.json({ user, token });
+            return res.redirect(`${env.FRONTEND_URL}/login/callback?token=${token}&id=${user.id}`);
         })(req, res)
 })

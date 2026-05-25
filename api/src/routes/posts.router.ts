@@ -10,11 +10,38 @@ export const postsRouter: Router = express.Router();
 postsRouter.use(passport.authenticate("jwt", { session: false }))
 
 postsRouter.get("/", async (req, res, next) => {
+
+  if (!req.user) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  const { id } = req.user;
+
   try {
     const posts = await prisma.post.findMany({
       orderBy: {
         created_at: 'desc',
       },
+      include: {
+        author: {
+          select: {
+            avatar: true,
+            username: true,
+            fullname: true
+          }
+        },
+        _count: {
+          select: {
+            likes: true,
+            comments: true
+          }
+        },
+        likes: {
+          where: {
+            userId: id
+          }
+        }
+      }
     })
 
     return res.status(200).json({ posts })
@@ -49,6 +76,27 @@ postsRouter.get("/following", async (req, res, next) => {
             }
           }
         ]
+      },
+      include: {
+        author: {
+          select: {
+            avatar: true,
+            username: true,
+            fullname: true
+          }
+        },
+        _count: {
+          select: {
+            likes: true,
+            comments: true
+          }
+        },
+        likes: {
+          where: {
+            userId: id
+          }
+        }
+
       },
       orderBy: {
         created_at: 'desc',
