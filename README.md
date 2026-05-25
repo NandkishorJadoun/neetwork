@@ -20,29 +20,30 @@
   - [x] GET /github/callback
 
 - [ ] /posts
-  - [ ] GET / will show all latest posts
-  - [ ] GET /following will show all the posts from the following
-  - [ ] POST / will create a new post
-  - [ ] GET /:postId will show the post
-  - [ ] DELETE /:postId will delete the post
-  - [ ] POST /:postId will create the new comment
-  - [ ] POST /:postId/like will like the post
-  - [ ] DELETE /:postId/like will unlike the post 
+  - [x] GET / will show all latest posts
+  - [x] GET /following will show all the posts from the following
+  - [x] POST / will create a new post
+  - [x] GET /:postId will show the post
+  - [x] DELETE /:postId will delete the post
+  - [x] POST /:postId will create the new comment
+  - [x] POST /:postId/like will like the post
+  - [x] DELETE /:postId/like will unlike the post 
 
-- [ ] /users
+ - [x] /users
   - [x] GET / show all users who exist on the platform but user haven't followed yet
   - [x] GET /:userId show the profile of the user
   - [x] GET /:userId/posts show the posts
   - [x] GET /:userId/comments show the comments
   - [x] GET /:userId/followers show the followers
   - [x] GET /:userId/followings show the followings
-
   - [x] POST /:userId/follow-request will send follow request
   - [x] DELETE /:userId/follow-request will delete follow request
+  - [x] DELETE /:userId/follow will unfollow the user
 
-  - [x] GET /me will send the data for patch
-  - [ ] PATCH /me will update the profile of the user
-
-  - [ ] GET /me/follow-requests will show all users who sent FR
-  - [ ] PATCH /me/follow-requests/:userId will accept the FR
-  - [ ] DELETE /me/follow-requests/:userId will reject the FR
+- [x] /me
+  - [x] GET / will send the data for patch
+  - [x] PATCH / will update the profile of the user
+  - [x] GET /follow-requests will show all users who sent FR
+  - [x] PATCH /follow-requests/:userId will accept the FR
+  - [x] DELETE /follow-requests/:userId will reject the FR
+  - [x] DELETE /followers/:userId will remove the follower

@@ -48,7 +48,7 @@ function RouteComponent() {
   )
 }
 
-const PostCard = ({ post }: { post: Post }) => {
+export const PostCard = ({ post }: { post: Post }) => {
   const { user } = useAuth();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -85,7 +85,10 @@ const PostCard = ({ post }: { post: Post }) => {
           <p>{post.author.fullname}</p>
           <span>{post.author.username}</span>
         </Link>
-        <p>{post.text}</p>
+        <Link
+          to='/posts/$postId'
+          params={{ postId: post.id }}
+        >{post.text}</Link>
         <div>
           <div>
             <button disabled={isLoading} onClick={likeHandler}>{isLiked ? "Unlike" : "Like"}</button><span>{post._count.likes}</span>

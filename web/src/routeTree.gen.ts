@@ -20,6 +20,7 @@ import { Route as LayoutEditProfileRouteImport } from './routes/_layout/edit-pro
 import { Route as LayoutCreatePostRouteImport } from './routes/_layout/create-post'
 import { Route as LayoutAboutRouteImport } from './routes/_layout/about'
 import { Route as LayoutUsersUserIdRouteImport } from './routes/_layout/users.$userId'
+import { Route as LayoutPostsPostIdRouteImport } from './routes/_layout/posts.$postId'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -75,6 +76,11 @@ const LayoutUsersUserIdRoute = LayoutUsersUserIdRouteImport.update({
   path: '/users/$userId',
   getParentRoute: () => LayoutRoute,
 } as any)
+const LayoutPostsPostIdRoute = LayoutPostsPostIdRouteImport.update({
+  id: '/posts/$postId',
+  path: '/posts/$postId',
+  getParentRoute: () => LayoutRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof LayoutIndexRoute
@@ -86,6 +92,7 @@ export interface FileRoutesByFullPath {
   '/follow-users': typeof LayoutFollowUsersRoute
   '/home': typeof LayoutHomeRoute
   '/login/callback': typeof LoginCallbackRoute
+  '/posts/$postId': typeof LayoutPostsPostIdRoute
   '/users/$userId': typeof LayoutUsersUserIdRoute
 }
 export interface FileRoutesByTo {
@@ -98,6 +105,7 @@ export interface FileRoutesByTo {
   '/home': typeof LayoutHomeRoute
   '/login/callback': typeof LoginCallbackRoute
   '/': typeof LayoutIndexRoute
+  '/posts/$postId': typeof LayoutPostsPostIdRoute
   '/users/$userId': typeof LayoutUsersUserIdRoute
 }
 export interface FileRoutesById {
@@ -112,6 +120,7 @@ export interface FileRoutesById {
   '/_layout/home': typeof LayoutHomeRoute
   '/login_/callback': typeof LoginCallbackRoute
   '/_layout/': typeof LayoutIndexRoute
+  '/_layout/posts/$postId': typeof LayoutPostsPostIdRoute
   '/_layout/users/$userId': typeof LayoutUsersUserIdRoute
 }
 export interface FileRouteTypes {
@@ -126,6 +135,7 @@ export interface FileRouteTypes {
     | '/follow-users'
     | '/home'
     | '/login/callback'
+    | '/posts/$postId'
     | '/users/$userId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -138,6 +148,7 @@ export interface FileRouteTypes {
     | '/home'
     | '/login/callback'
     | '/'
+    | '/posts/$postId'
     | '/users/$userId'
   id:
     | '__root__'
@@ -151,6 +162,7 @@ export interface FileRouteTypes {
     | '/_layout/home'
     | '/login_/callback'
     | '/_layout/'
+    | '/_layout/posts/$postId'
     | '/_layout/users/$userId'
   fileRoutesById: FileRoutesById
 }
@@ -239,6 +251,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutUsersUserIdRouteImport
       parentRoute: typeof LayoutRoute
     }
+    '/_layout/posts/$postId': {
+      id: '/_layout/posts/$postId'
+      path: '/posts/$postId'
+      fullPath: '/posts/$postId'
+      preLoaderRoute: typeof LayoutPostsPostIdRouteImport
+      parentRoute: typeof LayoutRoute
+    }
   }
 }
 
@@ -250,6 +269,7 @@ interface LayoutRouteChildren {
   LayoutFollowUsersRoute: typeof LayoutFollowUsersRoute
   LayoutHomeRoute: typeof LayoutHomeRoute
   LayoutIndexRoute: typeof LayoutIndexRoute
+  LayoutPostsPostIdRoute: typeof LayoutPostsPostIdRoute
   LayoutUsersUserIdRoute: typeof LayoutUsersUserIdRoute
 }
 
@@ -261,6 +281,7 @@ const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutFollowUsersRoute: LayoutFollowUsersRoute,
   LayoutHomeRoute: LayoutHomeRoute,
   LayoutIndexRoute: LayoutIndexRoute,
+  LayoutPostsPostIdRoute: LayoutPostsPostIdRoute,
   LayoutUsersUserIdRoute: LayoutUsersUserIdRoute,
 }
 

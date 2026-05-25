@@ -138,6 +138,11 @@ postsRouter.post("/", async (req, res, next) => {
 })
 
 postsRouter.get("/:postId", async (req, res, next) => {
+  if (!req.user) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  const { id: userId } = req.user;
   const { postId } = req.params
 
   if (Array.isArray(postId) || !postId) {
@@ -148,6 +153,31 @@ postsRouter.get("/:postId", async (req, res, next) => {
     const post = await prisma.post.findUnique({
       where: {
         id: postId
+      },
+      include: {
+        comments: {
+          include: {
+            author: true
+          }
+        },
+        author: {
+          select: {
+            avatar: true,
+            username: true,
+            fullname: true
+          }
+        },
+        _count: {
+          select: {
+            likes: true,
+            comments: true
+          }
+        },
+        likes: {
+          where: {
+            userId
+          }
+        }
       }
     })
 

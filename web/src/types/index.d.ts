@@ -34,10 +34,9 @@ export type Post = {
 export type Comment = {
     id: string;
     text: string;
-    created_at: Date;
     userId: string;
     postId: string;
-    auther: User;
+    author: User;
     post: Post;
 }
 
@@ -49,3 +48,7 @@ export type Like = {
     postId: string;
 }
 
+export type ValidationError = {
+  fieldName: string;
+  message: string
+}
