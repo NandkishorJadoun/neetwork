@@ -23,6 +23,12 @@ export type Post = {
     created_at: Date;
     userId: string;
     author: User;
+    likes: Like[];
+    comments: Comment[];
+    _count: {
+        likes: number;
+        comments: number;
+    }
 }
 
 export type Comment = {

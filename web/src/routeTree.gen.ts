@@ -13,10 +13,10 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as LayoutRouteImport } from './routes/_layout'
 import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
 import { Route as LoginCallbackRouteImport } from './routes/login_.callback'
-import { Route as LayoutProfileRouteImport } from './routes/_layout/profile'
 import { Route as LayoutHomeRouteImport } from './routes/_layout/home'
 import { Route as LayoutFollowUsersRouteImport } from './routes/_layout/follow-users'
 import { Route as LayoutFollowRequestsRouteImport } from './routes/_layout/follow-requests'
+import { Route as LayoutEditProfileRouteImport } from './routes/_layout/edit-profile'
 import { Route as LayoutCreatePostRouteImport } from './routes/_layout/create-post'
 import { Route as LayoutAboutRouteImport } from './routes/_layout/about'
 import { Route as LayoutUsersUserIdRouteImport } from './routes/_layout/users.$userId'
@@ -40,11 +40,6 @@ const LoginCallbackRoute = LoginCallbackRouteImport.update({
   path: '/login/callback',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LayoutProfileRoute = LayoutProfileRouteImport.update({
-  id: '/profile',
-  path: '/profile',
-  getParentRoute: () => LayoutRoute,
-} as any)
 const LayoutHomeRoute = LayoutHomeRouteImport.update({
   id: '/home',
   path: '/home',
@@ -58,6 +53,11 @@ const LayoutFollowUsersRoute = LayoutFollowUsersRouteImport.update({
 const LayoutFollowRequestsRoute = LayoutFollowRequestsRouteImport.update({
   id: '/follow-requests',
   path: '/follow-requests',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutEditProfileRoute = LayoutEditProfileRouteImport.update({
+  id: '/edit-profile',
+  path: '/edit-profile',
   getParentRoute: () => LayoutRoute,
 } as any)
 const LayoutCreatePostRoute = LayoutCreatePostRouteImport.update({
@@ -81,10 +81,10 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/about': typeof LayoutAboutRoute
   '/create-post': typeof LayoutCreatePostRoute
+  '/edit-profile': typeof LayoutEditProfileRoute
   '/follow-requests': typeof LayoutFollowRequestsRoute
   '/follow-users': typeof LayoutFollowUsersRoute
   '/home': typeof LayoutHomeRoute
-  '/profile': typeof LayoutProfileRoute
   '/login/callback': typeof LoginCallbackRoute
   '/users/$userId': typeof LayoutUsersUserIdRoute
 }
@@ -92,10 +92,10 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/about': typeof LayoutAboutRoute
   '/create-post': typeof LayoutCreatePostRoute
+  '/edit-profile': typeof LayoutEditProfileRoute
   '/follow-requests': typeof LayoutFollowRequestsRoute
   '/follow-users': typeof LayoutFollowUsersRoute
   '/home': typeof LayoutHomeRoute
-  '/profile': typeof LayoutProfileRoute
   '/login/callback': typeof LoginCallbackRoute
   '/': typeof LayoutIndexRoute
   '/users/$userId': typeof LayoutUsersUserIdRoute
@@ -106,10 +106,10 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/_layout/about': typeof LayoutAboutRoute
   '/_layout/create-post': typeof LayoutCreatePostRoute
+  '/_layout/edit-profile': typeof LayoutEditProfileRoute
   '/_layout/follow-requests': typeof LayoutFollowRequestsRoute
   '/_layout/follow-users': typeof LayoutFollowUsersRoute
   '/_layout/home': typeof LayoutHomeRoute
-  '/_layout/profile': typeof LayoutProfileRoute
   '/login_/callback': typeof LoginCallbackRoute
   '/_layout/': typeof LayoutIndexRoute
   '/_layout/users/$userId': typeof LayoutUsersUserIdRoute
@@ -121,10 +121,10 @@ export interface FileRouteTypes {
     | '/login'
     | '/about'
     | '/create-post'
+    | '/edit-profile'
     | '/follow-requests'
     | '/follow-users'
     | '/home'
-    | '/profile'
     | '/login/callback'
     | '/users/$userId'
   fileRoutesByTo: FileRoutesByTo
@@ -132,10 +132,10 @@ export interface FileRouteTypes {
     | '/login'
     | '/about'
     | '/create-post'
+    | '/edit-profile'
     | '/follow-requests'
     | '/follow-users'
     | '/home'
-    | '/profile'
     | '/login/callback'
     | '/'
     | '/users/$userId'
@@ -145,10 +145,10 @@ export interface FileRouteTypes {
     | '/login'
     | '/_layout/about'
     | '/_layout/create-post'
+    | '/_layout/edit-profile'
     | '/_layout/follow-requests'
     | '/_layout/follow-users'
     | '/_layout/home'
-    | '/_layout/profile'
     | '/login_/callback'
     | '/_layout/'
     | '/_layout/users/$userId'
@@ -190,13 +190,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginCallbackRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_layout/profile': {
-      id: '/_layout/profile'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof LayoutProfileRouteImport
-      parentRoute: typeof LayoutRoute
-    }
     '/_layout/home': {
       id: '/_layout/home'
       path: '/home'
@@ -216,6 +209,13 @@ declare module '@tanstack/react-router' {
       path: '/follow-requests'
       fullPath: '/follow-requests'
       preLoaderRoute: typeof LayoutFollowRequestsRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/edit-profile': {
+      id: '/_layout/edit-profile'
+      path: '/edit-profile'
+      fullPath: '/edit-profile'
+      preLoaderRoute: typeof LayoutEditProfileRouteImport
       parentRoute: typeof LayoutRoute
     }
     '/_layout/create-post': {
@@ -245,10 +245,10 @@ declare module '@tanstack/react-router' {
 interface LayoutRouteChildren {
   LayoutAboutRoute: typeof LayoutAboutRoute
   LayoutCreatePostRoute: typeof LayoutCreatePostRoute
+  LayoutEditProfileRoute: typeof LayoutEditProfileRoute
   LayoutFollowRequestsRoute: typeof LayoutFollowRequestsRoute
   LayoutFollowUsersRoute: typeof LayoutFollowUsersRoute
   LayoutHomeRoute: typeof LayoutHomeRoute
-  LayoutProfileRoute: typeof LayoutProfileRoute
   LayoutIndexRoute: typeof LayoutIndexRoute
   LayoutUsersUserIdRoute: typeof LayoutUsersUserIdRoute
 }
@@ -256,10 +256,10 @@ interface LayoutRouteChildren {
 const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutAboutRoute: LayoutAboutRoute,
   LayoutCreatePostRoute: LayoutCreatePostRoute,
+  LayoutEditProfileRoute: LayoutEditProfileRoute,
   LayoutFollowRequestsRoute: LayoutFollowRequestsRoute,
   LayoutFollowUsersRoute: LayoutFollowUsersRoute,
   LayoutHomeRoute: LayoutHomeRoute,
-  LayoutProfileRoute: LayoutProfileRoute,
   LayoutIndexRoute: LayoutIndexRoute,
   LayoutUsersUserIdRoute: LayoutUsersUserIdRoute,
 }
