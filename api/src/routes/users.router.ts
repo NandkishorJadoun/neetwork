@@ -32,6 +32,12 @@ usersRouter.get("/", async (req, res, next) => {
 usersRouter.get("/:userId", async (req, res, next) => {
     const { userId } = req.params
 
+    if (!req.user) {
+        return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const { id } = req.user;
+
     if (Array.isArray(userId) || !userId) {
         return res.status(400).json({ message: "Invalid User ID" })
     }
@@ -58,7 +64,7 @@ usersRouter.get("/:userId", async (req, res, next) => {
                 },
                 followers: {
                     where: {
-                        fromId: userId,
+                        fromId: id,
                     }
                 }
             }
@@ -119,6 +125,9 @@ usersRouter.get("/:userId/followers", async (req, res, next) => {
             where: {
                 toId: userId,
                 status: "ACCEPTED"
+            },
+            include: {
+                sender: true
             }
         })
 
@@ -127,6 +136,7 @@ usersRouter.get("/:userId/followers", async (req, res, next) => {
         next(error)
     }
 })
+
 usersRouter.get("/:userId/followings", async (req, res, next) => {
     const { userId } = req.params
 
@@ -139,6 +149,9 @@ usersRouter.get("/:userId/followings", async (req, res, next) => {
             where: {
                 fromId: userId,
                 status: "ACCEPTED"
+            },
+            include: {
+                receiver: true
             }
         })
 

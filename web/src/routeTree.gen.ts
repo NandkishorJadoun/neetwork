@@ -21,6 +21,8 @@ import { Route as LayoutCreatePostRouteImport } from './routes/_layout/create-po
 import { Route as LayoutAboutRouteImport } from './routes/_layout/about'
 import { Route as LayoutUsersUserIdRouteImport } from './routes/_layout/users.$userId'
 import { Route as LayoutPostsPostIdRouteImport } from './routes/_layout/posts.$postId'
+import { Route as LayoutUsersUserIdFollowingsRouteImport } from './routes/_layout/users.$userId_.followings'
+import { Route as LayoutUsersUserIdFollowersRouteImport } from './routes/_layout/users.$userId_.followers'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -81,6 +83,18 @@ const LayoutPostsPostIdRoute = LayoutPostsPostIdRouteImport.update({
   path: '/posts/$postId',
   getParentRoute: () => LayoutRoute,
 } as any)
+const LayoutUsersUserIdFollowingsRoute =
+  LayoutUsersUserIdFollowingsRouteImport.update({
+    id: '/users/$userId_/followings',
+    path: '/users/$userId/followings',
+    getParentRoute: () => LayoutRoute,
+  } as any)
+const LayoutUsersUserIdFollowersRoute =
+  LayoutUsersUserIdFollowersRouteImport.update({
+    id: '/users/$userId_/followers',
+    path: '/users/$userId/followers',
+    getParentRoute: () => LayoutRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof LayoutIndexRoute
@@ -94,6 +108,8 @@ export interface FileRoutesByFullPath {
   '/login/callback': typeof LoginCallbackRoute
   '/posts/$postId': typeof LayoutPostsPostIdRoute
   '/users/$userId': typeof LayoutUsersUserIdRoute
+  '/users/$userId/followers': typeof LayoutUsersUserIdFollowersRoute
+  '/users/$userId/followings': typeof LayoutUsersUserIdFollowingsRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
@@ -107,6 +123,8 @@ export interface FileRoutesByTo {
   '/': typeof LayoutIndexRoute
   '/posts/$postId': typeof LayoutPostsPostIdRoute
   '/users/$userId': typeof LayoutUsersUserIdRoute
+  '/users/$userId/followers': typeof LayoutUsersUserIdFollowersRoute
+  '/users/$userId/followings': typeof LayoutUsersUserIdFollowingsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -122,6 +140,8 @@ export interface FileRoutesById {
   '/_layout/': typeof LayoutIndexRoute
   '/_layout/posts/$postId': typeof LayoutPostsPostIdRoute
   '/_layout/users/$userId': typeof LayoutUsersUserIdRoute
+  '/_layout/users/$userId_/followers': typeof LayoutUsersUserIdFollowersRoute
+  '/_layout/users/$userId_/followings': typeof LayoutUsersUserIdFollowingsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -137,6 +157,8 @@ export interface FileRouteTypes {
     | '/login/callback'
     | '/posts/$postId'
     | '/users/$userId'
+    | '/users/$userId/followers'
+    | '/users/$userId/followings'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
@@ -150,6 +172,8 @@ export interface FileRouteTypes {
     | '/'
     | '/posts/$postId'
     | '/users/$userId'
+    | '/users/$userId/followers'
+    | '/users/$userId/followings'
   id:
     | '__root__'
     | '/_layout'
@@ -164,6 +188,8 @@ export interface FileRouteTypes {
     | '/_layout/'
     | '/_layout/posts/$postId'
     | '/_layout/users/$userId'
+    | '/_layout/users/$userId_/followers'
+    | '/_layout/users/$userId_/followings'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -258,6 +284,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutPostsPostIdRouteImport
       parentRoute: typeof LayoutRoute
     }
+    '/_layout/users/$userId_/followings': {
+      id: '/_layout/users/$userId_/followings'
+      path: '/users/$userId/followings'
+      fullPath: '/users/$userId/followings'
+      preLoaderRoute: typeof LayoutUsersUserIdFollowingsRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/users/$userId_/followers': {
+      id: '/_layout/users/$userId_/followers'
+      path: '/users/$userId/followers'
+      fullPath: '/users/$userId/followers'
+      preLoaderRoute: typeof LayoutUsersUserIdFollowersRouteImport
+      parentRoute: typeof LayoutRoute
+    }
   }
 }
 
@@ -271,6 +311,8 @@ interface LayoutRouteChildren {
   LayoutIndexRoute: typeof LayoutIndexRoute
   LayoutPostsPostIdRoute: typeof LayoutPostsPostIdRoute
   LayoutUsersUserIdRoute: typeof LayoutUsersUserIdRoute
+  LayoutUsersUserIdFollowersRoute: typeof LayoutUsersUserIdFollowersRoute
+  LayoutUsersUserIdFollowingsRoute: typeof LayoutUsersUserIdFollowingsRoute
 }
 
 const LayoutRouteChildren: LayoutRouteChildren = {
@@ -283,6 +325,8 @@ const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutIndexRoute: LayoutIndexRoute,
   LayoutPostsPostIdRoute: LayoutPostsPostIdRoute,
   LayoutUsersUserIdRoute: LayoutUsersUserIdRoute,
+  LayoutUsersUserIdFollowersRoute: LayoutUsersUserIdFollowersRoute,
+  LayoutUsersUserIdFollowingsRoute: LayoutUsersUserIdFollowingsRoute,
 }
 
 const LayoutRouteWithChildren =

@@ -59,8 +59,8 @@ function RouteComponent() {
         <p>{user.username}</p>
         <p>{user.about}</p>
         <div>
-          <span>Followers: {user._count.followers}</span>
-          <span>Followers: {user._count.followings}</span>
+          <Link to="/users/$userId/followers" params={{ userId: user.id }}>Followers: {user._count.followers}</Link>
+          <Link to="/users/$userId/followings" params={{ userId: user.id }}>Followings: {user._count.followings}</Link>
         </div>
 
         <ActionButtons user={user} />
@@ -80,7 +80,7 @@ function RouteComponent() {
   )
 }
 
-const ActionButtons = ({ user }: { user: User }) => {
+export const ActionButtons = ({ user }: { user: User }) => {
   const { user: currentUser } = useAuth()
   const { followers } = user;
 
