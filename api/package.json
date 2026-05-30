@@ -6,9 +6,10 @@
   "type": "module",
   "scripts": {
     "test": "vitest",
-    "dev": "pnpx tsx watch src/server.ts",
+    "dev": "tsx watch src/server.ts",
     "typecheck": "tsc",
     "build": "prisma generate && tsc",
+    "postinstall": "prisma generate",
     "start": "node ./dist/server.js"
   },
   "keywords": [],

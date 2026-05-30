@@ -1,7 +1,7 @@
 import express, { Router } from "express"
 import { passport } from "../libs/passport.js";
 import { prisma } from "../libs/prisma.js"
-import { Prisma } from "@prisma/client";
+import { Prisma } from "../../generated/prisma/index.js";
 
 export const usersRouter: Router = express.Router();
 

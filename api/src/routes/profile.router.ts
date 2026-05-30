@@ -5,7 +5,8 @@ import { ZodError } from "zod";
 import { PatchFormDataSchema } from "../schemas/form-validation.schema.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { prisma } from "../libs/prisma.js"
-import { Prisma } from "@prisma/client";
+import { Prisma } from "../../generated/prisma/index.js";
+
 
 export const profileRouter: Router = express.Router();
 
