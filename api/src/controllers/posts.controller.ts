@@ -6,130 +6,130 @@ import { Prisma } from "../../generated/prisma/index.js";
 
 export const getAllPosts = async (req: Request, res: Response, next: NextFunction) => {
 
-    if (!req.user) {
-        return res.status(401).json({ message: "Unauthorized" });
-    }
+  if (!req.user) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
 
-    const { id } = req.user;
+  const { id } = req.user;
 
-    try {
-        const posts = await prisma.post.findMany({
-            orderBy: {
-                created_at: 'desc',
-            },
-            include: {
-                author: {
-                    select: {
-                        avatar: true,
-                        username: true,
-                        fullname: true
-                    }
-                },
-                _count: {
-                    select: {
-                        likes: true,
-                        comments: true
-                    }
-                },
-                likes: {
-                    where: {
-                        userId: id
-                    }
-                }
-            }
-        })
+  try {
+    const posts = await prisma.post.findMany({
+      orderBy: {
+        created_at: 'desc',
+      },
+      include: {
+        author: {
+          select: {
+            avatar: true,
+            username: true,
+            fullname: true
+          }
+        },
+        _count: {
+          select: {
+            likes: true,
+            comments: true
+          }
+        },
+        likes: {
+          where: {
+            userId: id
+          }
+        }
+      }
+    })
 
-        return res.status(200).json({ posts })
+    return res.status(200).json({ posts })
 
-    } catch (error) {
-        next(error)
-    }
+  } catch (error) {
+    next(error)
+  }
 }
 
 export const getFollowingUserPosts = async (req: Request, res: Response, next: NextFunction) => {
-    if (!req.user) {
-        return res.status(401).json({ message: "Unauthorized" });
-    }
+  if (!req.user) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
 
-    const { id } = req.user;
+  const { id } = req.user;
 
-    try {
-        const posts = await prisma.post.findMany({
-            where: {
-                OR: [
-                    {
-                        userId: id
-                    },
-                    {
-                        author: {
-                            followers: {
-                                some: {
-                                    fromId: id,
-                                    status: "ACCEPTED"
-                                }
-                            }
-                        }
-                    }
-                ]
-            },
-            include: {
-                author: {
-                    select: {
-                        avatar: true,
-                        username: true,
-                        fullname: true
-                    }
-                },
-                _count: {
-                    select: {
-                        likes: true,
-                        comments: true
-                    }
-                },
-                likes: {
-                    where: {
-                        userId: id
-                    }
+  try {
+    const posts = await prisma.post.findMany({
+      where: {
+        OR: [
+          {
+            userId: id
+          },
+          {
+            author: {
+              followers: {
+                some: {
+                  fromId: id,
+                  status: "ACCEPTED"
                 }
+              }
+            }
+          }
+        ]
+      },
+      include: {
+        author: {
+          select: {
+            avatar: true,
+            username: true,
+            fullname: true
+          }
+        },
+        _count: {
+          select: {
+            likes: true,
+            comments: true
+          }
+        },
+        likes: {
+          where: {
+            userId: id
+          }
+        }
 
-            },
-            orderBy: {
-                created_at: 'desc',
-            },
-        })
+      },
+      orderBy: {
+        created_at: 'desc',
+      },
+    })
 
-        return res.status(200).json({ posts })
+    return res.status(200).json({ posts })
 
-    } catch (error) {
-        next(error)
-    }
+  } catch (error) {
+    next(error)
+  }
 }
 
 export const createPost = async (req: Request, res: Response, next: NextFunction) => {
-    const { body, user } = req;
+  const { body, user } = req;
 
-    if (!user) {
-        return res.status(401).json({ message: "Unauthorized" });
+  if (!user) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  try {
+    const postForm = PostFormSchema.parse(body)
+
+    const post = await prisma.post.create({
+      data: {
+        text: postForm.content,
+        userId: user.id
+      }
+    })
+
+    return res.status(201).json({ post })
+
+  } catch (error) {
+    if (error instanceof ZodError) {
+      return res.status(422).json({ errors: error.issues.map(issue => Object({ fieldName: issue.path[0], message: issue.message })) })
     }
-
-    try {
-        const postForm = PostFormSchema.parse(body)
-
-        const post = await prisma.post.create({
-            data: {
-                text: postForm.content,
-                userId: user.id
-            }
-        })
-
-        return res.status(201).json({ post })
-
-    } catch (error) {
-        if (error instanceof ZodError) {
-            return res.status(422).json({ errors: error.issues.map(issue => Object({ fieldName: issue.path[0], message: issue.message })) })
-        }
-        next(error)
-    }
+    next(error)
+  }
 }
 
 export const getPostById = async (req: Request, res: Response, next: NextFunction) => {
@@ -244,6 +244,37 @@ export const createComment = async (req: Request, res: Response, next: NextFunct
     if (error instanceof ZodError) {
       return res.status(422).json({ errors: error.issues.map(issue => Object({ fieldName: issue.path[0], message: issue.message })) })
     }
+    next(error)
+  }
+}
+
+export const getLikesByPostId = async (req: Request, res: Response, next: NextFunction) => {
+
+  const { postId } = req.params
+
+  if (Array.isArray(postId) || !postId) {
+    return res.status(400).json({ message: "Invalid Post ID" })
+  }
+
+  try {
+    const likes = await prisma.like.findMany({
+      where: { postId },
+      select: {
+        id: true,
+        user: {
+          select: {
+            id: true,
+            avatar: true,
+            fullname: true,
+            username: true
+          },
+        },
+      },
+    })
+
+    return res.json({ likes })
+
+  } catch (error) {
     next(error)
   }
 }

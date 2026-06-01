@@ -113,6 +113,32 @@ export const getCommentsByUserId = async (req: Request, res: Response, next: Nex
     }
 }
 
+export const getLikedPostsByUserId = async (req: Request, res: Response, next: NextFunction) => {
+    const { userId } = req.params
+
+    if (Array.isArray(userId) || !userId) {
+        return res.status(400).json({ message: "Invalid User ID" })
+    }
+
+    try {
+        const likes = await prisma.like.findMany({
+            where: { userId },
+            select: {
+                id: true,
+                post: {
+                    include: {
+                        author: true
+                    }
+                }
+            }
+        })
+
+        return res.status(200).json({ likes })
+    } catch (error) {
+        next(error)
+    }
+}
+
 export const getFollowersByUserId = async (req: Request, res: Response, next: NextFunction) => {
     const { userId } = req.params
 
