@@ -3,7 +3,7 @@ import type { Follow } from '../../types'
 import { useAuth } from '../../auth'
 import { FollowerCard } from '../../components/FollowerCard'
 
-export const Route = createFileRoute('/_layout/users/$userId_/followers')({
+export const Route = createFileRoute('/_authenticated/users/$userId_/followers')({
   loader: async ({ context, params: { userId } }) => {
     const token = context.auth.user?.token
     const url = `${import.meta.env.VITE_API_URL}/users/${userId}/followers`

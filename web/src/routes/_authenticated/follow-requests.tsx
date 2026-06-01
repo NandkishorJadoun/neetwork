@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import type { Follow } from '../../types'
 import { FollowRequestCard } from '../../components/FollowRequestCard'
 
-export const Route = createFileRoute('/_layout/follow-requests')({
+export const Route = createFileRoute('/_authenticated/follow-requests')({
   loader: async ({ context }) => {
     const token = context.auth.user?.token
     const url = `${import.meta.env.VITE_API_URL}/me/follow-requests`

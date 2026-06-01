@@ -4,7 +4,7 @@ import { useAuth } from '../../auth'
 import type { Post } from '../../types'
 import { CommentSection } from '../../components/CommentSection'
 
-export const Route = createFileRoute('/_layout/posts/$postId')({
+export const Route = createFileRoute('/_authenticated/posts/$postId')({
   loader: async ({ context, params: { postId } }) => {
     const token = context.auth.user?.token
     const options = { headers: { Authorization: `Bearer ${token}` } }
@@ -76,8 +76,14 @@ function RouteComponent() {
           <div>
             <p>{post.text}</p>
             <div>
-              <button disabled={isLoading} onClick={likeHandler}>{isLiked ? "Unlike" : "Like"}</button><span>{post._count.likes}</span>
-              <a href='#comment'>Comments</a><span>{post._count.comments}</span>
+              <div>
+                <button disabled={isLoading} onClick={likeHandler}>{isLiked ? "Unlike" : "Like"}</button>
+                <Link to='/posts/$postId/likes' params={{ postId: post.id }}>{post._count.likes}</Link>
+              </div>
+              <div>
+                <a href='#comment'>Comments</a>
+                <span>{post._count.comments}</span>
+              </div>
             </div>
           </div>
         </div>

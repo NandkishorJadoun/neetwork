@@ -7,7 +7,7 @@ type PostSearch = {
   posts?: 'following'
 }
 
-export const Route = createFileRoute('/_layout/home')({
+export const Route = createFileRoute('/_authenticated/home')({
   validateSearch: (search: Record<string, unknown>): PostSearch => {
     return {
       posts: search.posts === 'following' ? 'following' : undefined,

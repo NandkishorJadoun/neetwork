@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { useAuth } from '../../auth'
 import type { ValidationError } from '../../types'
 
-export const Route = createFileRoute('/_layout/create-post')({
+export const Route = createFileRoute('/_authenticated/create-post')({
   component: RouteComponent,
 })
 

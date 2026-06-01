@@ -1,27 +1,36 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import type { User, Post, Comment } from '../../types'
+import type { User, Post, Comment, Like } from '../../types'
 import { ActionButton } from '../../components/ProfileActionButton'
+import { ProfileTabContent } from '../../components/ProfileTabContent';
 
-type Tab = "posts" | "comments"
+export type Tab = "posts" | "comments" | "likes";
+export type TabData = { posts: Post[] } | { comments: Comment[] } | { likes: Like[] };
 
 type SearchParams = {
-  tab?: "comments"
+  tab?: "comments" | "likes"
 }
 
 type LoaderData = {
   user: User,
-  tab: Tab
-  tabData: Post[] | Comment[]
+  tab: Tab,
+  tabData: TabData;
 }
 
 function getTab(search: SearchParams): Tab {
-  return search.tab ? "comments" : "posts"
+  if (!search.tab) {
+    return "posts"
+  }
+
+  return search.tab
 }
 
-export const Route = createFileRoute('/_layout/users/$userId')({
+export const Route = createFileRoute('/_authenticated/users/$userId')({
   validateSearch: (search: Record<string, unknown>): SearchParams => {
     return {
-      tab: search.tab === 'comments' ? 'comments' : undefined,
+      tab:
+        search.tab === "comments" || search.tab === "likes"
+          ? search.tab
+          : undefined
     }
   },
   loaderDeps: ({ search }) => ({ tab: getTab(search) }),
@@ -50,7 +59,10 @@ export const Route = createFileRoute('/_layout/users/$userId')({
 })
 
 function RouteComponent() {
-  const { user, tab, tabData }: LoaderData = Route.useLoaderData()
+  const { user, tab, tabData }: LoaderData = Route.useLoaderData();
+
+  const { tab: data } = tabData
+
   return (
     <main>
       <div className="border">
@@ -70,12 +82,16 @@ function RouteComponent() {
         <Link to="/users/$userId" params={{ userId: user.id }}>Posts</Link>
         <Link to="/users/$userId"
           params={{ userId: user.id }}
-          search={{ tab: "comments" }}>Comments</Link>
+          search={{ tab: "comments" }}>Comments
+        </Link>
+        <Link to="/users/$userId"
+          params={{ userId: user.id }}
+          search={{ tab: "likes" }}>Likes
+        </Link>
       </div>
 
-      <div>
-        {JSON.stringify(tabData)}
-      </div>
+      <div>{JSON.stringify(tabData)}</div>
+      <ProfileTabContent tab={tab} tabData={tabData} />
     </main >
   )
 }

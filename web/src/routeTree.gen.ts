@@ -10,138 +10,153 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as LoginRouteImport } from './routes/login'
-import { Route as LayoutRouteImport } from './routes/_layout'
-import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
+import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
+import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
 import { Route as LoginCallbackRouteImport } from './routes/login_.callback'
-import { Route as LayoutHomeRouteImport } from './routes/_layout/home'
-import { Route as LayoutFollowUsersRouteImport } from './routes/_layout/follow-users'
-import { Route as LayoutFollowRequestsRouteImport } from './routes/_layout/follow-requests'
-import { Route as LayoutEditProfileRouteImport } from './routes/_layout/edit-profile'
-import { Route as LayoutCreatePostRouteImport } from './routes/_layout/create-post'
-import { Route as LayoutAboutRouteImport } from './routes/_layout/about'
-import { Route as LayoutUsersUserIdRouteImport } from './routes/_layout/users.$userId'
-import { Route as LayoutPostsPostIdRouteImport } from './routes/_layout/posts.$postId'
-import { Route as LayoutUsersUserIdFollowingsRouteImport } from './routes/_layout/users.$userId_.followings'
-import { Route as LayoutUsersUserIdFollowersRouteImport } from './routes/_layout/users.$userId_.followers'
+import { Route as AuthenticatedHomeRouteImport } from './routes/_authenticated/home'
+import { Route as AuthenticatedFollowUsersRouteImport } from './routes/_authenticated/follow-users'
+import { Route as AuthenticatedFollowRequestsRouteImport } from './routes/_authenticated/follow-requests'
+import { Route as AuthenticatedEditProfileRouteImport } from './routes/_authenticated/edit-profile'
+import { Route as AuthenticatedCreatePostRouteImport } from './routes/_authenticated/create-post'
+import { Route as AuthenticatedAboutRouteImport } from './routes/_authenticated/about'
+import { Route as AuthenticatedUsersUserIdRouteImport } from './routes/_authenticated/users.$userId'
+import { Route as AuthenticatedPostsPostIdRouteImport } from './routes/_authenticated/posts.$postId'
+import { Route as AuthenticatedUsersUserIdFollowingsRouteImport } from './routes/_authenticated/users.$userId_.followings'
+import { Route as AuthenticatedUsersUserIdFollowersRouteImport } from './routes/_authenticated/users.$userId_.followers'
+import { Route as AuthenticatedPostsPostIdLikesRouteImport } from './routes/_authenticated/posts.$postId_.likes'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LayoutRoute = LayoutRouteImport.update({
-  id: '/_layout',
+const AuthenticatedRoute = AuthenticatedRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LayoutIndexRoute = LayoutIndexRouteImport.update({
+const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => LayoutRoute,
+  getParentRoute: () => AuthenticatedRoute,
 } as any)
 const LoginCallbackRoute = LoginCallbackRouteImport.update({
   id: '/login_/callback',
   path: '/login/callback',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LayoutHomeRoute = LayoutHomeRouteImport.update({
+const AuthenticatedHomeRoute = AuthenticatedHomeRouteImport.update({
   id: '/home',
   path: '/home',
-  getParentRoute: () => LayoutRoute,
+  getParentRoute: () => AuthenticatedRoute,
 } as any)
-const LayoutFollowUsersRoute = LayoutFollowUsersRouteImport.update({
-  id: '/follow-users',
-  path: '/follow-users',
-  getParentRoute: () => LayoutRoute,
-} as any)
-const LayoutFollowRequestsRoute = LayoutFollowRequestsRouteImport.update({
-  id: '/follow-requests',
-  path: '/follow-requests',
-  getParentRoute: () => LayoutRoute,
-} as any)
-const LayoutEditProfileRoute = LayoutEditProfileRouteImport.update({
-  id: '/edit-profile',
-  path: '/edit-profile',
-  getParentRoute: () => LayoutRoute,
-} as any)
-const LayoutCreatePostRoute = LayoutCreatePostRouteImport.update({
+const AuthenticatedFollowUsersRoute =
+  AuthenticatedFollowUsersRouteImport.update({
+    id: '/follow-users',
+    path: '/follow-users',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedFollowRequestsRoute =
+  AuthenticatedFollowRequestsRouteImport.update({
+    id: '/follow-requests',
+    path: '/follow-requests',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedEditProfileRoute =
+  AuthenticatedEditProfileRouteImport.update({
+    id: '/edit-profile',
+    path: '/edit-profile',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedCreatePostRoute = AuthenticatedCreatePostRouteImport.update({
   id: '/create-post',
   path: '/create-post',
-  getParentRoute: () => LayoutRoute,
+  getParentRoute: () => AuthenticatedRoute,
 } as any)
-const LayoutAboutRoute = LayoutAboutRouteImport.update({
+const AuthenticatedAboutRoute = AuthenticatedAboutRouteImport.update({
   id: '/about',
   path: '/about',
-  getParentRoute: () => LayoutRoute,
+  getParentRoute: () => AuthenticatedRoute,
 } as any)
-const LayoutUsersUserIdRoute = LayoutUsersUserIdRouteImport.update({
-  id: '/users/$userId',
-  path: '/users/$userId',
-  getParentRoute: () => LayoutRoute,
-} as any)
-const LayoutPostsPostIdRoute = LayoutPostsPostIdRouteImport.update({
-  id: '/posts/$postId',
-  path: '/posts/$postId',
-  getParentRoute: () => LayoutRoute,
-} as any)
-const LayoutUsersUserIdFollowingsRoute =
-  LayoutUsersUserIdFollowingsRouteImport.update({
+const AuthenticatedUsersUserIdRoute =
+  AuthenticatedUsersUserIdRouteImport.update({
+    id: '/users/$userId',
+    path: '/users/$userId',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedPostsPostIdRoute =
+  AuthenticatedPostsPostIdRouteImport.update({
+    id: '/posts/$postId',
+    path: '/posts/$postId',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedUsersUserIdFollowingsRoute =
+  AuthenticatedUsersUserIdFollowingsRouteImport.update({
     id: '/users/$userId_/followings',
     path: '/users/$userId/followings',
-    getParentRoute: () => LayoutRoute,
+    getParentRoute: () => AuthenticatedRoute,
   } as any)
-const LayoutUsersUserIdFollowersRoute =
-  LayoutUsersUserIdFollowersRouteImport.update({
+const AuthenticatedUsersUserIdFollowersRoute =
+  AuthenticatedUsersUserIdFollowersRouteImport.update({
     id: '/users/$userId_/followers',
     path: '/users/$userId/followers',
-    getParentRoute: () => LayoutRoute,
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedPostsPostIdLikesRoute =
+  AuthenticatedPostsPostIdLikesRouteImport.update({
+    id: '/posts/$postId_/likes',
+    path: '/posts/$postId/likes',
+    getParentRoute: () => AuthenticatedRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof LayoutIndexRoute
+  '/': typeof AuthenticatedIndexRoute
   '/login': typeof LoginRoute
-  '/about': typeof LayoutAboutRoute
-  '/create-post': typeof LayoutCreatePostRoute
-  '/edit-profile': typeof LayoutEditProfileRoute
-  '/follow-requests': typeof LayoutFollowRequestsRoute
-  '/follow-users': typeof LayoutFollowUsersRoute
-  '/home': typeof LayoutHomeRoute
+  '/about': typeof AuthenticatedAboutRoute
+  '/create-post': typeof AuthenticatedCreatePostRoute
+  '/edit-profile': typeof AuthenticatedEditProfileRoute
+  '/follow-requests': typeof AuthenticatedFollowRequestsRoute
+  '/follow-users': typeof AuthenticatedFollowUsersRoute
+  '/home': typeof AuthenticatedHomeRoute
   '/login/callback': typeof LoginCallbackRoute
-  '/posts/$postId': typeof LayoutPostsPostIdRoute
-  '/users/$userId': typeof LayoutUsersUserIdRoute
-  '/users/$userId/followers': typeof LayoutUsersUserIdFollowersRoute
-  '/users/$userId/followings': typeof LayoutUsersUserIdFollowingsRoute
+  '/posts/$postId': typeof AuthenticatedPostsPostIdRoute
+  '/users/$userId': typeof AuthenticatedUsersUserIdRoute
+  '/posts/$postId/likes': typeof AuthenticatedPostsPostIdLikesRoute
+  '/users/$userId/followers': typeof AuthenticatedUsersUserIdFollowersRoute
+  '/users/$userId/followings': typeof AuthenticatedUsersUserIdFollowingsRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
-  '/about': typeof LayoutAboutRoute
-  '/create-post': typeof LayoutCreatePostRoute
-  '/edit-profile': typeof LayoutEditProfileRoute
-  '/follow-requests': typeof LayoutFollowRequestsRoute
-  '/follow-users': typeof LayoutFollowUsersRoute
-  '/home': typeof LayoutHomeRoute
+  '/about': typeof AuthenticatedAboutRoute
+  '/create-post': typeof AuthenticatedCreatePostRoute
+  '/edit-profile': typeof AuthenticatedEditProfileRoute
+  '/follow-requests': typeof AuthenticatedFollowRequestsRoute
+  '/follow-users': typeof AuthenticatedFollowUsersRoute
+  '/home': typeof AuthenticatedHomeRoute
   '/login/callback': typeof LoginCallbackRoute
-  '/': typeof LayoutIndexRoute
-  '/posts/$postId': typeof LayoutPostsPostIdRoute
-  '/users/$userId': typeof LayoutUsersUserIdRoute
-  '/users/$userId/followers': typeof LayoutUsersUserIdFollowersRoute
-  '/users/$userId/followings': typeof LayoutUsersUserIdFollowingsRoute
+  '/': typeof AuthenticatedIndexRoute
+  '/posts/$postId': typeof AuthenticatedPostsPostIdRoute
+  '/users/$userId': typeof AuthenticatedUsersUserIdRoute
+  '/posts/$postId/likes': typeof AuthenticatedPostsPostIdLikesRoute
+  '/users/$userId/followers': typeof AuthenticatedUsersUserIdFollowersRoute
+  '/users/$userId/followings': typeof AuthenticatedUsersUserIdFollowingsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/_layout': typeof LayoutRouteWithChildren
+  '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/login': typeof LoginRoute
-  '/_layout/about': typeof LayoutAboutRoute
-  '/_layout/create-post': typeof LayoutCreatePostRoute
-  '/_layout/edit-profile': typeof LayoutEditProfileRoute
-  '/_layout/follow-requests': typeof LayoutFollowRequestsRoute
-  '/_layout/follow-users': typeof LayoutFollowUsersRoute
-  '/_layout/home': typeof LayoutHomeRoute
+  '/_authenticated/about': typeof AuthenticatedAboutRoute
+  '/_authenticated/create-post': typeof AuthenticatedCreatePostRoute
+  '/_authenticated/edit-profile': typeof AuthenticatedEditProfileRoute
+  '/_authenticated/follow-requests': typeof AuthenticatedFollowRequestsRoute
+  '/_authenticated/follow-users': typeof AuthenticatedFollowUsersRoute
+  '/_authenticated/home': typeof AuthenticatedHomeRoute
   '/login_/callback': typeof LoginCallbackRoute
-  '/_layout/': typeof LayoutIndexRoute
-  '/_layout/posts/$postId': typeof LayoutPostsPostIdRoute
-  '/_layout/users/$userId': typeof LayoutUsersUserIdRoute
-  '/_layout/users/$userId_/followers': typeof LayoutUsersUserIdFollowersRoute
-  '/_layout/users/$userId_/followings': typeof LayoutUsersUserIdFollowingsRoute
+  '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/posts/$postId': typeof AuthenticatedPostsPostIdRoute
+  '/_authenticated/users/$userId': typeof AuthenticatedUsersUserIdRoute
+  '/_authenticated/posts/$postId_/likes': typeof AuthenticatedPostsPostIdLikesRoute
+  '/_authenticated/users/$userId_/followers': typeof AuthenticatedUsersUserIdFollowersRoute
+  '/_authenticated/users/$userId_/followings': typeof AuthenticatedUsersUserIdFollowingsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -157,6 +172,7 @@ export interface FileRouteTypes {
     | '/login/callback'
     | '/posts/$postId'
     | '/users/$userId'
+    | '/posts/$postId/likes'
     | '/users/$userId/followers'
     | '/users/$userId/followings'
   fileRoutesByTo: FileRoutesByTo
@@ -172,28 +188,30 @@ export interface FileRouteTypes {
     | '/'
     | '/posts/$postId'
     | '/users/$userId'
+    | '/posts/$postId/likes'
     | '/users/$userId/followers'
     | '/users/$userId/followings'
   id:
     | '__root__'
-    | '/_layout'
+    | '/_authenticated'
     | '/login'
-    | '/_layout/about'
-    | '/_layout/create-post'
-    | '/_layout/edit-profile'
-    | '/_layout/follow-requests'
-    | '/_layout/follow-users'
-    | '/_layout/home'
+    | '/_authenticated/about'
+    | '/_authenticated/create-post'
+    | '/_authenticated/edit-profile'
+    | '/_authenticated/follow-requests'
+    | '/_authenticated/follow-users'
+    | '/_authenticated/home'
     | '/login_/callback'
-    | '/_layout/'
-    | '/_layout/posts/$postId'
-    | '/_layout/users/$userId'
-    | '/_layout/users/$userId_/followers'
-    | '/_layout/users/$userId_/followings'
+    | '/_authenticated/'
+    | '/_authenticated/posts/$postId'
+    | '/_authenticated/users/$userId'
+    | '/_authenticated/posts/$postId_/likes'
+    | '/_authenticated/users/$userId_/followers'
+    | '/_authenticated/users/$userId_/followings'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  LayoutRoute: typeof LayoutRouteWithChildren
+  AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   LoginRoute: typeof LoginRoute
   LoginCallbackRoute: typeof LoginCallbackRoute
 }
@@ -207,19 +225,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_layout': {
-      id: '/_layout'
+    '/_authenticated': {
+      id: '/_authenticated'
       path: ''
       fullPath: '/'
-      preLoaderRoute: typeof LayoutRouteImport
+      preLoaderRoute: typeof AuthenticatedRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_layout/': {
-      id: '/_layout/'
+    '/_authenticated/': {
+      id: '/_authenticated/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof LayoutIndexRouteImport
-      parentRoute: typeof LayoutRoute
+      preLoaderRoute: typeof AuthenticatedIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
     '/login_/callback': {
       id: '/login_/callback'
@@ -228,112 +246,124 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginCallbackRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_layout/home': {
-      id: '/_layout/home'
+    '/_authenticated/home': {
+      id: '/_authenticated/home'
       path: '/home'
       fullPath: '/home'
-      preLoaderRoute: typeof LayoutHomeRouteImport
-      parentRoute: typeof LayoutRoute
+      preLoaderRoute: typeof AuthenticatedHomeRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
-    '/_layout/follow-users': {
-      id: '/_layout/follow-users'
+    '/_authenticated/follow-users': {
+      id: '/_authenticated/follow-users'
       path: '/follow-users'
       fullPath: '/follow-users'
-      preLoaderRoute: typeof LayoutFollowUsersRouteImport
-      parentRoute: typeof LayoutRoute
+      preLoaderRoute: typeof AuthenticatedFollowUsersRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
-    '/_layout/follow-requests': {
-      id: '/_layout/follow-requests'
+    '/_authenticated/follow-requests': {
+      id: '/_authenticated/follow-requests'
       path: '/follow-requests'
       fullPath: '/follow-requests'
-      preLoaderRoute: typeof LayoutFollowRequestsRouteImport
-      parentRoute: typeof LayoutRoute
+      preLoaderRoute: typeof AuthenticatedFollowRequestsRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
-    '/_layout/edit-profile': {
-      id: '/_layout/edit-profile'
+    '/_authenticated/edit-profile': {
+      id: '/_authenticated/edit-profile'
       path: '/edit-profile'
       fullPath: '/edit-profile'
-      preLoaderRoute: typeof LayoutEditProfileRouteImport
-      parentRoute: typeof LayoutRoute
+      preLoaderRoute: typeof AuthenticatedEditProfileRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
-    '/_layout/create-post': {
-      id: '/_layout/create-post'
+    '/_authenticated/create-post': {
+      id: '/_authenticated/create-post'
       path: '/create-post'
       fullPath: '/create-post'
-      preLoaderRoute: typeof LayoutCreatePostRouteImport
-      parentRoute: typeof LayoutRoute
+      preLoaderRoute: typeof AuthenticatedCreatePostRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
-    '/_layout/about': {
-      id: '/_layout/about'
+    '/_authenticated/about': {
+      id: '/_authenticated/about'
       path: '/about'
       fullPath: '/about'
-      preLoaderRoute: typeof LayoutAboutRouteImport
-      parentRoute: typeof LayoutRoute
+      preLoaderRoute: typeof AuthenticatedAboutRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
-    '/_layout/users/$userId': {
-      id: '/_layout/users/$userId'
+    '/_authenticated/users/$userId': {
+      id: '/_authenticated/users/$userId'
       path: '/users/$userId'
       fullPath: '/users/$userId'
-      preLoaderRoute: typeof LayoutUsersUserIdRouteImport
-      parentRoute: typeof LayoutRoute
+      preLoaderRoute: typeof AuthenticatedUsersUserIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
-    '/_layout/posts/$postId': {
-      id: '/_layout/posts/$postId'
+    '/_authenticated/posts/$postId': {
+      id: '/_authenticated/posts/$postId'
       path: '/posts/$postId'
       fullPath: '/posts/$postId'
-      preLoaderRoute: typeof LayoutPostsPostIdRouteImport
-      parentRoute: typeof LayoutRoute
+      preLoaderRoute: typeof AuthenticatedPostsPostIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
-    '/_layout/users/$userId_/followings': {
-      id: '/_layout/users/$userId_/followings'
+    '/_authenticated/users/$userId_/followings': {
+      id: '/_authenticated/users/$userId_/followings'
       path: '/users/$userId/followings'
       fullPath: '/users/$userId/followings'
-      preLoaderRoute: typeof LayoutUsersUserIdFollowingsRouteImport
-      parentRoute: typeof LayoutRoute
+      preLoaderRoute: typeof AuthenticatedUsersUserIdFollowingsRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
-    '/_layout/users/$userId_/followers': {
-      id: '/_layout/users/$userId_/followers'
+    '/_authenticated/users/$userId_/followers': {
+      id: '/_authenticated/users/$userId_/followers'
       path: '/users/$userId/followers'
       fullPath: '/users/$userId/followers'
-      preLoaderRoute: typeof LayoutUsersUserIdFollowersRouteImport
-      parentRoute: typeof LayoutRoute
+      preLoaderRoute: typeof AuthenticatedUsersUserIdFollowersRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/posts/$postId_/likes': {
+      id: '/_authenticated/posts/$postId_/likes'
+      path: '/posts/$postId/likes'
+      fullPath: '/posts/$postId/likes'
+      preLoaderRoute: typeof AuthenticatedPostsPostIdLikesRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
   }
 }
 
-interface LayoutRouteChildren {
-  LayoutAboutRoute: typeof LayoutAboutRoute
-  LayoutCreatePostRoute: typeof LayoutCreatePostRoute
-  LayoutEditProfileRoute: typeof LayoutEditProfileRoute
-  LayoutFollowRequestsRoute: typeof LayoutFollowRequestsRoute
-  LayoutFollowUsersRoute: typeof LayoutFollowUsersRoute
-  LayoutHomeRoute: typeof LayoutHomeRoute
-  LayoutIndexRoute: typeof LayoutIndexRoute
-  LayoutPostsPostIdRoute: typeof LayoutPostsPostIdRoute
-  LayoutUsersUserIdRoute: typeof LayoutUsersUserIdRoute
-  LayoutUsersUserIdFollowersRoute: typeof LayoutUsersUserIdFollowersRoute
-  LayoutUsersUserIdFollowingsRoute: typeof LayoutUsersUserIdFollowingsRoute
+interface AuthenticatedRouteChildren {
+  AuthenticatedAboutRoute: typeof AuthenticatedAboutRoute
+  AuthenticatedCreatePostRoute: typeof AuthenticatedCreatePostRoute
+  AuthenticatedEditProfileRoute: typeof AuthenticatedEditProfileRoute
+  AuthenticatedFollowRequestsRoute: typeof AuthenticatedFollowRequestsRoute
+  AuthenticatedFollowUsersRoute: typeof AuthenticatedFollowUsersRoute
+  AuthenticatedHomeRoute: typeof AuthenticatedHomeRoute
+  AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
+  AuthenticatedPostsPostIdRoute: typeof AuthenticatedPostsPostIdRoute
+  AuthenticatedUsersUserIdRoute: typeof AuthenticatedUsersUserIdRoute
+  AuthenticatedPostsPostIdLikesRoute: typeof AuthenticatedPostsPostIdLikesRoute
+  AuthenticatedUsersUserIdFollowersRoute: typeof AuthenticatedUsersUserIdFollowersRoute
+  AuthenticatedUsersUserIdFollowingsRoute: typeof AuthenticatedUsersUserIdFollowingsRoute
 }
 
-const LayoutRouteChildren: LayoutRouteChildren = {
-  LayoutAboutRoute: LayoutAboutRoute,
-  LayoutCreatePostRoute: LayoutCreatePostRoute,
-  LayoutEditProfileRoute: LayoutEditProfileRoute,
-  LayoutFollowRequestsRoute: LayoutFollowRequestsRoute,
-  LayoutFollowUsersRoute: LayoutFollowUsersRoute,
-  LayoutHomeRoute: LayoutHomeRoute,
-  LayoutIndexRoute: LayoutIndexRoute,
-  LayoutPostsPostIdRoute: LayoutPostsPostIdRoute,
-  LayoutUsersUserIdRoute: LayoutUsersUserIdRoute,
-  LayoutUsersUserIdFollowersRoute: LayoutUsersUserIdFollowersRoute,
-  LayoutUsersUserIdFollowingsRoute: LayoutUsersUserIdFollowingsRoute,
+const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedAboutRoute: AuthenticatedAboutRoute,
+  AuthenticatedCreatePostRoute: AuthenticatedCreatePostRoute,
+  AuthenticatedEditProfileRoute: AuthenticatedEditProfileRoute,
+  AuthenticatedFollowRequestsRoute: AuthenticatedFollowRequestsRoute,
+  AuthenticatedFollowUsersRoute: AuthenticatedFollowUsersRoute,
+  AuthenticatedHomeRoute: AuthenticatedHomeRoute,
+  AuthenticatedIndexRoute: AuthenticatedIndexRoute,
+  AuthenticatedPostsPostIdRoute: AuthenticatedPostsPostIdRoute,
+  AuthenticatedUsersUserIdRoute: AuthenticatedUsersUserIdRoute,
+  AuthenticatedPostsPostIdLikesRoute: AuthenticatedPostsPostIdLikesRoute,
+  AuthenticatedUsersUserIdFollowersRoute:
+    AuthenticatedUsersUserIdFollowersRoute,
+  AuthenticatedUsersUserIdFollowingsRoute:
+    AuthenticatedUsersUserIdFollowingsRoute,
 }
 
-const LayoutRouteWithChildren =
-  LayoutRoute._addFileChildren(LayoutRouteChildren)
+const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
+  AuthenticatedRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
-  LayoutRoute: LayoutRouteWithChildren,
+  AuthenticatedRoute: AuthenticatedRouteWithChildren,
   LoginRoute: LoginRoute,
   LoginCallbackRoute: LoginCallbackRoute,
 }

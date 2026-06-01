@@ -47,7 +47,7 @@ export const PostCard = ({ post }: { post: Post }) => {
         <div>
           <div>
             <button disabled={isLoading} onClick={likeHandler}>{isLiked ? "Unlike" : "Like"}</button>
-            <span> {post._count.likes} </span>
+            <Link to='/posts/$postId/likes' params={{ postId: post.id }}>{post._count.likes}</Link>
             <Link
               to='/posts/$postId'
               params={{ postId: post.id }}
