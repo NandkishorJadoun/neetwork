@@ -1,7 +1,8 @@
-import { createFileRoute, Link, useRouter } from '@tanstack/react-router'
-import { useState } from 'react'
+import { createFileRoute, Link, useRouter, useLocation } from '@tanstack/react-router'
+import { useEffect, useRef, useState } from 'react'
 import { useAuth } from '../../auth'
-import type { Post, ValidationError } from '../../types'
+import type { Post } from '../../types'
+import { CommentSection } from '../../components/CommentSection'
 
 export const Route = createFileRoute('/_layout/posts/$postId')({
   loader: async ({ context, params: { postId } }) => {
@@ -22,13 +23,24 @@ export const Route = createFileRoute('/_layout/posts/$postId')({
 
 function RouteComponent() {
   const { post }: { post: Post } = Route.useLoaderData()
+
   const { user } = useAuth();
   const router = useRouter();
+  const { hash } = useLocation();
+
   const [isLoading, setIsLoading] = useState(false);
-  const [errors, setErrors] = useState<ValidationError[] | null>(null)
-  const [comment, setComment] = useState("")
-  const { comments, likes } = post;
-  const isLiked = likes.length > 0;
+
+  const commentRef = useRef<HTMLTextAreaElement>(null)
+
+  useEffect(() => {
+    if (hash !== "comment") return
+
+    commentRef.current?.scrollIntoView({ behavior: "smooth" })
+    commentRef.current?.focus()
+
+  }, [hash])
+
+  const isLiked = post.likes.length > 0;
 
   const likeHandler = async () => {
     setIsLoading(true)
@@ -51,37 +63,6 @@ function RouteComponent() {
     setIsLoading(false)
   }
 
-  const commentHandler = async (e: React.SubmitEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
-    const url = `${import.meta.env.VITE_API_URL}/posts/${post.id}`;
-    const method = "POST";
-    const options = {
-      method,
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${user?.token}`
-      },
-      body: JSON.stringify({ content: comment })
-    }
-
-    try {
-      const res = await fetch(url, options);
-      if (!res.ok) {
-        const { errors } = await res.json()
-        setErrors(errors)
-        setIsLoading(false)
-        return
-      }
-      setComment("")
-      setErrors(null)
-      setIsLoading(false)
-      router.invalidate();
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
   return (
     <>
       <header>Post</header>
@@ -96,48 +77,11 @@ function RouteComponent() {
             <p>{post.text}</p>
             <div>
               <button disabled={isLoading} onClick={likeHandler}>{isLiked ? "Unlike" : "Like"}</button><span>{post._count.likes}</span>
-              <button>Comments</button><span>{post._count.comments}</span>
+              <a href='#comment'>Comments</a><span>{post._count.comments}</span>
             </div>
           </div>
         </div>
-        <div className='border'>
-          <div key={comments.length}>
-            <form onSubmit={commentHandler}>
-              <textarea name="content"
-                placeholder="Post your comment"
-                rows={3}
-                required
-                value={comment}
-                onChange={(e) => setComment(e.target.value)}
-                maxLength={280} />
-              <button disabled={comment.length === 0} type='submit'>Submit</button>
-            </form>
-            {errors && <ul>
-              {errors.map((error, id) => {
-                return <li key={id}>{error.message}</li>
-              })}
-            </ul>}
-          </div>
-          <div>
-            <p>Comments</p>
-            <div>{post.comments.map(comment => {
-              return (
-                <div>
-                  <Link to='/users/$userId' params={{ userId: comment.userId }}>
-                    <img src={comment.author.avatar} alt={comment.author.username} height={25} width={25} />
-                  </Link>
-                  <div>
-                    <Link to='/users/$userId' params={{ userId: comment.userId }}>
-                      <p>{comment.author.fullname}</p>
-                      <span>{comment.author.username}</span>
-                    </Link>
-                    <div>{comment.text}</div>
-                  </div>
-                </div>)
-            })}
-            </div>
-          </div>
-        </div>
+        <CommentSection post={post} commentRef={commentRef} />
       </main>
     </>
   )

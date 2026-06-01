@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import type { User, Post, Comment } from '../../types'
-import { useAuth } from '../../auth'
+import { ActionButton } from '../../components/ProfileActionButton'
 
 type Tab = "posts" | "comments"
 
@@ -63,7 +63,7 @@ function RouteComponent() {
           <Link to="/users/$userId/followings" params={{ userId: user.id }}>Followings: {user._count.followings}</Link>
         </div>
 
-        <ActionButtons user={user} />
+        <ActionButton user={user} />
       </div>
 
       <div>
@@ -78,21 +78,4 @@ function RouteComponent() {
       </div>
     </main >
   )
-}
-
-export const ActionButtons = ({ user }: { user: User }) => {
-  const { user: currentUser } = useAuth()
-  const { followers } = user;
-
-  if (currentUser && currentUser.id === user.id) {
-    return <Link to='/edit-profile'>Edit Profile</Link>
-  }
-
-  if (followers.length === 0) {
-    return <button>Follow</button>
-  }
-
-  const isFollowing = followers[0].status === "ACCEPTED";
-
-  return <button>{isFollowing ? "Following" : "Requested"}</button>
 }

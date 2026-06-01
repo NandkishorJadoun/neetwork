@@ -46,8 +46,14 @@ export const PostCard = ({ post }: { post: Post }) => {
         >{post.text}</Link>
         <div>
           <div>
-            <button disabled={isLoading} onClick={likeHandler}>{isLiked ? "Unlike" : "Like"}</button><span>{post._count.likes}</span>
-            <button>Comments</button><span>{post._count.comments}</span>
+            <button disabled={isLoading} onClick={likeHandler}>{isLiked ? "Unlike" : "Like"}</button>
+            <span> {post._count.likes} </span>
+            <Link
+              to='/posts/$postId'
+              params={{ postId: post.id }}
+              hash="comment"
+            >Comments</Link>
+            <span> {post._count.comments}</span>
           </div>
         </div>
       </div>
