@@ -151,6 +151,9 @@ export const getPostById = async (req: Request, res: Response, next: NextFunctio
       },
       include: {
         comments: {
+          orderBy: {
+            created_at: "desc"
+          },
           include: {
             author: true
           }
