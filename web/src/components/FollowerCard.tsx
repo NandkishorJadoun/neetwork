@@ -36,7 +36,7 @@ export const FollowerCard = ({ follower, isCurrentUser }: FollowerCardProp) => {
 
   return <div className='border'>
     <Link to="/users/$userId" params={{ userId: follower.fromId }}>
-      <img src={sender.avatar} width={25} />
+      <img src={sender.avatar} alt={`${sender.username}'s avatar`} width={25} />
       <div>
         <p>{sender.fullname}</p>
         <p>{sender.username}</p>

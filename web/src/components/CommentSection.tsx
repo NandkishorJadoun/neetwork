@@ -1,7 +1,8 @@
-import { Link, useRouter } from "@tanstack/react-router"
+import { useRouter } from "@tanstack/react-router"
 import { useState } from "react";
 import type { Post, ValidationError } from "../types";
 import { useAuth } from "../auth";
+import { CommentCard } from "./CommentCard";
 
 interface CommentSection {
   post: Post
@@ -69,22 +70,13 @@ export const CommentSection = ({ post, commentRef }: CommentSection) => {
     </div>
     <div >
       <p>Comments</p>
-      <div>{post.comments.map(comment => {
-        return (
-          <div key={comment.id}>
-            <Link to='/users/$userId' params={{ userId: comment.userId }}>
-              <img src={comment.author.avatar} alt={comment.author.username} height={25} width={25} />
-            </Link>
-            <div>
-              <Link to='/users/$userId' params={{ userId: comment.userId }}>
-                <p>{comment.author.fullname}</p>
-                <span>{comment.author.username}</span>
-              </Link>
-              <div>{comment.text}</div>
-            </div>
-          </div>)
-      })}
+      <div>
+        {post.comments.map(comment => {
+          const { id, text, author } = comment;
+          return <CommentCard key={id} text={text} author={author} />
+        })}
       </div>
     </div>
   </div>)
 }
+

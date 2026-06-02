@@ -31,7 +31,7 @@ export const FollowUserCard = ({ user }: { user: User }) => {
     return (
         <div className='border'>
             <Link to='/users/$userId' params={{ userId: user.id }}>
-                <img src={user.avatar} alt={user.fullname} width={25} height={25} />
+                <img src={user.avatar} alt={`${user.username}'s avatar`} width={25} />
             </Link>
             <Link to='/users/$userId' params={{ userId: user.id }}>
                 <p>{user.fullname}</p>

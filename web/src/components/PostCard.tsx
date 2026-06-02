@@ -31,9 +31,9 @@ export const PostCard = ({ post }: { post: Post }) => {
   }
 
   return (
-    <div key={post.id} className='border'>
+    <div className='border'>
       <Link to='/users/$userId' params={{ userId: post.userId }}>
-        <img src={post.author.avatar} alt={post.author.username} height={25} width={25} />
+        <img src={post.author.avatar} alt={`${post.author.username}'s avatar`} width={25} />
       </Link>
       <div>
         <Link to='/users/$userId' params={{ userId: post.userId }}>

@@ -32,7 +32,7 @@ export const FollowRequestCard = ({ followRequest }: { followRequest: Follow }) 
 
     return <div className='border'>
         <Link to="/users/$userId" params={{ userId: followRequest.fromId }}>
-            <img src={sender.avatar} alt={sender.fullname} height={25} width={25} />
+            <img src={sender.avatar} alt={`${sender.username}'s avatar`} width={25} />
         </Link>
         <div>
             <Link to="/users/$userId" params={{ userId: followRequest.fromId }}>
