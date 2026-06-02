@@ -39,7 +39,7 @@ const LikeUserCard = ({ like }: { like: Like }) => {
 
   return (
     <Link className='border block' to='/users/$userId' params={{ userId: user.id }}>
-      <img src={user.avatar} alt="" width={25} />
+      <img src={user.avatar} alt={`${user.username}'s avatar`} width={25} />
       <div>
         <p>{user.fullname}</p>
         <p>{user.username}</p>

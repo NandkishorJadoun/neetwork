@@ -2,10 +2,14 @@ export type User = {
     id: string;
     fullname: string;
     about: string | null;
-    avatar: string | null;
+    avatar: string;
     username: string;
     followers: Follow[];
     followings: Follow[];
+    _count: {
+        followers: number;
+        followings: number;
+    }
 }
 
 export type Follow = {
@@ -49,6 +53,6 @@ export type Like = {
 }
 
 export type ValidationError = {
-  fieldName: string;
-  message: string
+    fieldName: string;
+    message: string
 }

@@ -3,7 +3,7 @@ import type { User, Post, Comment, Like } from '../../types'
 import { ActionButton } from '../../components/ProfileActionButton'
 import { ProfileTabContent } from '../../components/ProfileTabContent';
 
-export type Tab = "posts" | "comments" | "likes";
+type Tab = "posts" | "comments" | "likes";
 export type TabData = { posts: Post[] } | { comments: Comment[] } | { likes: Like[] };
 
 type SearchParams = {
@@ -12,7 +12,6 @@ type SearchParams = {
 
 type LoaderData = {
   user: User,
-  tab: Tab,
   tabData: TabData;
 }
 
@@ -53,20 +52,18 @@ export const Route = createFileRoute('/_authenticated/users/$userId')({
     const { user } = await userRes.json();
     const tabData = await tabRes.json();
 
-    return { user, tab, tabData };
+    return { user, tabData };
   },
   component: RouteComponent,
 })
 
 function RouteComponent() {
-  const { user, tab, tabData }: LoaderData = Route.useLoaderData();
-
-  const { tab: data } = tabData
+  const { user, tabData }: LoaderData = Route.useLoaderData();
 
   return (
     <main>
       <div className="border">
-        <img src={user.avatar} alt={user.fullname} />
+        <img src={user.avatar} alt={`${user.username}'s avatar`} />
         <p>{user.fullname}</p>
         <p>{user.username}</p>
         <p>{user.about}</p>
@@ -90,8 +87,7 @@ function RouteComponent() {
         </Link>
       </div>
 
-      <div>{JSON.stringify(tabData)}</div>
-      <ProfileTabContent tab={tab} tabData={tabData} />
+      <ProfileTabContent tabData={tabData} />
     </main >
   )
 }
