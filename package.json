@@ -1,6 +1,6 @@
 {
   "private": true,
-  "packageManager": "pnpm@11.0.8",
+  "packageManager": "pnpm@11.5.0",
   "scripts": {
     "dev": "pnpm --parallel --filter api --filter web dev",
     "dev:api": "pnpm --filter api dev",
