@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import type { Follow } from '../../types'
-import { useAuth } from '../../auth'
+import { useAuth } from '../../context/auth'
 import { FollowingCard } from '../../components/FollowingCard'
 
 export const Route = createFileRoute('/_authenticated/users/$userId_/followings')({

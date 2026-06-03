@@ -1,7 +1,7 @@
 import { useRouter } from "@tanstack/react-router"
 import { useState } from "react";
 import type { Post, ValidationError } from "../types";
-import { useAuth } from "../auth";
+import { useAuth } from "../context/auth";
 import { CommentCard } from "./CommentCard";
 
 interface CommentSection {

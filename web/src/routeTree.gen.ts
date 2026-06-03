@@ -13,6 +13,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
 import { Route as LoginCallbackRouteImport } from './routes/login_.callback'
+import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedHomeRouteImport } from './routes/_authenticated/home'
 import { Route as AuthenticatedFollowUsersRouteImport } from './routes/_authenticated/follow-users'
 import { Route as AuthenticatedFollowRequestsRouteImport } from './routes/_authenticated/follow-requests'
@@ -43,6 +44,11 @@ const LoginCallbackRoute = LoginCallbackRouteImport.update({
   id: '/login_/callback',
   path: '/login/callback',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedHomeRoute = AuthenticatedHomeRouteImport.update({
   id: '/home',
@@ -117,6 +123,7 @@ export interface FileRoutesByFullPath {
   '/follow-requests': typeof AuthenticatedFollowRequestsRoute
   '/follow-users': typeof AuthenticatedFollowUsersRoute
   '/home': typeof AuthenticatedHomeRoute
+  '/settings': typeof AuthenticatedSettingsRoute
   '/login/callback': typeof LoginCallbackRoute
   '/posts/$postId': typeof AuthenticatedPostsPostIdRoute
   '/users/$userId': typeof AuthenticatedUsersUserIdRoute
@@ -132,6 +139,7 @@ export interface FileRoutesByTo {
   '/follow-requests': typeof AuthenticatedFollowRequestsRoute
   '/follow-users': typeof AuthenticatedFollowUsersRoute
   '/home': typeof AuthenticatedHomeRoute
+  '/settings': typeof AuthenticatedSettingsRoute
   '/login/callback': typeof LoginCallbackRoute
   '/': typeof AuthenticatedIndexRoute
   '/posts/$postId': typeof AuthenticatedPostsPostIdRoute
@@ -150,6 +158,7 @@ export interface FileRoutesById {
   '/_authenticated/follow-requests': typeof AuthenticatedFollowRequestsRoute
   '/_authenticated/follow-users': typeof AuthenticatedFollowUsersRoute
   '/_authenticated/home': typeof AuthenticatedHomeRoute
+  '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/login_/callback': typeof LoginCallbackRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/posts/$postId': typeof AuthenticatedPostsPostIdRoute
@@ -169,6 +178,7 @@ export interface FileRouteTypes {
     | '/follow-requests'
     | '/follow-users'
     | '/home'
+    | '/settings'
     | '/login/callback'
     | '/posts/$postId'
     | '/users/$userId'
@@ -184,6 +194,7 @@ export interface FileRouteTypes {
     | '/follow-requests'
     | '/follow-users'
     | '/home'
+    | '/settings'
     | '/login/callback'
     | '/'
     | '/posts/$postId'
@@ -201,6 +212,7 @@ export interface FileRouteTypes {
     | '/_authenticated/follow-requests'
     | '/_authenticated/follow-users'
     | '/_authenticated/home'
+    | '/_authenticated/settings'
     | '/login_/callback'
     | '/_authenticated/'
     | '/_authenticated/posts/$postId'
@@ -245,6 +257,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/login/callback'
       preLoaderRoute: typeof LoginCallbackRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/settings': {
+      id: '/_authenticated/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AuthenticatedSettingsRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/home': {
       id: '/_authenticated/home'
@@ -333,6 +352,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedFollowRequestsRoute: typeof AuthenticatedFollowRequestsRoute
   AuthenticatedFollowUsersRoute: typeof AuthenticatedFollowUsersRoute
   AuthenticatedHomeRoute: typeof AuthenticatedHomeRoute
+  AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedPostsPostIdRoute: typeof AuthenticatedPostsPostIdRoute
   AuthenticatedUsersUserIdRoute: typeof AuthenticatedUsersUserIdRoute
@@ -348,6 +368,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedFollowRequestsRoute: AuthenticatedFollowRequestsRoute,
   AuthenticatedFollowUsersRoute: AuthenticatedFollowUsersRoute,
   AuthenticatedHomeRoute: AuthenticatedHomeRoute,
+  AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedPostsPostIdRoute: AuthenticatedPostsPostIdRoute,
   AuthenticatedUsersUserIdRoute: AuthenticatedUsersUserIdRoute,

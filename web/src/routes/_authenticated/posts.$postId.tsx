@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useRouter, useLocation } from '@tanstack/react-router'
 import { useEffect, useRef, useState } from 'react'
-import { useAuth } from '../../auth'
+import { useAuth } from '../../context/auth'
 import type { Post } from '../../types'
 import { CommentSection } from '../../components/CommentSection'
 

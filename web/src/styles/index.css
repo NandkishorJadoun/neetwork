@@ -1,1 +1,50 @@
 @import "tailwindcss";
+
+:root {
+    --app-bg: #0b0f19;
+    --app-surface: #111827;
+    --app-text: #e5e7eb;
+    --app-muted: #9ca3af;
+    --app-accent: #60a5fa;
+    --app-border: #243041;
+}
+
+:root[data-theme="light"] {
+    --app-bg: #f8fafc;
+    --app-surface: #ffffff;
+    --app-text: #0f172a;
+    --app-muted: #64748b;
+    --app-border: #dbe3ee;
+}
+
+:root[data-theme="dark"] {
+    --app-bg: #0b0f19;
+    --app-surface: #111827;
+    --app-text: #e5e7eb;
+    --app-muted: #9ca3af;
+    --app-border: #243041;
+}
+
+:root[data-accent="blue"] {
+    --app-accent: #38bdf8;
+}
+
+:root[data-accent="red"] {
+    --app-accent: #fb7185;
+}
+
+:root[data-accent="yellow"] {
+    --app-accent: #fbbf24;
+}
+
+:root[data-accent="green"] {
+    --app-accent: #34d399;
+}
+
+:root[data-accent="purple"] {
+    --app-accent: #a78bfa;
+}
+
+:root[data-accent="pink"] {
+    --app-accent: #f472b6;
+}

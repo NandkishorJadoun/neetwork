@@ -1,5 +1,5 @@
 import { createFileRoute, Navigate } from '@tanstack/react-router'
-import { useAuth } from '../auth'
+import { useAuth } from '../context/auth'
 import { useEffect } from 'react'
 
 export const Route = createFileRoute('/login_/callback')({

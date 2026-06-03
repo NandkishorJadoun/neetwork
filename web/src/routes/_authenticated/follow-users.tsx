@@ -23,6 +23,9 @@ function RouteComponent() {
     {users.map(user => {
       return <FollowUserCard key={user.id} user={user} />
     })}
+    <p className="py-6 text-center text-xs text-(--app-muted)">
+      End of list
+    </p>
   </main>
 }
 

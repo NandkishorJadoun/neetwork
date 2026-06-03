@@ -1,6 +1,6 @@
 import { Link, useRouter } from "@tanstack/react-router";
 import { useState } from "react";
-import { useAuth } from "../auth";
+import { useAuth } from "../context/auth";
 import type { Follow } from "../types";
 
 type FollowingCardProp = {

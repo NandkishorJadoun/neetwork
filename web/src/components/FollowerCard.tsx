@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useAuth } from "../auth";
+import { useAuth } from "../context/auth";
 import { Link, useRouter } from "@tanstack/react-router";
 import type { Follow } from "../types";
 
