@@ -20,7 +20,7 @@ function RouteComponent() {
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0  h-12 border-b border-(--app-border) bg-(--app-bg)/80 px-2.5 flex items-center justify-between backdrop-blur-md">
+      <header className="fixed top-0 left-0 right-0 z-20 h-12 border-b border-(--app-border) bg-(--app-bg)/80 px-2.5 flex items-center justify-between backdrop-blur-md">
         <h1 className="text-lg font-bold">Neetwork</h1>
         <button>
           <Menu size={16} />

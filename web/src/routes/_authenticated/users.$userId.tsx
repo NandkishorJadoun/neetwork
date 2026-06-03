@@ -1,25 +1,22 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import type { User, Post, Comment, Like } from '../../types'
 import { ActionButton } from '../../components/ProfileActionButton'
-import { ProfileTabContent } from '../../components/ProfileTabContent';
+import { ProfileTabContent } from '../../components/ProfileTabContent'
 
-type Tab = "posts" | "comments" | "likes";
-export type TabData = { posts: Post[] } | { comments: Comment[] } | { likes: Like[] };
+type Tab = 'posts' | 'comments' | 'likes'
+export type TabData = { posts: Post[] } | { comments: Comment[] } | { likes: Like[] }
 
 type SearchParams = {
-  tab?: "comments" | "likes"
+  tab?: 'comments' | 'likes'
 }
 
 type LoaderData = {
-  user: User,
-  tabData: TabData;
+  user: User
+  tabData: TabData
 }
 
 function getTab(search: SearchParams): Tab {
-  if (!search.tab) {
-    return "posts"
-  }
-
+  if (!search.tab) return 'posts'
   return search.tab
 }
 
@@ -27,9 +24,9 @@ export const Route = createFileRoute('/_authenticated/users/$userId')({
   validateSearch: (search: Record<string, unknown>): SearchParams => {
     return {
       tab:
-        search.tab === "comments" || search.tab === "likes"
+        search.tab === 'comments' || search.tab === 'likes'
           ? search.tab
-          : undefined
+          : undefined,
     }
   },
   loaderDeps: ({ search }) => ({ tab: getTab(search) }),
@@ -39,55 +36,119 @@ export const Route = createFileRoute('/_authenticated/users/$userId')({
     const baseUrl = `${import.meta.env.VITE_API_URL}/users/${userId}`
     const tabUrl = `${baseUrl}/${tab}`
 
-    const [userRes, tabRes] = await Promise.all([fetch(baseUrl, options), fetch(tabUrl, options)])
+    const [userRes, tabRes] = await Promise.all([
+      fetch(baseUrl, options),
+      fetch(tabUrl, options),
+    ])
 
-    if (!userRes.ok) {
-      throw new Error("Failed to load user")
-    }
+    if (!userRes.ok) throw new Error('Failed to load user')
+    if (!tabRes.ok) throw new Error('Failed to load tab data')
 
-    if (!tabRes.ok) {
-      throw new Error("Failed to load tab data")
-    }
+    const { user } = await userRes.json()
+    const tabData = await tabRes.json()
 
-    const { user } = await userRes.json();
-    const tabData = await tabRes.json();
-
-    return { user, tabData };
+    return { user, tabData }
   },
   component: RouteComponent,
 })
 
 function RouteComponent() {
-  const { user, tabData }: LoaderData = Route.useLoaderData();
+  const { user, tabData }: LoaderData = Route.useLoaderData()
+  const activeTab = Route.useSearch().tab
+
+  const tabBase =
+    'px-4 py-3 text-sm font-medium text-(--app-muted) transition-colors'
+  const tabActive = 'text-(--app-text) border-b-2 border-(--app-accent)'
 
   return (
-    <main>
-      <div className="border">
-        <img src={user.avatar} alt={`${user.username}'s avatar`} />
-        <p>{user.fullname}</p>
-        <p>{user.username}</p>
-        <p>{user.about}</p>
-        <div>
-          <Link to="/users/$userId/followers" params={{ userId: user.id }}>Followers: {user._count.followers}</Link>
-          <Link to="/users/$userId/followings" params={{ userId: user.id }}>Followings: {user._count.followings}</Link>
+    <main className="mx-auto w-full max-w-md pb-20">
+      <section className="p-4 pb-0">
+        <img
+          src={user.avatar}
+          alt={`${user.username}'s avatar`}
+          className="h-20 w-20 rounded-full object-cover"
+        />
+
+        <div className="mt-3">
+          <h1 className="text-xl font-bold">
+            {user.fullname}
+          </h1>
+
+          <p className="text-sm text-(--app-muted)">
+            @{user.username}
+          </p>
         </div>
 
-        <ActionButton user={user} />
+        {user.about && (
+          <p className="mt-4 whitespace-pre-wrap text-sm leading-relaxed">
+            {user.about}
+          </p>
+        )}
+
+        <div className="mt-4 flex gap-4 text-sm">
+          <Link
+            to="/users/$userId/followers"
+            params={{ userId: user.id }}
+          >
+            <span className="font-semibold">
+              {user._count.followers}
+            </span>{' '}
+            <span className="text-(--app-muted)">
+              Followers
+            </span>
+          </Link>
+
+          <Link
+            to="/users/$userId/followings"
+            params={{ userId: user.id }}
+          >
+            <span className="font-semibold">
+              {user._count.followings}
+            </span>{' '}
+            <span className="text-(--app-muted)">
+              Following
+            </span>
+          </Link>
+        </div>
+
+        <div className="mt-4">
+          <ActionButton user={user} />
+        </div>
+      </section>
+
+      <div className="sticky top-12 z-40 mt-4 border-b border-(--app-border) bg-(--app-bg)/80 backdrop-blur-md">
+        <div className="mx-auto flex max-w-md justify-center gap-6 px-4">
+          <Link
+            to="/users/$userId"
+            params={{ userId: user.id }}
+            className={`${tabBase} ${!activeTab ? tabActive : ''}`}
+          >
+            Posts
+          </Link>
+
+          <Link
+            to="/users/$userId"
+            params={{ userId: user.id }}
+            search={{ tab: 'comments' }}
+            className={`${tabBase} ${activeTab === 'comments' ? tabActive : ''}`}
+          >
+            Comments
+          </Link>
+
+          <Link
+            to="/users/$userId"
+            params={{ userId: user.id }}
+            search={{ tab: 'likes' }}
+            className={`${tabBase} ${activeTab === 'likes' ? tabActive : ''}`}
+          >
+            Likes
+          </Link>
+        </div>
       </div>
 
-      <div>
-        <Link to="/users/$userId" params={{ userId: user.id }}>Posts</Link>
-        <Link to="/users/$userId"
-          params={{ userId: user.id }}
-          search={{ tab: "comments" }}>Comments
-        </Link>
-        <Link to="/users/$userId"
-          params={{ userId: user.id }}
-          search={{ tab: "likes" }}>Likes
-        </Link>
+      <div className="px-0">
+        <ProfileTabContent tabData={tabData} />
       </div>
-
-      <ProfileTabContent tabData={tabData} />
-    </main >
+    </main>
   )
 }

@@ -27,7 +27,6 @@ export const ProfileTabContent = ({ tabData }: ProfileTabContent) => {
 const ProfilePostList = ({ posts }: { posts: Post[] }) => {
   return (
     <div>
-      <div>Total Posts: {posts.length}</div>
       {
         posts.map(post => {
           return <PostCard key={post.id} post={post} />
@@ -41,15 +40,13 @@ const ProfilePostList = ({ posts }: { posts: Post[] }) => {
 const ProfileCommentList = ({ comments }: { comments: Comment[] }) => {
   return (
     <div>
-      <div>Total Comments: {comments.length}</div>
       {
         comments.map(comment => {
           const { id, text, author, post } = comment;
           console.log(text)
           return (
             <div key={id}>
-              <PostCard post={post} />
-              <CommentCard author={author} text={text} />
+              <PostCard post={post} comment={<CommentCard author={author} text={text} />} />
             </div>
           )
         })
@@ -61,7 +58,6 @@ const ProfileCommentList = ({ comments }: { comments: Comment[] }) => {
 const ProfileLikedPostList = ({ likes }: { likes: Like[] }) => {
   return (
     <div>
-      <div>Total Liked Posts: {likes.length}</div>
       {
         likes.map(like => {
           const { id, post } = like

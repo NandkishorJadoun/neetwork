@@ -50,33 +50,75 @@ export const CommentSection = ({ post, commentRef }: CommentSection) => {
     }
   }
 
-  return (<div className='border'>
-    <div>
-      <form onSubmit={commentHandler}>
-        <textarea ref={commentRef} name="content"
-          placeholder="Post your comment"
-          rows={3}
-          required
-          value={comment}
-          onChange={(e) => setComment(e.target.value)}
-          maxLength={280} />
-        <button disabled={comment.length === 0 || isLoading} type='submit'>Submit</button>
-      </form>
-      {errors && <ul>
-        {errors.map((error, id) => {
-          return <li key={id}>{error.message}</li>
-        })}
-      </ul>}
-    </div>
-    <div >
-      <p>Comments</p>
-      <div>
-        {post.comments.map(comment => {
-          const { id, text, author } = comment;
-          return <CommentCard key={id} text={text} author={author} />
-        })}
+  return (
+    <section className="border-b border-(--app-border)">
+      <div className="px-4 py-4">
+        <form onSubmit={commentHandler} className="space-y-3">
+          <textarea
+            ref={commentRef}
+            name="content"
+            placeholder="Write a comment..."
+            rows={3}
+            required
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            maxLength={280}
+            className="
+              w-full resize-none rounded-xl
+              border border-(--app-border)
+              bg-transparent px-3 py-2
+              text-sm leading-relaxed text-(--app-text)
+              outline-none
+              placeholder:text-(--app-muted)
+              focus:border-(--app-accent)
+            "
+          />
+
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-(--app-muted)">
+              {comment.length}/280
+            </span>
+
+            <button
+              disabled={comment.trim().length === 0 || isLoading}
+              type="submit"
+              className="
+                rounded-md border border-(--app-border)
+                px-4 py-2 text-sm font-medium
+                text-(--app-text)
+                transition-colors
+                hover:bg-(--app-surface)
+                disabled:cursor-not-allowed
+                disabled:opacity-50
+              "
+            >
+              {isLoading ? 'Posting...' : 'Comment'}
+            </button>
+          </div>
+        </form>
+
+        {errors && (
+          <ul className="mt-3 rounded-md border border-red-500/20 bg-red-500/5 p-3 text-sm text-red-500">
+            {errors.map((error, id) => (
+              <li key={id}>{error.message}</li>
+            ))}
+          </ul>
+        )}
       </div>
-    </div>
-  </div>)
+
+      <div>
+        <div className="border-y border-(--app-border) sticky top-12 z-10 bg-(--app-bg)/80 px-4 py-3 backdrop-blur-md">
+          <p className="text-sm font-medium">Comments</p>
+        </div>
+
+        <div className="divide-y divide-(--app-border) px-4">
+          {post.comments.map((comment) => {
+            const { id, text, author } = comment
+            return <CommentCard key={id} text={text} author={author} />
+          })}
+        </div>
+      </div>
+    </section>
+  )
 }
 
