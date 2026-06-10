@@ -39,7 +39,7 @@ function RouteComponent() {
 
   return (
     <div className="flex flex-col">
-      <div className="sticky top-12 border-b border-(--app-border) bg-(--app-bg)/80 backdrop-blur-md">
+      <div className="sticky top-14 border-b border-(--app-border) bg-(--app-bg)/80 backdrop-blur-md">
         <div className="mx-auto flex max-w-md justify-center gap-6">
           <Link
             to="/home"

@@ -51,8 +51,8 @@ export const CommentSection = ({ post, commentRef }: CommentSection) => {
   }
 
   return (
-    <section className="border-b border-(--app-border)">
-      <div className="px-4 py-4">
+    <section>
+      <div className="px-4 py-4 border-b border-(--app-border)">
         <form onSubmit={commentHandler} className="space-y-3">
           <textarea
             ref={commentRef}
@@ -107,7 +107,7 @@ export const CommentSection = ({ post, commentRef }: CommentSection) => {
       </div>
 
       <div>
-        <div className="border-y border-(--app-border) sticky top-12 z-10 bg-(--app-bg)/80 px-4 py-3 backdrop-blur-md">
+        <div className="border-b border-(--app-border) sticky top-14 z-10 bg-(--app-bg)/80 px-4 py-2 backdrop-blur-md">
           <p className="text-sm font-medium">Comments</p>
         </div>
 

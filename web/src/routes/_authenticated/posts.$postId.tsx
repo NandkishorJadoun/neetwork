@@ -70,7 +70,7 @@ function RouteComponent() {
   return (
     <div className="mx-auto w-full max-w-md pb-20">
       <section className="border-b border-(--app-border) ">
-        <div className="sticky top-12 z-10 border-b border-(--app-border) bg-(--app-bg)/80 px-4 py-3 backdrop-blur-md">
+        <div className="sticky top-14 z-10 border-b border-(--app-border) bg-(--app-bg)/80 px-4 py-2 backdrop-blur-md">
           <p className="text-sm font-medium text-(--app-text)">Post</p>
         </div>
         <div className="flex items-start gap-3 px-4 py-4">

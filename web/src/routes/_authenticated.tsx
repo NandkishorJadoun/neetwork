@@ -1,6 +1,8 @@
 import { createFileRoute, redirect, Outlet, Link } from '@tanstack/react-router'
 import { useAuth } from '../context/auth'
 import { Home, Menu, Pencil, UserRound, UserRoundPlus, UserRoundSearch } from 'lucide-react'
+import { useState } from 'react'
+import { Navbar } from '../components/MobileNavBar'
 
 export const Route = createFileRoute('/_authenticated')({
   beforeLoad: ({ context }) => {
@@ -14,44 +16,42 @@ export const Route = createFileRoute('/_authenticated')({
 })
 
 function RouteComponent() {
-  const style = 'font-bold border-b-2 border-(--app-accent)'
+  const [isOpen, setIsOpen] = useState(false);
   const { user } = useAuth()
-  if (!user) return null
+  if (!user) return
+
+  const navData = [
+    { to: "/home", icon: <Home /> },
+    { to: "/follow-requests", icon: <UserRoundPlus /> },
+    { to: "/create-post", icon: <Pencil /> },
+    { to: "/follow-users", icon: <UserRoundSearch /> },
+    { to: `/users/${user.id}`, icon: <UserRound /> },
+  ]
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 z-20 h-12 border-b border-(--app-border) bg-(--app-bg)/80 px-2.5 flex items-center justify-between backdrop-blur-md">
-        <h1 className="text-lg font-bold">Neetwork</h1>
+      <header className="fixed top-0 left-0 right-0 z-20 h-14 border-b border-(--app-border) bg-(--app-bg)/80 px-4 flex items-center justify-between backdrop-blur-md">
+        <Link to='/home' className="text-lg font-bold">Neetwork</Link>
         <button>
-          <Menu size={16} />
+          <Menu size={18} onClick={() => setIsOpen(true)} />
         </button>
       </header>
 
-      <main className="py-12">
+      <main className="pt-14 pb-12">
         <Outlet />
       </main>
 
       <div className="fixed bottom-0 left-0 right-0 flex h-12 items-center justify-around border-t border-(--app-border) bg-(--app-bg)/80 backdrop-blur-md">
-        <Link to="/home" activeProps={{ className: style }}>
-          <Home />
-        </Link>
-        <Link to="/follow-requests" activeProps={{ className: style }}>
-          <UserRoundPlus />
-        </Link>
-        <Link to="/create-post" activeProps={{ className: style }}>
-          <Pencil />
-        </Link>
-        <Link to="/follow-users" activeProps={{ className: style }}>
-          <UserRoundSearch />
-        </Link>
-        <Link
-          to="/users/$userId"
-          params={{ userId: user.id }}
-          activeProps={{ className: style }}
-        >
-          <UserRound />
-        </Link>
+        {navData.map(nav => {
+          const { to, icon } = nav
+          return <Link
+            to={to}
+            className='border-b-2 border-transparent'
+            activeProps={{ className: "border-(--app-accent)!" }}
+          >{icon}</Link>
+        })}
       </div>
+      <Navbar isOpen={isOpen} setIsOpen={setIsOpen} userId={user.id} />
     </>
   )
 }
