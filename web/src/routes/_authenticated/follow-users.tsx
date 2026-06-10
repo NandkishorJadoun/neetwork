@@ -19,13 +19,15 @@ export const Route = createFileRoute('/_authenticated/follow-users')({
 
 function RouteComponent() {
   const { users }: { users: User[] } = Route.useLoaderData();
-  return <main>
-    {users.map(user => {
-      return <FollowUserCard key={user.id} user={user} />
-    })}
-    <p className="py-6 text-center text-xs text-(--app-muted)">
-      End of list
-    </p>
-  </main>
+  return (
+    <main>
+      {users.map(user => {
+        return <FollowUserCard key={user.id} user={user} />
+      })}
+      <p className="py-6 text-center text-xs text-(--app-muted)">
+        End of list
+      </p>
+    </main>
+  )
 }
 

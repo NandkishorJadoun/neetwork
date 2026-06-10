@@ -19,10 +19,27 @@ export const Route = createFileRoute('/_authenticated/follow-requests')({
 
 function RouteComponent() {
   const { followRequests }: { followRequests: Follow[] } = Route.useLoaderData()
-  return <main>
-    {followRequests.map(fr => {
-      return <FollowRequestCard key={fr.id} followRequest={fr} />
-    })}
-  </main>
+
+  return (
+    <div className="flex flex-col">
+      <div className="mx-auto w-full max-w-md">
+        {followRequests.length === 0 ? (
+          <p className="py-12 text-center text-sm text-(--app-muted)">
+            No follow requests
+          </p>
+        ) : (
+          <>
+            {followRequests.map(fr => (
+              <FollowRequestCard key={fr.id} followRequest={fr} />
+            ))}
+
+            <p className="py-6 text-center text-xs text-(--app-muted)">
+              End of list
+            </p>
+          </>
+        )}
+      </div>
+    </div>
+  )
 }
 

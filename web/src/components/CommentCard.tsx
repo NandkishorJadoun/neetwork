@@ -35,7 +35,7 @@ export const CommentCard = ({ text, author }: CommentCardProp) => {
           </span>
         </Link>
 
-        <p className="mt-1 whitespace-pre-wrap break-words text-sm leading-relaxed text-(--app-text)">
+        <p className="mt-1 whitespace-pre-wrap wrap-break-word text-sm leading-relaxed text-(--app-text)">
           {text}
         </p>
       </div>

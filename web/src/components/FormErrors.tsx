@@ -15,9 +15,9 @@ export const FormErrors = ({ fieldName, errors }: FormErrorsProps) => {
   if (fieldErrors.length === 0) return null;
 
   return (
-    <ul>
+    <ul className="mt-4 border border-red-500/20 bg-red-500/5 p-3 text-sm text-red-500">
       {fieldErrors.map((fieldError, index) => (
-        <li key={index} className="text-red-500">
+        <li key={index}>
           {fieldError.message}
         </li>
       ))}
