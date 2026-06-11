@@ -9,7 +9,7 @@ passport.use(
     new GitHubStrategy({
         clientID: env.GITHUB_CLIENT_ID,
         clientSecret: env.GITHUB_CLIENT_SECRET,
-        callbackURL: "http://localhost:3000/auth/github/callback"
+        callbackURL: env.GITHUB_CALLBACK_URL,
     },
         async (_accessToken: string, _refreshToken: string, profile: Profile, cb: VerifyCallback) => {
             try {
