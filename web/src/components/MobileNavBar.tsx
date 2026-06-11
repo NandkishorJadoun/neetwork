@@ -41,7 +41,7 @@ export function Navbar({ isOpen, setIsOpen, userId }: NavbarProp) {
                             <li onClick={() => setIsOpen(false)}>
                                 <Link to={to}
                                     activeProps={{ className: 'text-(--app-text)' }}
-                                    className='flex items-center gap-2 rounded-md p-2 text-(--app-muted) border border-(--app-bg) hover:border-(--app-border) hover:bg-(--app-surface)/70'>
+                                    className='flex items-center gap-3 rounded-md p-2 text-(--app-muted) border border-(--app-bg) hover:border-(--app-border) hover:bg-(--app-surface)/70'>
                                     {icon}
                                     <p>{name}</p>
                                 </Link>

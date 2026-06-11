@@ -9,11 +9,11 @@ const accents = ["blue", "red", "yellow", "green", "purple", "pink"] as const;
 const backgrounds = ["slate", "gray", "zinc", "stone", "neutral"] as const;
 
 const accentClasses = {
-  blue: "bg-blue-400",
-  red: "bg-red-400",
-  yellow: "bg-yellow-400",
-  green: "bg-green-400",
-  purple: "bg-purple-400",
+  blue: "bg-sky-400",
+  red: "bg-rose-400",
+  yellow: "bg-amber-400",
+  green: "bg-emerald-400",
+  purple: "bg-violet-400",
   pink: "bg-pink-400",
 };
 
