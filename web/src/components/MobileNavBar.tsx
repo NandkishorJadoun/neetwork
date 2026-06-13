@@ -26,7 +26,7 @@ export function Navbar({ isOpen, setIsOpen, userId }: NavbarProp) {
     ]
 
     return (
-        <>
+        <div className='md:block'>
             <nav className={`fixed top-0 right-0 z-40 h-full w-64 bg-(--app-bg) border-l border-(--app-border) transition-transform duration-200 ease-in-out md:hidden ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
                 <div className='flex justify-between border-b border-(--app-border) p-4'>
                     <p>Menu</p>
@@ -55,7 +55,7 @@ export function Navbar({ isOpen, setIsOpen, userId }: NavbarProp) {
                 className={`fixed inset-0 z-20 bg-black/40 backdrop-blur-xs transition-opacity duration-200 md:hidden ${isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
                 onClick={() => setIsOpen(false)}
             />
-        </>
+        </div>
     );
 }
 

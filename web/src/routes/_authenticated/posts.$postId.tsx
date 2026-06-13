@@ -4,6 +4,7 @@ import { useAuth } from '../../context/auth'
 import type { Post } from '../../types'
 import { CommentSection } from '../../components/CommentSection'
 import { Heart, MessageCircle } from 'lucide-react'
+import { PageHeader } from '../../components/PageHeader'
 
 export const Route = createFileRoute('/_authenticated/posts/$postId')({
   loader: async ({ context, params: { postId } }) => {
@@ -68,11 +69,10 @@ function RouteComponent() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-md pb-20">
-      <section className="border-b border-(--app-border) ">
-        <div className="sticky top-14 z-10 border-b border-(--app-border) bg-(--app-bg)/80 px-4 py-2 backdrop-blur-md">
-          <p className="text-sm font-medium text-(--app-text)">Post</p>
-        </div>
+    <>
+      <section>
+
+        <PageHeader>Post</PageHeader>
         <div className="flex items-start gap-3 px-4 py-4">
           <Link
             to="/users/$userId"
@@ -146,7 +146,8 @@ function RouteComponent() {
         </div>
       </section>
 
+
       <CommentSection post={post} commentRef={commentRef} />
-    </div>
+    </>
   )
 }

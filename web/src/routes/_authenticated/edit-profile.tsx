@@ -1,8 +1,8 @@
 import { createFileRoute, useNavigate, useRouter } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
-import { MoveLeft } from 'lucide-react'
 import type { User, ValidationError } from '../../types'
 import { FormErrors } from '../../components/FormErrors'
+import { PageHeader } from '../../components/PageHeader'
 
 export const Route = createFileRoute('/_authenticated/edit-profile')({
   loader: async ({ context }) => {
@@ -93,21 +93,11 @@ function RouteComponent() {
 
   return (
     <>
-      <div className="sticky top-12 z-10 flex h-12 items-center justify-between border-b border-(--app-border) bg-(--app-bg)/80 px-4 backdrop-blur-md">
-        <button
-          type="button"
-          onClick={() => navigate({ to: '/users/$userId', params: { userId: user.id } })}
-          className="text-sm text-(--app-muted) transition-colors hover:text-(--app-text)"
-        >
-          <MoveLeft />
-        </button>
+      <PageHeader>
+        <p className='text-center'>Edit Profile</p>
+      </PageHeader>
 
-        <p className="text-sm font-medium text-(--app-text)">Edit Profile</p>
-
-        <div className="w-5" />
-      </div>
-
-      <div className="mx-auto w-full max-w-md p-4">
+      <div className="w-full p-4">
         <form onSubmit={formSubmitHandler} className="space-y-6">
           <div className="flex flex-col items-center gap-3">
             <img
@@ -118,7 +108,7 @@ function RouteComponent() {
 
             <label
               htmlFor="avatar"
-              className="inline-block cursor-pointer border border-(--app-border) px-4 py-2 text-sm font-medium text-(--app-text) transition-colors hover:bg-(--app-surface)"
+              className="inline-block cursor-pointer border border-(--app-border) px-4 py-2 text-smtext-(--app-text) transition-colors hover:bg-(--app-surface) rounded-md"
             >
               Upload photo
             </label>
@@ -146,7 +136,7 @@ function RouteComponent() {
               required
               value={formData.fullname}
               onChange={(e) => setFormData({ ...formData, fullname: e.target.value })}
-              className="w-full border border-(--app-border) bg-transparent px-3 py-2 text-sm text-(--app-text) outline-none placeholder:text-(--app-muted) focus:border-(--app-accent)"
+              className="rounded-md w-full border border-(--app-border) bg-transparent px-3 py-2 text-sm text-(--app-text) outline-none placeholder:text-(--app-muted) focus:border-(--app-accent)"
             />
             <FormErrors fieldName="fullname" errors={errors} />
           </div>
@@ -161,7 +151,7 @@ function RouteComponent() {
               rows={4}
               value={formData.about}
               onChange={(e) => setFormData({ ...formData, about: e.target.value })}
-              className="w-full resize-none border border-(--app-border) bg-transparent px-3 py-2 text-sm text-(--app-text) outline-none placeholder:text-(--app-muted) focus:border-(--app-accent)"
+              className="w-full rounded-md resize-none border border-(--app-border) bg-transparent px-3 py-2 text-sm text-(--app-text) outline-none placeholder:text-(--app-muted) focus:border-(--app-accent)"
             />
             <FormErrors fieldName="about" errors={errors} />
           </div>
@@ -170,14 +160,14 @@ function RouteComponent() {
             <button
               type="button"
               onClick={() => router.history.back()}
-              className="flex-1 border border-(--app-border) px-4 py-2 text-sm font-medium text-(--app-text) transition-colors hover:bg-(--app-surface)"
+              className="flex-1 rounded-md border border-(--app-border) px-4 py-2 text-sm font-medium text-(--app-text) transition-colors hover:bg-(--app-surface)"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isLoading}
-              className="flex-1 border border-(--app-accent) bg-(--app-accent) px-4 py-2 text-sm font-medium text-white transition-colors hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex-1 border border-(--app-accent) bg-(--app-accent) px-4 py-2 text-sm font-medium text-white rounded-md transition-colors hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isLoading ? "Saving..." : "Save"}
             </button>

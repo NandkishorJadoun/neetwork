@@ -3,6 +3,7 @@ import { useState } from "react";
 import type { Post, ValidationError } from "../types";
 import { useAuth } from "../context/auth";
 import { CommentCard } from "./CommentCard";
+import { PageHeader } from "./PageHeader";
 
 interface CommentSection {
   post: Post
@@ -51,7 +52,7 @@ export const CommentSection = ({ post, commentRef }: CommentSection) => {
   }
 
   return (
-    <section>
+    <>
       <div className="px-4 py-4 border-b border-(--app-border)">
         <form onSubmit={commentHandler} className="space-y-3">
           <textarea
@@ -107,18 +108,26 @@ export const CommentSection = ({ post, commentRef }: CommentSection) => {
       </div>
 
       <div>
-        <div className="border-b border-(--app-border) sticky top-14 z-10 bg-(--app-bg)/80 px-4 py-2 backdrop-blur-md">
-          <p className="text-sm font-medium">Comments</p>
-        </div>
-
+        <PageHeader>Comments</PageHeader>
         <div className="divide-y divide-(--app-border) px-4">
-          {post.comments.map((comment) => {
-            const { id, text, author } = comment
-            return <CommentCard key={id} text={text} author={author} />
-          })}
+          {post.comments.length === 0 ? (
+            <p className="py-6 text-center text-sm text-(--app-muted)">
+              No comments yet
+            </p>
+          ) : (
+            <>
+              {post.comments.map((comment) => {
+                const { id, text, author } = comment
+                return <CommentCard key={id} text={text} author={author} />
+              })}
+              <p className="py-6 text-center text-xs text-(--app-muted)">
+                End of list
+              </p>
+            </>
+          )}
         </div>
       </div>
-    </section>
+    </>
   )
 }
 

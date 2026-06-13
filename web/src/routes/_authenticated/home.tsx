@@ -39,8 +39,8 @@ function RouteComponent() {
 
   return (
     <div className="flex flex-col">
-      <div className="sticky top-14 border-b border-(--app-border) bg-(--app-bg)/80 backdrop-blur-md">
-        <div className="mx-auto flex max-w-md justify-center gap-6">
+      <div className="sticky top-0 border-b border-(--app-border) bg-(--app-bg)/80 backdrop-blur-md">
+        <div className="mx-auto flex justify-center gap-6">
           <Link
             to="/home"
             className={`${tabBase} ${!activeTab ? tabActive : ''}`}
@@ -57,7 +57,7 @@ function RouteComponent() {
         </div>
       </div>
 
-      <div className="mx-auto w-full max-w-md">
+      <div>
         {posts.map((post) => (
           <PostCard key={post.id} post={post} />
         ))}

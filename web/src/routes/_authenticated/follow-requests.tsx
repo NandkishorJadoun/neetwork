@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import type { Follow } from '../../types'
 import { FollowRequestCard } from '../../components/FollowRequestCard'
+import { PageHeader } from '../../components/PageHeader'
 
 export const Route = createFileRoute('/_authenticated/follow-requests')({
   loader: async ({ context }) => {
@@ -21,10 +22,13 @@ function RouteComponent() {
   const { followRequests }: { followRequests: Follow[] } = Route.useLoaderData()
 
   return (
-    <div className="flex flex-col">
-      <div className="mx-auto w-full max-w-md">
+    <>
+      <PageHeader>
+        <p className='text-center'>Follow Requests</p>
+      </PageHeader>
+      <div>
         {followRequests.length === 0 ? (
-          <p className="py-12 text-center text-sm text-(--app-muted)">
+          <p className="py-6 text-center text-sm text-(--app-muted)">
             No follow requests
           </p>
         ) : (
@@ -39,7 +43,7 @@ function RouteComponent() {
           </>
         )}
       </div>
-    </div>
+    </>
   )
 }
 

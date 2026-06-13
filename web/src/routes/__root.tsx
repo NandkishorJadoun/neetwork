@@ -6,9 +6,5 @@ interface MyRouterContext {
 }
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
-  component: () => (
-    <div>
-      <Outlet />
-    </div>
-  ),
+  component: () => <Outlet />,
 })

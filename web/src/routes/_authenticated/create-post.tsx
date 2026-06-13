@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useAuth } from '../../context/auth'
 import type { ValidationError } from '../../types'
-import { MoveLeft } from 'lucide-react'
+import { PageHeader } from '../../components/PageHeader'
 
 export const Route = createFileRoute('/_authenticated/create-post')({
   component: RouteComponent,
@@ -17,7 +17,6 @@ function RouteComponent() {
 
   const submitPostHandler = async () => {
     if (!content.trim()) return
-
     setIsLoading(true)
     setErrors(null)
 
@@ -49,28 +48,22 @@ function RouteComponent() {
 
   return (
     <>
-      <div className="sticky top-12 flex h-12 items-center justify-between border-b border-(--app-border) bg-(--app-bg)/80 px-4 backdrop-blur-md">
-        <button
-          type="button"
-          onClick={() => navigate({ to: '/home' })}
-          className="text-sm text-(--app-muted) transition-colors hover:text-(--app-text)"
-        >
-          <MoveLeft />
-        </button>
+      <PageHeader>
+        <div className='flex items-center justify-between'>
+          <span className='w-5'></span>
+          <p className='font-semibold'>Create post</p>
+          <button
+            type="button"
+            disabled={isLoading || !content.trim()}
+            onClick={submitPostHandler}
+            className="text-sm font-medium text-(--app-accent) disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {isLoading ? 'Posting...' : 'Post'}
+          </button>
+        </div>
+      </PageHeader>
 
-        <p className="text-sm font-medium text-(--app-text)">Create post</p>
-
-        <button
-          type="button"
-          disabled={isLoading || !content.trim()}
-          onClick={submitPostHandler}
-          className="text-sm font-medium text-(--app-accent) disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          {isLoading ? 'Posting...' : 'Post'}
-        </button>
-      </div>
-
-      <div className="mx-auto w-full max-w-md p-4">
+      <div className="p-4">
         <textarea
           name="content"
           placeholder="What's happening?"
@@ -79,7 +72,7 @@ function RouteComponent() {
           maxLength={280}
           rows={10}
           required
-          className="w-full resize-none bg-transparent text-base leading-relaxed text-(--app-text) outline-none border border-(--app-border) placeholder:text-(--app-muted) focus:border-(--app-accent) p-2"
+          className="w-full resize-none text-base text-(--app-text) outline-none border border-(--app-border) placeholder:text-(--app-muted) focus:border-(--app-accent) px-3 py-2 rounded-md"
         />
 
         <div className="mt-2 flex items-center justify-between text-xs text-(--app-muted)">

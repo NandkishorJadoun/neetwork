@@ -61,7 +61,7 @@ function RouteComponent() {
   const tabActive = 'text-(--app-text) border-b-2 border-(--app-accent)'
 
   return (
-    <main className="mx-auto w-full max-w-md pb-20">
+    <>
       <section className="p-4 pb-0">
         <img
           src={user.avatar}
@@ -116,7 +116,7 @@ function RouteComponent() {
         </div>
       </section>
 
-      <div className="sticky top-12 z-40 mt-4 border-b border-(--app-border) bg-(--app-bg)/80 backdrop-blur-md">
+      <div className="sticky top-0 z-40 mt-4 border-b border-(--app-border) bg-(--app-bg)/80 backdrop-blur-md">
         <div className="mx-auto flex max-w-md justify-center gap-6 px-4">
           <Link
             to="/users/$userId"
@@ -149,6 +149,6 @@ function RouteComponent() {
       <div className="px-0">
         <ProfileTabContent tabData={tabData} />
       </div>
-    </main>
+    </>
   )
 }
