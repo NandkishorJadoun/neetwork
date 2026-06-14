@@ -71,7 +71,6 @@ function RouteComponent() {
   return (
     <>
       <section>
-
         <PageHeader>Post</PageHeader>
         <div className="flex items-start gap-3 px-4 py-4">
           <Link

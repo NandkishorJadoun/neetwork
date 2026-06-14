@@ -1,29 +1,19 @@
 import { Link } from '@tanstack/react-router';
-import { Home, Info, Pencil, UserRound, UserRoundCog, UserRoundPen, UserRoundPlus, UserRoundSearch, X } from 'lucide-react';
-import { useEffect } from 'react';
+import { LogOut, X } from 'lucide-react';
+import { useEffect, type JSX } from 'react';
 
-type NavbarProp = {
+type MobileNavbarProp = {
     isOpen: boolean,
     setIsOpen: React.Dispatch<React.SetStateAction<boolean>>,
-    userId: string
+    navItems: { to: string, name: string, icon: JSX.Element }[],
+    handleLogout: () => void,
 }
 
-export function Navbar({ isOpen, setIsOpen, userId }: NavbarProp) {
+export function MobileNavbar({ isOpen, setIsOpen, navItems, handleLogout }: MobileNavbarProp) {
     useEffect(() => {
         document.body.style.overflow = isOpen ? 'hidden' : 'unset';
         return () => { document.body.style.overflow = 'unset'; };
     }, [isOpen]);
-
-    const navData = [
-        { to: "/home", name: "Home", icon: <Home size={20} /> },
-        { to: `/users/${userId}`, name: "User", icon: <UserRound size={20} /> },
-        { to: "/edit-profile", name: "Edit Profile", icon: <UserRoundPen size={20} /> },
-        { to: "/create-post", name: "Create Post", icon: <Pencil size={20} /> },
-        { to: "/follow-requests", name: "Follow Requests", icon: <UserRoundPlus size={20} /> },
-        { to: "/follow-users", name: "Follow Users", icon: <UserRoundSearch size={20} /> },
-        { to: "/settings", name: "Settings", icon: <UserRoundCog size={20} /> },
-        { to: "/about", name: "About", icon: <Info size={20} /> },
-    ]
 
     return (
         <div className='md:block'>
@@ -35,8 +25,8 @@ export function Navbar({ isOpen, setIsOpen, userId }: NavbarProp) {
                     </button>
                 </div>
                 <ul className="flex flex-col gap-2 p-2">
-                    {navData.map(nav => {
-                        const { to, name, icon } = nav;
+                    {navItems.map(item => {
+                        const { to, name, icon } = item;
                         return (
                             <li onClick={() => setIsOpen(false)}>
                                 <Link to={to}
@@ -48,6 +38,12 @@ export function Navbar({ isOpen, setIsOpen, userId }: NavbarProp) {
                             </li>
                         )
                     })}
+                    <li>
+                        <button onClick={handleLogout} className='w-full text-red-500 flex items-center gap-3 rounded-md py-2 pl-2 hover:bg-(--app-surface)/70'>
+                            <LogOut />
+                            <p>LogOut</p>
+                        </button>
+                    </li>
                 </ul>
             </nav>
 

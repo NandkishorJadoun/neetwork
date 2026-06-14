@@ -2,6 +2,7 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import type { User, Post, Comment, Like } from '../../types'
 import { ActionButton } from '../../components/ProfileActionButton'
 import { ProfileTabContent } from '../../components/ProfileTabContent'
+import { PageHeader } from '../../components/PageHeader'
 
 type Tab = 'posts' | 'comments' | 'likes'
 export type TabData = { posts: Post[] } | { comments: Comment[] } | { likes: Like[] }
@@ -62,93 +63,100 @@ function RouteComponent() {
 
   return (
     <>
-      <section className="p-4 pb-0">
-        <img
-          src={user.avatar}
-          alt={`${user.username}'s avatar`}
-          className="h-20 w-20 rounded-full object-cover"
-        />
+      <section>
+        <PageHeader>
+          <p className='text-center'>User Profile</p>
+        </PageHeader>
+        <div className='p-4 pb-0'>
+          <img
+            src={user.avatar}
+            alt={`${user.username}'s avatar`}
+            className="h-20 w-20 rounded-full object-cover"
+          />
 
-        <div className="mt-3">
-          <h1 className="text-xl font-bold">
-            {user.fullname}
-          </h1>
+          <div className="mt-3">
+            <h1 className="text-xl font-bold">
+              {user.fullname}
+            </h1>
 
-          <p className="text-sm text-(--app-muted)">
-            @{user.username}
-          </p>
-        </div>
+            <p className="text-sm text-(--app-muted)">
+              @{user.username}
+            </p>
+          </div>
 
-        {user.about && (
-          <p className="mt-4 whitespace-pre-wrap text-sm leading-relaxed">
-            {user.about}
-          </p>
-        )}
+          {user.about && (
+            <p className="mt-4 whitespace-pre-wrap text-sm leading-relaxed">
+              {user.about}
+            </p>
+          )}
 
-        <div className="mt-4 flex gap-4 text-sm">
-          <Link
-            to="/users/$userId/followers"
-            params={{ userId: user.id }}
-          >
-            <span className="font-semibold">
-              {user._count.followers}
-            </span>{' '}
-            <span className="text-(--app-muted)">
-              Followers
-            </span>
-          </Link>
+          <div className="mt-4 flex gap-4 text-sm">
+            <Link
+              to="/users/$userId/followers"
+              params={{ userId: user.id }}
+            >
+              <span className="font-semibold">
+                {user._count.followers}
+              </span>{' '}
+              <span className="text-(--app-muted)">
+                Followers
+              </span>
+            </Link>
 
-          <Link
-            to="/users/$userId/followings"
-            params={{ userId: user.id }}
-          >
-            <span className="font-semibold">
-              {user._count.followings}
-            </span>{' '}
-            <span className="text-(--app-muted)">
-              Following
-            </span>
-          </Link>
-        </div>
+            <Link
+              to="/users/$userId/followings"
+              params={{ userId: user.id }}
+            >
+              <span className="font-semibold">
+                {user._count.followings}
+              </span>{' '}
+              <span className="text-(--app-muted)">
+                Following
+              </span>
+            </Link>
+          </div>
 
-        <div className="mt-4">
-          <ActionButton user={user} />
+          <div className="mt-4">
+            <ActionButton user={user} />
+          </div>
         </div>
       </section>
 
-      <div className="sticky top-0 z-40 mt-4 border-b border-(--app-border) bg-(--app-bg)/80 backdrop-blur-md">
-        <div className="mx-auto flex max-w-md justify-center gap-6 px-4">
-          <Link
-            to="/users/$userId"
-            params={{ userId: user.id }}
-            className={`${tabBase} ${!activeTab ? tabActive : ''}`}
-          >
-            Posts
-          </Link>
+      <section>
+        <div className="sticky top-0 z-40 mt-4 border-b border-(--app-border) bg-(--app-bg)/80 backdrop-blur-md">
+          <div className="mx-auto flex max-w-md justify-center gap-6 px-4">
+            <Link
+              to="/users/$userId"
+              params={{ userId: user.id }}
+              className={`${tabBase} ${!activeTab ? tabActive : ''}`}
+            >
+              Posts
+            </Link>
 
-          <Link
-            to="/users/$userId"
-            params={{ userId: user.id }}
-            search={{ tab: 'comments' }}
-            className={`${tabBase} ${activeTab === 'comments' ? tabActive : ''}`}
-          >
-            Comments
-          </Link>
+            <Link
+              to="/users/$userId"
+              params={{ userId: user.id }}
+              search={{ tab: 'comments' }}
+              className={`${tabBase} ${activeTab === 'comments' ? tabActive : ''}`}
+            >
+              Comments
+            </Link>
 
-          <Link
-            to="/users/$userId"
-            params={{ userId: user.id }}
-            search={{ tab: 'likes' }}
-            className={`${tabBase} ${activeTab === 'likes' ? tabActive : ''}`}
-          >
-            Likes
-          </Link>
+            <Link
+              to="/users/$userId"
+              params={{ userId: user.id }}
+              search={{ tab: 'likes' }}
+              className={`${tabBase} ${activeTab === 'likes' ? tabActive : ''}`}
+            >
+              Likes
+            </Link>
+          </div>
         </div>
-      </div>
 
-      <div className="px-0">
-        <ProfileTabContent tabData={tabData} />
-      </div>
+        <div className="px-0">
+          <ProfileTabContent tabData={tabData} />
+        </div>
+      </section>
     </>
   )
 }

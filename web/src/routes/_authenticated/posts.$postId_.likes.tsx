@@ -24,9 +24,7 @@ function RouteComponent() {
   const { likes }: { likes: Like[] } = Route.useLoaderData();
   return (
     <>
-      <PageHeader>
-        <p className='text-center'>Likes</p>
-      </PageHeader>
+      <PageHeader>Likes</PageHeader>
       <div>
         {likes.length === 0 ? (
           <p className="py-6 text-center text-xs text-(--app-muted)">

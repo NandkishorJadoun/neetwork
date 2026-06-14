@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import { createFileRoute, redirect, Outlet, Link, useNavigate } from '@tanstack/react-router'
 import { useAuth } from '../context/auth'
-import { Home, Info, LogOut, Pencil, UserRound, UserRoundCog, UserRoundPen, UserRoundPlus, UserRoundSearch } from 'lucide-react'
-import { Navbar } from '../components/MobileNavBar'
+import { Home, Info, Menu, Pencil, UserRound, UserRoundCog, UserRoundPen, UserRoundPlus, UserRoundSearch } from 'lucide-react'
+import { MobileNavbar } from '../components/MobileNavBar'
+import { SideBar } from '../components/SideBar'
+import { MobileNavContext } from "../context/mobileNav"
 
 export const Route = createFileRoute('/_authenticated')({
   beforeLoad: ({ context }) => {
@@ -25,7 +27,7 @@ function RouteComponent() {
   }
   if (!user) return
 
-  const navData = [
+  const bottomNavItems = [
     { to: "/home", icon: <Home /> },
     { to: "/follow-requests", icon: <UserRoundPlus /> },
     { to: "/create-post", icon: <Pencil /> },
@@ -33,7 +35,7 @@ function RouteComponent() {
     { to: `/users/${user.id}`, icon: <UserRound /> },
   ]
 
-  const laptopNavData = [
+  const navItems = [
     { to: "/home", name: "Home", icon: <Home size={20} /> },
     { to: `/users/${user.id}`, name: "User", icon: <UserRound size={20} /> },
     { to: "/edit-profile", name: "Edit Profile", icon: <UserRoundPen size={20} /> },
@@ -46,57 +48,26 @@ function RouteComponent() {
 
   return (
     <>
-      {/* <header className="fixed top-0 left-0 right-0 z-20">
-        <div className='mx-auto flex h-14 max-w-6xl items-center justify-between px-4 backdrop-blur-md border-b border-(--app-border) bg-(--app-bg)/80'>
-          <Link to='/home' className="text-lg font-bold">Neetwork</Link>
-          <button>
-            <Menu size={18} onClick={() => setIsOpen(true)} />
-          </button>
-        </div>
-      </header> */}
-
       <div className='flex min-h-dvh'>
         <div className='hidden md:block w-56'>
           <div className='sticky top-0 flex flex-col'>
             <header>
               <Link to='/home' className="text-2xl block p-2 pl-4 font-bold">Neetwork</Link>
             </header>
-            <aside className='flex-1'>
-              <nav>
-                <ul className="flex flex-col gap-2 mt-2 pr-2">
-                  {laptopNavData.map(nav => {
-                    const { to, name, icon } = nav;
-                    return (
-                      <li key={name}>
-                        <Link to={to}
-                          activeProps={{ className: 'text-(--app-text)' }}
-                          className='flex items-center gap-3 rounded-md py-2 pl-4 text-(--app-muted) hover:bg-(--app-surface)/70'>
-                          {icon}
-                          <p>{name}</p>
-                        </Link>
-                      </li>
-                    )
-                  })}
-                  <li>
-                    <button onClick={handleLogout} className='w-full text-red-500 flex items-center gap-3 rounded-md py-2 pl-4 hover:bg-(--app-surface)/70'>
-                      <LogOut />
-                      <p>LogOut</p>
-                    </button>
-                  </li>
-                </ul>
-              </nav>
-            </aside>
+            <SideBar navItems={navItems} handleLogout={handleLogout} />
           </div>
         </div>
 
-        <main className="pb-12 flex-1 border border-(--app-border) border-y-0">
-          <Outlet />
-        </main>
+        <MobileNavContext.Provider value={{ isOpen, setIsOpen }} >
+          <main className="pb-12  flex-1 border border-(--app-border) border-y-0">
+            <Outlet />
+          </main>
+        </MobileNavContext.Provider>
       </div>
 
       <div className="md:hidden fixed bottom-0 left-0 right-0 flex h-12 items-center justify-around border-t border-(--app-border) bg-(--app-bg)/80 backdrop-blur-md">
-        {navData.map(nav => {
-          const { to, icon } = nav
+        {bottomNavItems.map(item => {
+          const { to, icon } = item
           return <Link
             to={to}
             className='border-b-2 border-transparent'
@@ -104,7 +75,7 @@ function RouteComponent() {
           >{icon}</Link>
         })}
       </div>
-      <Navbar isOpen={isOpen} setIsOpen={setIsOpen} userId={user.id} />
+      <MobileNavbar isOpen={isOpen} setIsOpen={setIsOpen} navItems={navItems} handleLogout={handleLogout} />
     </>
   )
 }

@@ -3,7 +3,6 @@ import { useState } from "react";
 import type { Post, ValidationError } from "../types";
 import { useAuth } from "../context/auth";
 import { CommentCard } from "./CommentCard";
-import { PageHeader } from "./PageHeader";
 
 interface CommentSection {
   post: Post
@@ -108,7 +107,11 @@ export const CommentSection = ({ post, commentRef }: CommentSection) => {
       </div>
 
       <div>
-        <PageHeader>Comments</PageHeader>
+
+        <div className="sticky top-0 text-start md:text-center border-b border-(--app-border) bg-(--app-bg)/80 px-4 py-3 font-bold backdrop-blur-md">
+          Comments
+        </div>
+
         <div className="divide-y divide-(--app-border) px-4">
           {post.comments.length === 0 ? (
             <p className="py-6 text-center text-sm text-(--app-muted)">

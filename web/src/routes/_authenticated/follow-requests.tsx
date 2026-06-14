@@ -23,9 +23,7 @@ function RouteComponent() {
 
   return (
     <>
-      <PageHeader>
-        <p className='text-center'>Follow Requests</p>
-      </PageHeader>
+      <PageHeader>Follow Requests</PageHeader>
       <div>
         {followRequests.length === 0 ? (
           <p className="py-6 text-center text-sm text-(--app-muted)">

@@ -93,10 +93,7 @@ function RouteComponent() {
 
   return (
     <>
-      <PageHeader>
-        <p className='text-center'>Edit Profile</p>
-      </PageHeader>
-
+      <PageHeader>Edit post</PageHeader>
       <div className="w-full p-4">
         <form onSubmit={formSubmitHandler} className="space-y-6">
           <div className="flex flex-col items-center gap-3">

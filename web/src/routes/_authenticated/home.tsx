@@ -1,6 +1,8 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import type { Post } from '../../types'
 import { PostCard } from '../../components/PostCard'
+import { Menu } from 'lucide-react'
+import { useMobileNav } from '../../context/mobileNav'
 
 type PostSearch = {
   posts?: 'following'
@@ -31,6 +33,7 @@ export const Route = createFileRoute('/_authenticated/home')({
 
 function RouteComponent() {
   const activeTab = Route.useSearch().posts
+  const { setIsOpen } = useMobileNav()
   const { posts }: { posts: Post[] } = Route.useLoaderData()
 
   const tabBase =
@@ -39,7 +42,14 @@ function RouteComponent() {
 
   return (
     <div className="flex flex-col">
-      <div className="sticky top-0 border-b border-(--app-border) bg-(--app-bg)/80 backdrop-blur-md">
+
+      <header className='sticky top-0 border-b border-(--app-border) bg-(--app-bg)/80 px-4 font-bold backdrop-blur-md'>
+        <div className='md:hidden flex items-center justify-between pt-3'>
+          <Link to='/home' className="text-lg font-bold">Neetwork</Link>
+          <button>
+            <Menu size={18} onClick={() => setIsOpen(true)} />
+          </button>
+        </div>
         <div className="mx-auto flex justify-center gap-6">
           <Link
             to="/home"
@@ -55,8 +65,7 @@ function RouteComponent() {
             Following
           </Link>
         </div>
-      </div>
-
+      </header>
       <div>
         {posts.map((post) => (
           <PostCard key={post.id} post={post} />

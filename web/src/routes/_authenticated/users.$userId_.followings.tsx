@@ -1,8 +1,8 @@
-import { createFileRoute, useRouter } from '@tanstack/react-router'
-import { MoveLeft } from 'lucide-react'
+import { createFileRoute } from '@tanstack/react-router'
 import type { Follow } from '../../types'
 import { useAuth } from '../../context/auth'
 import { FollowingCard } from '../../components/FollowingCard'
+import { PageHeader } from '../../components/PageHeader'
 
 export const Route = createFileRoute('/_authenticated/users/$userId_/followings')({
   loader: async ({ context, params: { userId } }) => {
@@ -28,23 +28,10 @@ function RouteComponent() {
   const { userId } = Route.useParams();
   const { followings }: { followings: Follow[] } = Route.useLoaderData()
   const isCurrentUser = currentUser?.id === userId
-  const router = useRouter()
 
   return (
-    <main className="mx-auto w-full max-w-md pb-20">
-      <div className="sticky top-12 z-10 flex h-12 items-center justify-between border-b border-(--app-border) bg-(--app-bg)/80 px-4 backdrop-blur-md">
-        <button
-          type="button"
-          onClick={() => router.history.back()}
-          className="text-sm text-(--app-muted) transition-colors hover:text-(--app-text)"
-        >
-          <MoveLeft />
-        </button>
-
-        <p className="text-sm font-medium text-(--app-text)">Following</p>
-
-        <div className="w-5" />
-      </div>
+    <>
+      <PageHeader>Followings</PageHeader>
 
       <div>
         {followings.length === 0 ? (
@@ -64,6 +51,6 @@ function RouteComponent() {
           </>
         )}
       </div>
-    </main>
+    </>
   )
 }

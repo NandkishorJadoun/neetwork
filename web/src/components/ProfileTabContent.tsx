@@ -43,7 +43,6 @@ const ProfileCommentList = ({ comments }: { comments: Comment[] }) => {
       {
         comments.map(comment => {
           const { id, text, author, post } = comment;
-          console.log(text)
           return (
             <div key={id}>
               <PostCard post={post} comment={<CommentCard author={author} text={text} />} />

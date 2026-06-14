@@ -22,9 +22,7 @@ function RouteComponent() {
   const { users }: { users: User[] } = Route.useLoaderData();
   return (
     <>
-      <PageHeader>
-        <p className='text-center'>Follow Users</p>
-      </PageHeader>
+      <PageHeader>Follow Users</PageHeader>
       <div>
         {users.length === 0 ? (
           <p className="py-6 text-center text-sm text-(--app-muted)">
