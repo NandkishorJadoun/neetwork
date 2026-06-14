@@ -28,7 +28,7 @@ export function MobileNavbar({ isOpen, setIsOpen, navItems, handleLogout }: Mobi
                     {navItems.map(item => {
                         const { to, name, icon } = item;
                         return (
-                            <li onClick={() => setIsOpen(false)}>
+                            <li key={name} onClick={() => setIsOpen(false)}>
                                 <Link to={to}
                                     activeProps={{ className: 'text-(--app-text)' }}
                                     className='flex items-center gap-3 rounded-md p-2 text-(--app-muted) border border-(--app-bg) hover:border-(--app-border) hover:bg-(--app-surface)/70'>

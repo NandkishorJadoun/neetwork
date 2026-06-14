@@ -3,6 +3,7 @@ import type { Post } from '../../types'
 import { PostCard } from '../../components/PostCard'
 import { Menu } from 'lucide-react'
 import { useMobileNav } from '../../context/mobileNav'
+import { useScrollListener } from '../../hooks/useScrollListener'
 
 type PostSearch = {
   posts?: 'following'
@@ -34,8 +35,11 @@ export const Route = createFileRoute('/_authenticated/home')({
 function RouteComponent() {
   const activeTab = Route.useSearch().posts
   const { setIsOpen } = useMobileNav()
-  const { posts }: { posts: Post[] } = Route.useLoaderData()
+  const scroll = useScrollListener();
 
+  const scrollStyles = scroll.y > 150 && scroll.y - scroll.lastY > 0 ? "invisible -translate-y-full" : "visible ";
+
+  const { posts }: { posts: Post[] } = Route.useLoaderData()
   const tabBase =
     'px-4 py-2 text-sm font-medium text-(--app-muted) transition-colors'
   const tabActive = 'text-(--app-text) border-b-2 border-(--app-accent)'
@@ -43,7 +47,7 @@ function RouteComponent() {
   return (
     <div className="flex flex-col">
 
-      <header className='sticky top-0 border-b border-(--app-border) bg-(--app-bg)/80 px-4 font-bold backdrop-blur-md'>
+      <div className={`${scrollStyles} transition-all duration-200 sticky top-0 border-b border-(--app-border) bg-(--app-bg)/80 px-4 font-bold backdrop-blur-md`}>
         <div className='md:hidden flex items-center justify-between pt-3'>
           <Link to='/home' className="text-lg font-bold">Neetwork</Link>
           <button>
@@ -65,7 +69,8 @@ function RouteComponent() {
             Following
           </Link>
         </div>
-      </header>
+      </div>
+
       <div>
         {posts.map((post) => (
           <PostCard key={post.id} post={post} />

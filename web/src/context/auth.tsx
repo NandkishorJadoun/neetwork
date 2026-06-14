@@ -1,4 +1,4 @@
-import React, { createContext, useState, useCallback } from "react"
+import React, { createContext, useState } from "react"
 
 interface AuthUser {
     id: string,
@@ -48,15 +48,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<AuthUser | null>(getStoredUser())
     const isAuthenticated = Boolean(user)
 
-    const logout = useCallback(() => {
+    const logout = () => {
         setStoredUser(null)
         setUser(null)
-    }, [])
+    }
 
-    const handleSetUser = useCallback((user: AuthUser) => {
+    const handleSetUser = (user: AuthUser) => {
         setStoredUser(user)
         setUser(user)
-    }, [])
+    }
 
     return (
         <AuthContext.Provider value={{ isAuthenticated, user, setUser: handleSetUser, logout }}>
