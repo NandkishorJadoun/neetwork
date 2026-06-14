@@ -50,7 +50,7 @@ function RouteComponent() {
   return (
     <>
       <PageHeader>Create post</PageHeader>
-      <form className="p-4" onSubmit={submitPostHandler}>
+      <form className="md:w-md mx-auto w-full p-4" onSubmit={submitPostHandler}>
         <textarea
           name="content"
           placeholder="What's happening?"

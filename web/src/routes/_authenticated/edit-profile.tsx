@@ -94,7 +94,7 @@ function RouteComponent() {
   return (
     <>
       <PageHeader>Edit post</PageHeader>
-      <div className="w-full p-4">
+      <div className="md:w-md mx-auto w-full p-4">
         <form onSubmit={formSubmitHandler} className="space-y-6">
           <div className="flex flex-col items-center gap-3">
             <img

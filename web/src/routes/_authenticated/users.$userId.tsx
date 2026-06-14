@@ -123,7 +123,7 @@ function RouteComponent() {
       </section>
 
       <section>
-        <div className="sticky top-0 z-40 mt-4 border-b border-(--app-border) bg-(--app-bg)/80 backdrop-blur-md">
+        <div className="sticky top-0 z-10 mt-4 border-b border-(--app-border) bg-(--app-bg)/80 backdrop-blur-md">
           <div className="mx-auto flex max-w-md justify-center gap-6 px-4">
             <Link
               to="/users/$userId"

@@ -1,7 +1,7 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { createFileRoute, redirect, Outlet, Link, useNavigate } from '@tanstack/react-router'
 import { useAuth } from '../context/auth'
-import { Home, Info, Menu, Pencil, UserRound, UserRoundCog, UserRoundPen, UserRoundPlus, UserRoundSearch } from 'lucide-react'
+import { Home, Info, Pencil, UserRound, UserRoundCog, UserRoundPen, UserRoundPlus, UserRoundSearch } from 'lucide-react'
 import { MobileNavbar } from '../components/MobileNavBar'
 import { SideBar } from '../components/SideBar'
 import { MobileNavContext } from "../context/mobileNav"
@@ -58,24 +58,34 @@ function RouteComponent() {
           </div>
         </div>
 
+        <MobileNavbar isOpen={isOpen} setIsOpen={setIsOpen} navItems={navItems} handleLogout={handleLogout} />
         <MobileNavContext.Provider value={{ isOpen, setIsOpen }} >
-          <main className="pb-12  flex-1 border border-(--app-border) border-y-0">
+          <main className="md:pb-0 pb-12 flex-1 border border-(--app-border) border-y-0">
             <Outlet />
           </main>
         </MobileNavContext.Provider>
       </div>
 
-      <div className="md:hidden fixed bottom-0 left-0 right-0 flex h-12 items-center justify-around border-t border-(--app-border) bg-(--app-bg)/80 backdrop-blur-md">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 flex py-3 items-center justify-around border-t border-(--app-border) bg-(--app-bg)/80 backdrop-blur-md">
         {bottomNavItems.map(item => {
           const { to, icon } = item
-          return <Link
-            to={to}
-            className='border-b-2 border-transparent'
-            activeProps={{ className: "border-(--app-accent)!" }}
-          >{icon}</Link>
+          return (
+            <Link
+              key={to}
+              to={to}
+              className="group flex items-center justify-center rounded-md p-2 transition"
+              activeProps={{ className: "text-(--app-text)" }}
+              inactiveProps={{ className: "text-(--app-muted)" }}
+            >
+              {({ isActive }) =>
+                isActive
+                  ? React.cloneElement(icon, { strokeWidth: 2.5 })
+                  : icon
+              }
+            </Link>
+          )
         })}
       </div>
-      <MobileNavbar isOpen={isOpen} setIsOpen={setIsOpen} navItems={navItems} handleLogout={handleLogout} />
     </>
   )
 }
