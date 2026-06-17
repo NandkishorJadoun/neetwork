@@ -30,6 +30,7 @@
     "@types/passport-oauth2": "^1.8.0",
     "@types/pg": "^8.20.0",
     "@types/supertest": "^7.2.0",
+    "@vitest/coverage-v8": "4.1.7",
     "eslint": "^10.3.0",
     "prettier": "3.8.1",
     "prisma": "^7.8.0",
