@@ -11,9 +11,19 @@ export const getAllPosts = async (req: Request, res: Response, next: NextFunctio
   }
 
   const { id } = req.user;
+  const { cursor } = req.query;
+  const isValidCursor = typeof cursor === "string" && cursor.length > 0
+  const LIMIT = 10
 
   try {
     const posts = await prisma.post.findMany({
+      ...(isValidCursor ? {
+        cursor: {
+          id: cursor
+        },
+        skip: 1
+      } : {}),
+      take: LIMIT,
       orderBy: {
         created_at: 'desc',
       },
@@ -39,7 +49,10 @@ export const getAllPosts = async (req: Request, res: Response, next: NextFunctio
       }
     })
 
-    return res.status(200).json({ posts })
+    const hasNextPage = posts.length === LIMIT;
+    const nextCursor = hasNextPage ? posts.at(-1)?.id : null;
+
+    res.status(200).json({ posts, nextCursor })
 
   } catch (error) {
     next(error)
