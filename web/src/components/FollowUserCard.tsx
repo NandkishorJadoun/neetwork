@@ -1,15 +1,14 @@
-import { Link, useRouter } from "@tanstack/react-router"
+import { Link } from "@tanstack/react-router"
 import { useAuth } from "../context/auth"
 import { useState } from "react"
 import type { User } from "../types"
 
 export const FollowUserCard = ({ user }: { user: User }) => {
-    const [isLoading, setIsLoading] = useState(false)
+    const [isRequestSent, setIsRequestSent] = useState(false);
     const { user: currentUser } = useAuth()
-    const router = useRouter()
 
     const sendFollowRequest = async () => {
-        setIsLoading(true)
+        setIsRequestSent(true)
         const url = `${import.meta.env.VITE_API_URL}/users/${user.id}/follow-request`;
         const options = {
             method: "POST",
@@ -20,13 +19,18 @@ export const FollowUserCard = ({ user }: { user: User }) => {
         }
 
         try {
-            await fetch(url, options);
-            router.invalidate();
+            const res = await fetch(url, options);
+
+            if (!res.ok) {
+                setIsRequestSent(false)
+            }
+
         } catch (error) {
             console.error(error);
         }
-        setIsLoading(false)
     }
+
+    if (isRequestSent) return null
 
     return (
         <div className="flex items-center justify-between gap-3 border-b border-(--app-border) px-4 py-3">
@@ -53,11 +57,10 @@ export const FollowUserCard = ({ user }: { user: User }) => {
             </Link>
 
             <button
-                disabled={isLoading}
                 onClick={sendFollowRequest}
                 className="shrink-0 rounded-md border border-(--app-border) px-3 py-1.5 text-sm font-medium hover:bg-(--app-surface)"
             >
-                {isLoading ? "Sending..." : "Follow"}
+                Follow
             </button>
         </div>
     )
