@@ -1,4 +1,4 @@
-import { Link, useRouter } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { useAuth } from "../context/auth";
 import { useState, type JSX } from "react";
 import type { Post } from "../types";
@@ -6,14 +6,21 @@ import { Heart, MessageCircle } from "lucide-react";
 
 export const PostCard = ({ post, comment }: { post: Post, comment?: JSX.Element }) => {
   const { user } = useAuth();
-  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const isLiked = post.likes.length > 0;
+  const [isLiked, setIsLiked] = useState(post.likes.length > 0);
+  const [likeCount, setLikeCount] = useState(post._count.likes)
 
   const likeHandler = async () => {
+    const nextLiked = !isLiked
+
+    setIsLiked(nextLiked)
+    setLikeCount(prev => prev + (nextLiked ? 1 : -1))
+
     setIsLoading(true)
-    const url = `${import.meta.env.VITE_API_URL}/posts/${post.id}/like`;
-    const method = isLiked ? "DELETE" : "POST";
+
+    const url = `${import.meta.env.VITE_API_URL}/posts/${post.id}/like`
+    const method = nextLiked ? "POST" : "DELETE"
+
     const options = {
       method,
       headers: {
@@ -24,7 +31,6 @@ export const PostCard = ({ post, comment }: { post: Post, comment?: JSX.Element 
 
     try {
       await fetch(url, options);
-      router.invalidate();
     } catch (error) {
       console.error(error);
     }
@@ -78,8 +84,6 @@ export const PostCard = ({ post, comment }: { post: Post, comment?: JSX.Element 
               rounded-full p-1.5 transition-colors
               hover:bg-pink-600/10
               hover:text-pink-600
-              disabled:cursor-not-allowed
-              disabled:opacity-50
               ${isLiked ? "text-pink-600" : ""}
             `}
               >
@@ -93,7 +97,7 @@ export const PostCard = ({ post, comment }: { post: Post, comment?: JSX.Element 
                 to="/posts/$postId/likes"
                 params={{ postId: post.id }}
               >
-                {post._count.likes}
+                {likeCount}
               </Link>
             </div>
 
@@ -122,7 +126,7 @@ export const PostCard = ({ post, comment }: { post: Post, comment?: JSX.Element 
           <div className="w-10 h-10 shrink-0 flex justify-end relative">
             <div className="w-1/2 h-[150%] absolute -top-7.5 right-0 border-l-2 border-b-2 border-(--app-border) rounded-bl-xl" />
           </div>
-          <div className="min-w-0 flex-1 text-xs  rounded-xl px-2.5">
+          <div className="min-w-0 flex-1 text-xs rounded-xl px-2.5">
             {comment}
           </div>
         </div>
