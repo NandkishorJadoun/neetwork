@@ -5,18 +5,38 @@ import { ZodError } from "zod";
 import { Prisma } from "../../generated/prisma/index.js";
 
 export const getAllPosts = async (req: Request, res: Response, next: NextFunction) => {
-
   if (!req.user) {
     return res.status(401).json({ message: "Unauthorized" });
   }
 
   const { id } = req.user;
-  const { cursor } = req.query;
-  const isValidCursor = typeof cursor === "string" && cursor.length > 0
-  const LIMIT = 10
+  const { cursor, users } = req.query;
+  const isFollowingTab = users === "following";
+  const isValidCursor = typeof cursor === "string" && cursor.length > 0 && cursor !== 'null'
+
+  const LIMIT = 10;
 
   try {
     const posts = await prisma.post.findMany({
+      ...(isFollowingTab ? {
+        where: {
+          OR: [
+            {
+              userId: id
+            },
+            {
+              author: {
+                followers: {
+                  some: {
+                    fromId: id,
+                    status: "ACCEPTED"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      } : {}),
       ...(isValidCursor ? {
         cursor: {
           id: cursor
@@ -53,65 +73,6 @@ export const getAllPosts = async (req: Request, res: Response, next: NextFunctio
     const nextCursor = hasNextPage ? posts.at(-1)?.id : null;
 
     res.status(200).json({ posts, nextCursor })
-
-  } catch (error) {
-    next(error)
-  }
-}
-
-export const getFollowingUserPosts = async (req: Request, res: Response, next: NextFunction) => {
-  if (!req.user) {
-    return res.status(401).json({ message: "Unauthorized" });
-  }
-
-  const { id } = req.user;
-
-  try {
-    const posts = await prisma.post.findMany({
-      where: {
-        OR: [
-          {
-            userId: id
-          },
-          {
-            author: {
-              followers: {
-                some: {
-                  fromId: id,
-                  status: "ACCEPTED"
-                }
-              }
-            }
-          }
-        ]
-      },
-      include: {
-        author: {
-          select: {
-            avatar: true,
-            username: true,
-            fullname: true
-          }
-        },
-        _count: {
-          select: {
-            likes: true,
-            comments: true
-          }
-        },
-        likes: {
-          where: {
-            userId: id
-          }
-        }
-
-      },
-      orderBy: {
-        created_at: 'desc',
-      },
-    })
-
-    return res.status(200).json({ posts })
 
   } catch (error) {
     next(error)
