@@ -1,3 +1,4 @@
+import type { ActiveTab } from "../routes/_authenticated/home"
 import type { Post } from "../types"
 
 type FetchPostsResponse = {
@@ -6,13 +7,14 @@ type FetchPostsResponse = {
 }
 
 type FetchPostsArgs = {
-    token?: string
-    posts?: 'following'
+    token: string
+    activeTab: ActiveTab
     nextCursor: string
 }
 
-export const fetchFeedPosts = async ({ token, posts, nextCursor }: FetchPostsArgs): Promise<FetchPostsResponse> => {
-    const url = `${import.meta.env.VITE_API_URL}/posts${posts ? '/following' : ''}?cursor=${nextCursor}`
+export const fetchFeedPosts = async ({ token, activeTab, nextCursor }: FetchPostsArgs): Promise<FetchPostsResponse> => {
+    const url = `${import.meta.env.VITE_API_URL}/posts?users=${activeTab}&cursor=${nextCursor}`
+    console.log(url)
     const options = {
         headers: {
             Authorization: `Bearer ${token}`,

@@ -1,42 +1,44 @@
 import { useEffect } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/react-query'
-import { useAuth } from '../../context/auth'
 import { HomePageHeader } from '../../components/HomePageHeader'
 import { useInView } from 'react-intersection-observer'
 import { PostCard } from '../../components/PostCard'
 import { fetchFeedPosts } from '../../services/posts'
+import { PostCardSkeleton } from '../../components/PostSkeleton'
 
-const postsQueryOptions = (token: string | undefined, posts: "following" | undefined) =>
+export type ActiveTab = "all" | "following"
+
+const postsQueryOptions = (token: string, activeTab: ActiveTab) =>
   infiniteQueryOptions({
-    queryKey: ['feed-posts', { token, posts }],
-    queryFn: ({ pageParam: nextCursor }) => fetchFeedPosts({ token, posts, nextCursor }),
+    queryKey: ['feed-posts', { token, activeTab }],
+    queryFn: ({ pageParam: nextCursor }) => fetchFeedPosts({ token, activeTab, nextCursor }),
     initialPageParam: "",
     getNextPageParam: ({ nextCursor }) => nextCursor
   })
 
 export const Route = createFileRoute('/_authenticated/home')({
-  validateSearch: (search: Record<string, unknown>): { posts?: "following" } => {
+  validateSearch: (search: Record<string, unknown>): { users?: "following" } => {
     return {
-      posts: search.posts === 'following' ? 'following' : undefined,
+      users: search.users === 'following' ? 'following' : undefined,
     }
   },
-  loaderDeps: ({ search }) => ({ posts: search.posts }),
+  loaderDeps: ({ search }) => ({ users: search.users }),
   loader: async ({ context, deps }) => {
-    const { posts } = deps
-    const token = context.auth.user?.token
-    const { queryClient } = context;
-
-    await queryClient.ensureInfiniteQueryData(postsQueryOptions(token, posts))
+    const activeTab = deps.users ?? "all"
+    const { queryClient, user } = context;
+    const { token } = user;
+    await queryClient.ensureInfiniteQueryData(postsQueryOptions(token, activeTab))
+    return { token }
   },
   component: RouteComponent,
 })
 
 function RouteComponent() {
-  const activeTab = Route.useSearch().posts
-  const { user } = useAuth()
+  const activeTab = Route.useSearch().users ?? "all"
+  const { token } = Route.useLoaderData()
   const { ref, inView } = useInView();
-  const { data, hasNextPage, fetchNextPage } = useInfiniteQuery(postsQueryOptions(user?.token, activeTab))
+  const { data, hasNextPage, fetchNextPage } = useInfiniteQuery(postsQueryOptions(token, activeTab))
 
   useEffect(() => {
     if (inView && hasNextPage) {
@@ -55,9 +57,11 @@ function RouteComponent() {
         }
         {
           hasNextPage ?
-            <p ref={ref} className="py-6 text-center text-xs text-(--app-muted)">
-              Loading...
-            </p>
+            <>
+              <PostCardSkeleton ref={ref} />
+              <PostCardSkeleton />
+              <PostCardSkeleton />
+            </>
             :
             <p className="py-6 text-center text-xs text-(--app-muted)">
               End of list
