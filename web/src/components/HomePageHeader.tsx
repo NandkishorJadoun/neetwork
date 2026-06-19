@@ -2,8 +2,9 @@ import { Menu } from "lucide-react"
 import { useMobileNav } from "../context/mobileNav";
 import { useScrollListener } from "../hooks/useScrollListener";
 import { Link } from "@tanstack/react-router";
+import type { ActiveTab } from "../routes/_authenticated/home";
 
-export const HomePageHeader = ({ tab }: { tab?: "following" }) => {
+export const HomePageHeader = ({ tab }: { tab: ActiveTab }) => {
     const { setIsOpen } = useMobileNav()
     const scroll = useScrollListener();
 
@@ -20,14 +21,14 @@ export const HomePageHeader = ({ tab }: { tab?: "following" }) => {
         <div className="mx-auto flex justify-center gap-6">
             <Link
                 to="/home"
-                className={`${tabBase} ${!tab ? tabActive : ''}`}
+                className={`${tabBase} ${tab === "all" ? tabActive : ''}`}
             >
                 All
             </Link>
             <Link
                 to="/home"
-                search={{ posts: 'following' }}
-                className={`${tabBase} ${tab ? tabActive : ''}`}
+                search={{ users: 'following' }}
+                className={`${tabBase} ${tab === "following" ? tabActive : ''}`}
             >
                 Following
             </Link>
