@@ -9,10 +9,13 @@ import { MobileBottomNav } from '../components/MobileBottomNav'
 
 export const Route = createFileRoute('/_authenticated')({
   beforeLoad: ({ context }) => {
-    if (!context.auth.isAuthenticated) {
+    if (!context.auth.isAuthenticated || !context.auth.user) {
       throw redirect({
         to: '/login',
       })
+    }
+    return {
+      user: context.auth.user
     }
   },
   component: RouteComponent,
@@ -26,11 +29,10 @@ function RouteComponent() {
     logout()
     navigate({ to: '/login', replace: true })
   }
-  if (!user) return
 
   const navItems = [
     { to: "/home", name: "Home", icon: <Home size={20} /> },
-    { to: `/users/${user.id}`, name: "User", icon: <UserRound size={20} /> },
+    { to: `/users/${user?.id}`, name: "User", icon: <UserRound size={20} /> },
     { to: "/edit-profile", name: "Edit Profile", icon: <UserRoundPen size={20} /> },
     { to: "/create-post", name: "Create Post", icon: <Pencil size={20} /> },
     { to: "/follow-requests", name: "Follow Requests", icon: <UserRoundPlus size={20} /> },
