@@ -1,16 +1,22 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
-import type { Post } from '../../types'
+import { useEffect } from 'react'
+import { createFileRoute } from '@tanstack/react-router'
+import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/react-query'
+import { useAuth } from '../../context/auth'
+import { HomePageHeader } from '../../components/HomePageHeader'
+import { useInView } from 'react-intersection-observer'
 import { PostCard } from '../../components/PostCard'
-import { Menu } from 'lucide-react'
-import { useMobileNav } from '../../context/mobileNav'
-import { useScrollListener } from '../../hooks/useScrollListener'
+import { fetchFeedPosts } from '../../services/posts'
 
-type PostSearch = {
-  posts?: 'following'
-}
+const postsQueryOptions = (token: string | undefined, posts: "following" | undefined) =>
+  infiniteQueryOptions({
+    queryKey: ['feed-posts', { token, posts }],
+    queryFn: ({ pageParam: nextCursor }) => fetchFeedPosts({ token, posts, nextCursor }),
+    initialPageParam: "",
+    getNextPageParam: ({ nextCursor }) => nextCursor
+  })
 
 export const Route = createFileRoute('/_authenticated/home')({
-  validateSearch: (search: Record<string, unknown>): PostSearch => {
+  validateSearch: (search: Record<string, unknown>): { posts?: "following" } => {
     return {
       posts: search.posts === 'following' ? 'following' : undefined,
     }
@@ -19,66 +25,44 @@ export const Route = createFileRoute('/_authenticated/home')({
   loader: async ({ context, deps }) => {
     const { posts } = deps
     const token = context.auth.user?.token
-    const url = `${import.meta.env.VITE_API_URL}/posts${posts ? '/following' : ''}`
+    const { queryClient } = context;
 
-    const res = await fetch(url, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-
-    return await res.json()
+    await queryClient.ensureInfiniteQueryData(postsQueryOptions(token, posts))
   },
   component: RouteComponent,
 })
 
 function RouteComponent() {
   const activeTab = Route.useSearch().posts
-  const { setIsOpen } = useMobileNav()
-  const scroll = useScrollListener();
+  const { user } = useAuth()
+  const { ref, inView } = useInView();
+  const { data, hasNextPage, fetchNextPage } = useInfiniteQuery(postsQueryOptions(user?.token, activeTab))
 
-  const scrollStyles = scroll.y > 150 && scroll.y - scroll.lastY > 0 ? "invisible -translate-y-full" : "visible ";
-
-  const { posts }: { posts: Post[] } = Route.useLoaderData()
-  const tabBase =
-    'px-4 py-2 text-sm font-medium text-(--app-muted) transition-colors'
-  const tabActive = 'text-(--app-text) border-b-2 border-(--app-accent)'
+  useEffect(() => {
+    if (inView && hasNextPage) {
+      fetchNextPage()
+    }
+  }, [inView, hasNextPage, fetchNextPage])
 
   return (
     <div className="flex flex-col">
-
-      <div className={`${scrollStyles} transition-all duration-200 sticky top-0 border-b border-(--app-border) bg-(--app-bg)/80 px-4 font-bold backdrop-blur-md`}>
-        <div className='md:hidden flex items-center justify-between pt-3'>
-          <Link to='/home' className="text-lg font-bold">Neetwork</Link>
-          <button>
-            <Menu size={18} onClick={() => setIsOpen(true)} />
-          </button>
-        </div>
-        <div className="mx-auto flex justify-center gap-6">
-          <Link
-            to="/home"
-            className={`${tabBase} ${!activeTab ? tabActive : ''}`}
-          >
-            All
-          </Link>
-          <Link
-            to="/home"
-            search={{ posts: 'following' }}
-            className={`${tabBase} ${activeTab ? tabActive : ''}`}
-          >
-            Following
-          </Link>
-        </div>
-      </div>
-
+      <HomePageHeader tab={activeTab} />
       <div>
-        {posts.map((post) => (
-          <PostCard key={post.id} post={post} />
-        ))}
-
-        <p className="py-6 text-center text-xs text-(--app-muted)">
-          End of list
-        </p>
+        {
+          data?.pages.flatMap(page => page.posts).map(post => (
+            <PostCard key={post.id} post={post} />
+          ))
+        }
+        {
+          hasNextPage ?
+            <p ref={ref} className="py-6 text-center text-xs text-(--app-muted)">
+              Loading...
+            </p>
+            :
+            <p className="py-6 text-center text-xs text-(--app-muted)">
+              End of list
+            </p>
+        }
       </div>
     </div>
   )
