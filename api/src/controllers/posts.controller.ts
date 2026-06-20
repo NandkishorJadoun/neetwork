@@ -1,14 +1,11 @@
 import { prisma } from "../configs/prisma.js";
-import type { Request, Response, NextFunction } from "express";
+import type { Response, NextFunction } from "express";
 import { CommentFormSchema, PostFormSchema } from "../schemas/form-validation.schema.js";
 import { ZodError } from "zod";
 import { Prisma } from "../../generated/prisma/index.js";
+import type { AuthRequest } from "../types/express.js";
 
-export const getAllPosts = async (req: Request, res: Response, next: NextFunction) => {
-  if (!req.user) {
-    return res.status(401).json({ message: "Unauthorized" });
-  }
-
+export const getAllPosts = async (req: AuthRequest, res: Response, next: NextFunction) => {
   const { id } = req.user;
   const { cursor, users } = req.query;
   const isFollowingTab = users === "following";
@@ -79,12 +76,8 @@ export const getAllPosts = async (req: Request, res: Response, next: NextFunctio
   }
 }
 
-export const createPost = async (req: Request, res: Response, next: NextFunction) => {
+export const createPost = async (req: AuthRequest, res: Response, next: NextFunction) => {
   const { body, user } = req;
-
-  if (!user) {
-    return res.status(401).json({ message: "Unauthorized" });
-  }
 
   try {
     const postForm = PostFormSchema.parse(body)
@@ -106,10 +99,7 @@ export const createPost = async (req: Request, res: Response, next: NextFunction
   }
 }
 
-export const getPostById = async (req: Request, res: Response, next: NextFunction) => {
-  if (!req.user) {
-    return res.status(401).json({ message: "Unauthorized" });
-  }
+export const getPostById = async (req: AuthRequest, res: Response, next: NextFunction) => {
 
   const { id: userId } = req.user;
   const { postId } = req.params
@@ -164,11 +154,7 @@ export const getPostById = async (req: Request, res: Response, next: NextFunctio
   }
 }
 
-export const deletePost = async (req: Request, res: Response, next: NextFunction) => {
-  if (!req.user) {
-    return res.status(401).json({ message: "Unauthorized" });
-  }
-
+export const deletePost = async (req: AuthRequest, res: Response, next: NextFunction) => {
   const userId = req.user.id;
   const id = req.params.postId
 
@@ -193,17 +179,13 @@ export const deletePost = async (req: Request, res: Response, next: NextFunction
   }
 }
 
-export const createComment = async (req: Request, res: Response, next: NextFunction) => {
+export const createComment = async (req: AuthRequest, res: Response, next: NextFunction) => {
   const { body, user, params } = req;
 
   if (Array.isArray(params.postId) || !params.postId) {
     return res.status(400).json({ message: "Invalid Post ID" })
   }
-
-  if (!user) {
-    return res.status(401).json({ message: "Unauthorized" });
-  }
-
+ 
   try {
     const commentForm = CommentFormSchema.parse(body)
 
@@ -225,7 +207,7 @@ export const createComment = async (req: Request, res: Response, next: NextFunct
   }
 }
 
-export const getLikesByPostId = async (req: Request, res: Response, next: NextFunction) => {
+export const getLikesByPostId = async (req: AuthRequest, res: Response, next: NextFunction) => {
 
   const { postId } = req.params
 
@@ -256,15 +238,11 @@ export const getLikesByPostId = async (req: Request, res: Response, next: NextFu
   }
 }
 
-export const likePost = async (req: Request, res: Response, next: NextFunction) => {
+export const likePost = async (req: AuthRequest, res: Response, next: NextFunction) => {
   const { user, params } = req;
 
   if (Array.isArray(params.postId) || !params.postId) {
     return res.status(400).json({ message: "Invalid Post ID" })
-  }
-
-  if (!user) {
-    return res.status(401).json({ message: "Unauthorized" });
   }
 
   try {
@@ -287,17 +265,12 @@ export const likePost = async (req: Request, res: Response, next: NextFunction) 
   }
 }
 
-export const unlikePost = async (req: Request, res: Response, next: NextFunction) => {
+export const unlikePost = async (req: AuthRequest, res: Response, next: NextFunction) => {
   const { user, params } = req;
-
   const { postId } = params;
 
   if (typeof postId === "object" || !postId) {
     return res.status(400).json({ message: "Invalid Post ID" })
-  }
-
-  if (!user) {
-    return res.status(401).json({ message: "Unauthorized" });
   }
 
   const userId = user.id;

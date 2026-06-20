@@ -1,15 +1,12 @@
 import { ZodError } from "zod";
 import { prisma } from "../configs/prisma.js";
 import { Prisma } from "../../generated/prisma/index.js";
-import type { Request, Response, NextFunction } from "express";
+import type { Response, NextFunction } from "express";
 import { uploadOnCloudinary } from "../configs/cloudinary.js";
 import { PatchFormDataSchema } from "../schemas/form-validation.schema.js";
+import type { AuthRequest } from "../types/express.js";
 
-export const getUserProfile = async (req: Request, res: Response, next: NextFunction) => {
-    if (!req.user) {
-        return res.status(401).json({ message: "Unauthorized" });
-    }
-
+export const getUserProfile = async (req: AuthRequest, res: Response, next: NextFunction) => {
     const { id } = req.user
 
     try {
@@ -25,12 +22,8 @@ export const getUserProfile = async (req: Request, res: Response, next: NextFunc
     }
 }
 
-export const updateUserProfile = async (req: Request, res: Response, next: NextFunction) => {
+export const updateUserProfile = async (req: AuthRequest, res: Response, next: NextFunction) => {
     const { file, body, user } = req
-
-    if (!user) {
-        return res.status(401).json({ message: "Unauthorized" });
-    }
 
     const { id } = user;
     let avatar = null;
@@ -59,11 +52,7 @@ export const updateUserProfile = async (req: Request, res: Response, next: NextF
 
 }
 
-export const getAllFollowRequests = async (req: Request, res: Response, next: NextFunction) => {
-    if (!req.user) {
-        return res.status(401).json({ message: "Unauthorized" });
-    }
-
+export const getAllFollowRequests = async (req: AuthRequest, res: Response, next: NextFunction) => {
     const { id } = req.user
 
     try {
@@ -87,11 +76,7 @@ export const getAllFollowRequests = async (req: Request, res: Response, next: Ne
     }
 }
 
-export const acceptFollowRequest = async (req: Request, res: Response, next: NextFunction) => {
-    if (!req.user) {
-        return res.status(401).json({ message: "Unauthorized" });
-    }
-
+export const acceptFollowRequest = async (req: AuthRequest, res: Response, next: NextFunction) => {
     const toId = req.user.id
     const fromId = req.params.userId;
 
@@ -122,10 +107,7 @@ export const acceptFollowRequest = async (req: Request, res: Response, next: Nex
     }
 }
 
-export const rejectFollowRequest = async (req: Request, res: Response, next: NextFunction) => {
-    if (!req.user) {
-        return res.status(401).json({ message: "Unauthorized" });
-    }
+export const rejectFollowRequest = async (req: AuthRequest, res: Response, next: NextFunction) => {
 
     const toId = req.user.id
     const fromId = req.params.userId;
@@ -154,10 +136,7 @@ export const rejectFollowRequest = async (req: Request, res: Response, next: Nex
     }
 }
 
-export const removeFollower = async (req: Request, res: Response, next: NextFunction) => {
-    if (!req.user) {
-        return res.status(401).json({ message: "Unauthorized" });
-    }
+export const removeFollower = async (req: AuthRequest, res: Response, next: NextFunction) => {
 
     const toId = req.user.id
     const fromId = req.params.userId;
