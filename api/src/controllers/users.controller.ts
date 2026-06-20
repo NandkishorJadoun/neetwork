@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
-import { prisma } from "../libs/prisma.js";
+import { prisma } from "../configs/prisma.js";
 import { Prisma } from "../../generated/prisma/index.js";
 
 export const getAllNonFollowingUsers = async (req: Request, res: Response, next: NextFunction) => {

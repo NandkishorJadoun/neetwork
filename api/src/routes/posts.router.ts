@@ -1,5 +1,5 @@
 import express, { Router } from "express"
-import { passport } from "../libs/passport.js";
+import { passport } from "../configs/passport.js";
 import { createComment, createPost, deletePost, getAllPosts, getPostById, getLikesByPostId,likePost, unlikePost } from "../controllers/posts.controller.js";
 
 export const postsRouter: Router = express.Router();

@@ -1,16 +1,16 @@
 import app from '../src/app'
 import { expect, describe, it, beforeAll, afterAll, afterEach, beforeEach, vi } from 'vitest'
 import request from "supertest"
-import { prisma } from "../src/libs/prisma"
+import { prisma } from "../src/configs/prisma"
 import { createMockUser } from "../src/scripts/mock-data"
 import { env } from '../src/schemas/env.schema'
 import jwt from "jsonwebtoken"
 import type { ValidationError } from "../src/types/index"
-import type { Follow } from '@prisma/client'
+import type { Follow } from '../generated/prisma'
 
 // mock uploadOnCloudinary function
 
-vi.mock("../src/utils/cloudinary", () => {
+vi.mock("../src/configs/cloudinary", () => {
     return {
         uploadOnCloudinary: vi.fn().mockResolvedValue({
             secure_url: "https://cloudinary.com"

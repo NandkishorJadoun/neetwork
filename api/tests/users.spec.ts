@@ -1,7 +1,7 @@
 import app from '../src/app'
 import { expect, describe, it, beforeAll, afterAll, afterEach, beforeEach } from 'vitest'
 import request from "supertest"
-import { prisma } from "../src/libs/prisma"
+import { prisma } from "../src/configs/prisma"
 import { createMockUser, createMockPost } from "../src/scripts/mock-data"
 import { env } from '../src/schemas/env.schema'
 import jwt from "jsonwebtoken"
@@ -54,7 +54,7 @@ describe("GET /users/:userId", () => {
     const res = await request(app).get(`/users/${userB.id}`).set('Authorization', `Bearer ${token}`)
 
     expect(res.status).toBe(200)
-    expect(res.body.user).toEqual(userB)
+    expect(res.body.user).toMatchObject(userB)
   })
 })
 

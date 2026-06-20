@@ -1,5 +1,5 @@
 import express, { Router } from "express"
-import { passport } from "../libs/passport.js";
+import { passport } from "../configs/passport.js";
 import { getGithubCallback, getGuestLogin } from "../controllers/auth.controller.js";
 
 

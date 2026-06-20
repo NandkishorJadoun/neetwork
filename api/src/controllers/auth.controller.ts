@@ -2,8 +2,8 @@ import type { Profile } from "passport-github2";
 import jwt from "jsonwebtoken";
 import { env } from "../schemas/env.schema.js";
 import type { NextFunction, Request, Response } from "express";
-import { passport } from "../libs/passport.js";
-import { prisma } from "../libs/prisma.js";
+import { passport } from "../configs/passport.js";
+import { prisma } from "../configs/prisma.js";
 
 const guestUserInfo = {
     githubId: "619515",

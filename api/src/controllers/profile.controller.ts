@@ -1,8 +1,8 @@
 import { ZodError } from "zod";
-import { prisma } from "../libs/prisma.js";
+import { prisma } from "../configs/prisma.js";
 import { Prisma } from "../../generated/prisma/index.js";
 import type { Request, Response, NextFunction } from "express";
-import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import { uploadOnCloudinary } from "../configs/cloudinary.js";
 import { PatchFormDataSchema } from "../schemas/form-validation.schema.js";
 
 export const getUserProfile = async (req: Request, res: Response, next: NextFunction) => {

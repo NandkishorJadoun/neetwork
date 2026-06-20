@@ -1,4 +1,4 @@
-import { prisma } from "../libs/prisma.js";
+import { prisma } from "../configs/prisma.js";
 import type { Request, Response, NextFunction } from "express";
 import { CommentFormSchema, PostFormSchema } from "../schemas/form-validation.schema.js";
 import { ZodError } from "zod";
@@ -290,7 +290,9 @@ export const likePost = async (req: Request, res: Response, next: NextFunction) 
 export const unlikePost = async (req: Request, res: Response, next: NextFunction) => {
   const { user, params } = req;
 
-  if (Array.isArray(params.postId) || !params.postId) {
+  const { postId } = params;
+
+  if (typeof postId === "object" || !postId) {
     return res.status(400).json({ message: "Invalid Post ID" })
   }
 
@@ -298,7 +300,6 @@ export const unlikePost = async (req: Request, res: Response, next: NextFunction
     return res.status(401).json({ message: "Unauthorized" });
   }
 
-  const { postId } = params;
   const userId = user.id;
 
   try {

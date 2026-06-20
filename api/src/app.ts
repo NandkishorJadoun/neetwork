@@ -5,7 +5,7 @@ import { authRouter } from "./routes/auth.router.js";
 import { usersRouter } from "./routes/users.router.js";
 import { profileRouter } from "./routes/profile.router.js";
 import { postsRouter } from "./routes/posts.router.js";
-import { UploadValidationError } from "./utils/UploadValidationError.js";
+import { UploadValidationError } from "./configs/multer.js";
 
 const app: Express = express()
 

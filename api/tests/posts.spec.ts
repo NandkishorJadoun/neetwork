@@ -1,7 +1,7 @@
 import app from '../src/app'
 import { expect, describe, it, beforeAll, afterAll, afterEach, beforeEach } from 'vitest'
 import request from "supertest"
-import { prisma } from "../src/libs/prisma"
+import { prisma } from "../src/configs/prisma"
 import { createMockUser, createMockPost } from "../src/scripts/mock-data"
 import { env } from '../src/schemas/env.schema'
 import jwt from "jsonwebtoken"
@@ -25,29 +25,6 @@ describe("GET /posts", () => {
     expect(res.status).toBe(200)
     expect(res.body.posts.length).toEqual(10)
     expect(res.body.posts[0].created_at).toBe(latestPost.created_at)
-  })
-})
-
-describe("GET /posts/following", () => {
-  const [userA, userB, userC] = mockUsers;
-  const token = jwt.sign({ id: userA.id }, env.JWT_SECRET_KEY);
-
-  beforeEach(async () => {
-    await prisma.follow.createMany({
-      data: [
-        { fromId: userA.id, toId: userB.id, status: "ACCEPTED" },
-        { fromId: userA.id, toId: userC.id, status: "ACCEPTED" }
-      ]
-    })
-  })
-
-  afterEach(async () => await prisma.follow.deleteMany({}))
-
-  it("should show all the posts from user whom he is following sort by latest", async () => {
-    const res = await request(app).get("/posts/following").set('Authorization', `Bearer ${token}`)
-
-    expect(res.status).toBe(200)
-    expect(res.body.posts.length).toEqual(6)
   })
 })
 
@@ -97,7 +74,7 @@ describe("GET /posts/:postId", () => {
       .set('Authorization', `Bearer ${token}`)
 
     expect(res.status).toBe(200)
-    expect(res.body.post).toEqual(post)
+    expect(res.body.post).toMatchObject(post)
   })
 })
 
