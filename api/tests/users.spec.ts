@@ -74,6 +74,120 @@ describe("GET /users/:userId/posts", () => {
   })
 })
 
+describe("GET /users/:userId/comments", () => {
+  afterEach(async () => {
+    await prisma.comment.deleteMany({})
+    await prisma.post.deleteMany({})
+  })
+
+  const [userA, userB] = mockUsers;
+  const token = jwt.sign({ id: userA.id }, env.JWT_SECRET_KEY);
+
+  it("will send all the user's comment", async () => {
+    const mockPost = createMockPost(userA.id);
+    await prisma.post.create({ data: mockPost })
+
+    // User B mock comments on mock post
+
+    await prisma.comment.createMany({
+      data: [
+        { userId: userB.id, postId: mockPost.id, text: "First Comment" },
+        { userId: userB.id, postId: mockPost.id, text: "Second Comment" }
+      ]
+    })
+
+    const res = await request(app).get(`/users/${userB.id}/comments`).set('Authorization', `Bearer ${token}`)
+
+    expect(res.status).toBe(200)
+    expect(res.body.comments.length).toEqual(2)
+    expect(res.body.comments).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ text: 'First Comment' }),
+        expect.objectContaining({ text: 'Second Comment' })
+      ])
+    )
+  })
+})
+
+describe("GET /users/:userId/likes", () => {
+  afterEach(async () => {
+    await prisma.like.deleteMany({})
+    await prisma.post.deleteMany({})
+  })
+
+  const [userA, userB] = mockUsers;
+  const token = jwt.sign({ id: userA.id }, env.JWT_SECRET_KEY);
+
+  it("will send all the posts that user have liked", async () => {
+    const mockPosts = Array.from({ length: 5 }).map(() => createMockPost(userA.id));
+
+    await prisma.post.createMany({ data: mockPosts })
+    await prisma.like.createMany({ data: [{ postId: mockPosts[1].id, userId: userB.id }, { postId: mockPosts[4].id, userId: userB.id }] })
+
+    const res = await request(app).get(`/users/${userB.id}/likes`).set('Authorization', `Bearer ${token}`)
+
+    expect(res.status).toBe(200)
+    expect(res.body.likes.length).toEqual(2)
+  })
+})
+
+describe("GET /users/:userId/followers", () => {
+  afterEach(async () => await prisma.follow.deleteMany({}))
+
+  const [userA, userB, userC] = mockUsers;
+  const token = jwt.sign({ id: userA.id }, env.JWT_SECRET_KEY);
+
+  it("will return all the followers of user", async () => {
+
+    await prisma.follow.createMany({
+      data: [
+        { fromId: userA.id, toId: userB.id, status: "ACCEPTED" },
+        { fromId: userC.id, toId: userB.id, status: "ACCEPTED" },
+      ]
+    })
+
+    const res = await request(app).get(`/users/${userB.id}/followers`).set('Authorization', `Bearer ${token}`)
+
+    expect(res.status).toBe(200)
+    expect(res.body.followers.length).toEqual(2)
+    expect(res.body.followers).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ fromId: userA.id }),
+        expect.objectContaining({ fromId: userC.id })
+      ])
+    )
+
+  })
+})
+
+describe("GET /users/:userId/followings", () => {
+  afterEach(async () => await prisma.follow.deleteMany({}))
+
+  const [userA, userB, userC] = mockUsers;
+  const token = jwt.sign({ id: userA.id }, env.JWT_SECRET_KEY);
+
+  it("will return all the followings of user", async () => {
+
+    await prisma.follow.createMany({
+      data: [
+        { fromId: userB.id, toId: userA.id, status: "ACCEPTED" },
+        { fromId: userB.id, toId: userC.id, status: "ACCEPTED" },
+      ]
+    })
+
+    const res = await request(app).get(`/users/${userB.id}/followings`).set('Authorization', `Bearer ${token}`)
+
+    expect(res.status).toBe(200)
+    expect(res.body.followings.length).toEqual(2)
+    expect(res.body.followings).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ toId: userA.id }),
+        expect.objectContaining({ toId: userC.id })
+      ])
+    )
+  })
+})
+
 describe("POST /users/:userId/follow-request", () => {
   afterEach(async () => await prisma.follow.deleteMany({}))
 
