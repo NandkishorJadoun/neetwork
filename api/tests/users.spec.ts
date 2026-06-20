@@ -13,7 +13,7 @@ afterAll(async () => await prisma.user.deleteMany({}))
 
 describe("GET /users", () => {
   afterEach(async () => await prisma.follow.deleteMany({}))
-
+  beforeEach(async () => await prisma.follow.deleteMany())
   const [userA, userB] = mockUsers;
   const token = jwt.sign({ id: userA.id }, env.JWT_SECRET_KEY);
 

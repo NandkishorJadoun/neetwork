@@ -23,6 +23,15 @@ const mockUsers = Array.from({ length: 3 }).map(() => createMockUser());
 beforeAll(async () => await prisma.user.createMany({ data: mockUsers }))
 afterAll(async () => await prisma.user.deleteMany({}))
 
+describe("GET /me", () => {
+    it("should respond with 200 and user profile data", async () => {
+        const [user] = mockUsers;
+        const token = jwt.sign({ id: user.id }, env.JWT_SECRET_KEY);
+        const res = await request(app).get("/me").set('Authorization', `Bearer ${token}`)
+        expect(res.status).toEqual(200)
+        expect(res.body.user.id).toEqual(user.id)
+    })
+})
 
 describe("PATCH /me", () => {
     const [user] = mockUsers;
