@@ -1,9 +1,12 @@
-import type { AuthRequest } from "../types/express.js";
-import type { Response, NextFunction } from "express";
+import type { Request, Response, NextFunction } from "express";
 import { prisma } from "../configs/prisma.js";
 import { Prisma } from "../../generated/prisma/index.js";
 
-export const getAllNonFollowingUsers = async (req: AuthRequest, res: Response, next: NextFunction) => {
+export const getAllNonFollowingUsers = async (req: Request, res: Response, next: NextFunction) => {
+  if (!req.user) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
   const { id } = req.user;
 
   try {
@@ -23,8 +26,13 @@ export const getAllNonFollowingUsers = async (req: AuthRequest, res: Response, n
   }
 }
 
-export const getUserById = async (req: AuthRequest, res: Response, next: NextFunction) => {
+export const getUserById = async (req: Request, res: Response, next: NextFunction) => {
   const { userId } = req.params
+
+  if (!req.user) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
   const { id } = req.user;
 
   if (Array.isArray(userId) || !userId) {
@@ -69,9 +77,13 @@ export const getUserById = async (req: AuthRequest, res: Response, next: NextFun
   }
 }
 
-export const getPostsByUserId = async (req: AuthRequest, res: Response, next: NextFunction) => {
+export const getPostsByUserId = async (req: Request, res: Response, next: NextFunction) => {
 
   const { params, user } = req
+
+  if (!user) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
 
   if (Array.isArray(params.userId) || !params.userId) {
     return res.status(400).json({ message: "Invalid User ID" })
@@ -114,8 +126,12 @@ export const getPostsByUserId = async (req: AuthRequest, res: Response, next: Ne
   }
 }
 
-export const getCommentsByUserId = async (req: AuthRequest, res: Response, next: NextFunction) => {
+export const getCommentsByUserId = async (req: Request, res: Response, next: NextFunction) => {
   const { params, user } = req
+
+  if (!user) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
 
   if (Array.isArray(params.userId) || !params.userId) {
     return res.status(400).json({ message: "Invalid User ID" })
@@ -170,8 +186,12 @@ export const getCommentsByUserId = async (req: AuthRequest, res: Response, next:
   }
 }
 
-export const getLikedPostsByUserId = async (req: AuthRequest, res: Response, next: NextFunction) => {
+export const getLikedPostsByUserId = async (req: Request, res: Response, next: NextFunction) => {
   const { params, user } = req
+
+  if (!user) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
 
   if (Array.isArray(params.userId) || !params.userId) {
     return res.status(400).json({ message: "Invalid User ID" })
@@ -219,7 +239,7 @@ export const getLikedPostsByUserId = async (req: AuthRequest, res: Response, nex
   }
 }
 
-export const getFollowersByUserId = async (req: AuthRequest, res: Response, next: NextFunction) => {
+export const getFollowersByUserId = async (req: Request, res: Response, next: NextFunction) => {
   const { userId } = req.params
 
   if (Array.isArray(userId) || !userId) {
@@ -243,7 +263,7 @@ export const getFollowersByUserId = async (req: AuthRequest, res: Response, next
   }
 }
 
-export const getFollowingsByUserId = async (req: AuthRequest, res: Response, next: NextFunction) => {
+export const getFollowingsByUserId = async (req: Request, res: Response, next: NextFunction) => {
   const { userId } = req.params
 
   if (Array.isArray(userId) || !userId) {
@@ -267,7 +287,10 @@ export const getFollowingsByUserId = async (req: AuthRequest, res: Response, nex
   }
 }
 
-export const sendFollowRequest = async (req: AuthRequest, res: Response, next: NextFunction) => {
+export const sendFollowRequest = async (req: Request, res: Response, next: NextFunction) => {
+  if (!req.user) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
 
   const fromId = req.user.id;
   const toId = req.params.userId
@@ -292,7 +315,11 @@ export const sendFollowRequest = async (req: AuthRequest, res: Response, next: N
   }
 }
 
-export const deleteFollowRequest = async (req: AuthRequest, res: Response, next: NextFunction) => {
+export const deleteFollowRequest = async (req: Request, res: Response, next: NextFunction) => {
+  if (!req.user) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
   const fromId = req.user.id;
   const toId = req.params.userId
 
@@ -317,7 +344,10 @@ export const deleteFollowRequest = async (req: AuthRequest, res: Response, next:
   }
 }
 
-export const removeFollowerByUserId = async (req: AuthRequest, res: Response, next: NextFunction) => {
+export const removeFollowerByUserId = async (req: Request, res: Response, next: NextFunction) => {
+  if (!req.user) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
 
   const fromId = req.user.id;
   const toId = req.params.userId;

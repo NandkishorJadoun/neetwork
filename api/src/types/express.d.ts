@@ -1,4 +1,4 @@
-import type { Request } from 'express'
+export { }
 
 declare global {
     namespace Express {
@@ -6,8 +6,4 @@ declare global {
             id: string,
         }
     }
-}
-
-export interface AuthRequest extends Request {
-    user: Express.User
 }
