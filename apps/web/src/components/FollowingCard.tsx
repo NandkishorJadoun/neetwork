@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useAuth } from "../context/auth";
 import type { Follow } from "../types";
 
-type FollowingCardProp = {
+interface FollowingCardProp {
     following: Follow,
     isCurrentUser: boolean
 }

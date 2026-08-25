@@ -15,7 +15,7 @@ passport.use(
             try {
 
                 if (!profile.username) {
-                    return cb(new Error("Username is undefined"))
+                    cb(new Error("Username is undefined")); return;
                 }
 
                 const avatarUrl = `https://avatars.githubusercontent.com/u/${profile.id}`
@@ -34,12 +34,12 @@ passport.use(
                     }
                 })
 
-                return cb(null, user, {
+                cb(null, user, {
                     message: "Logged in successfully"
-                });
+                }); return;
 
             } catch (err) {
-                return cb(err)
+                cb(err); return;
             }
         }
     ));
@@ -57,10 +57,10 @@ passport.use(
                     select: { id: true, }
                 });
 
-                return user ? cb(null, user) : cb(null, false)
+                user ? cb(null, user) : cb(null, false); return;
 
             } catch (error) {
-                return cb(error);
+                cb(error); return;
             }
         }
     )

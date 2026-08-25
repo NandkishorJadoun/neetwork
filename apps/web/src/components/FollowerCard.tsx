@@ -3,7 +3,7 @@ import { useAuth } from "../context/auth";
 import { Link, useRouter } from "@tanstack/react-router";
 import type { Follow } from "../types";
 
-type FollowerCardProp = {
+interface FollowerCardProp {
   follower: Follow,
   isCurrentUser: boolean
 }

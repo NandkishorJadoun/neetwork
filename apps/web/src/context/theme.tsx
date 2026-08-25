@@ -4,14 +4,14 @@ type ThemeMode = "light" | "dark" | "system";
 type Accent = "blue" | "red" | "yellow" | "green" | "purple" | "pink";
 type Background = "slate" | "gray" | "zinc" | "stone" | "neutral";
 
-type ThemeSettings = {
+interface ThemeSettings {
   theme: ThemeMode;
   accent: Accent;
   background: Background;
   setTheme: (theme: ThemeMode) => void;
   setAccent: (accent: Accent) => void;
   setBackground: (bg: Background) => void;
-};
+}
 
 const ThemeContext = createContext<ThemeSettings | null>(null);
 

@@ -3,7 +3,7 @@ import type { Like, Post, Comment } from "../types"
 import { CommentCard } from "./CommentCard"
 import { PostCard } from "./PostCard"
 
-type ProfileTabContent = {
+interface ProfileTabContent {
   tabData: TabData
 }
 

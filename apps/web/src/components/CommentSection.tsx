@@ -61,7 +61,7 @@ export const CommentSection = ({ post, commentRef }: CommentSection) => {
             rows={3}
             required
             value={comment}
-            onChange={(e) => setComment(e.target.value)}
+            onChange={(e) => { setComment(e.target.value); }}
             maxLength={280}
             className="
               w-full resize-none rounded-xl

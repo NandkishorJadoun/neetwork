@@ -55,7 +55,7 @@ function RouteComponent() {
           name="content"
           placeholder="What's happening?"
           value={content}
-          onChange={(e) => setContent(e.target.value)}
+          onChange={(e) => { setContent(e.target.value); }}
           maxLength={280}
           rows={10}
           required

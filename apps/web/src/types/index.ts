@@ -1,4 +1,4 @@
-export type User = {
+export interface User {
     id: string;
     fullname: string;
     about: string | null;
@@ -12,7 +12,7 @@ export type User = {
     }
 }
 
-export type Follow = {
+export interface Follow {
     id: string;
     sender: User;
     receiver: User;
@@ -21,7 +21,7 @@ export type Follow = {
     toId: string;
 }
 
-export type Post = {
+export interface Post {
     id: string;
     text: string;
     created_at: Date;
@@ -35,7 +35,7 @@ export type Post = {
     }
 }
 
-export type Comment = {
+export interface Comment {
     id: string;
     text: string;
     userId: string;
@@ -44,7 +44,7 @@ export type Comment = {
     post: Post;
 }
 
-export type Like = {
+export interface Like {
     id: number;
     user: User;
     userId: string;
@@ -52,7 +52,7 @@ export type Like = {
     postId: string;
 }
 
-export type ValidationError = {
+export interface ValidationError {
     fieldName: string;
     message: string
 }

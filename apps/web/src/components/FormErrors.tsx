@@ -1,6 +1,6 @@
 import type { ValidationError } from "../types";
 
-type FormErrorsProps = {
+interface FormErrorsProps {
   fieldName: string;
   errors: null | ValidationError[];
 }

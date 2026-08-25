@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router"
 import type { User } from "../types"
 
-type CommentCardProp = {
+interface CommentCardProp {
   text: string,
   author: User,
 }

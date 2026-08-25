@@ -11,7 +11,7 @@ export const PageHeader = ({ children }: { children: JSX.Element | string }) => 
             <div className='flex items-center justify-between md:justify-center'>
                 {children}
                 <button className='md:hidden'>
-                    <Menu size={18} onClick={() => setIsOpen(true)} />
+                    <Menu size={18} onClick={() => { setIsOpen(true); }} />
                 </button>
             </div>
         </div>

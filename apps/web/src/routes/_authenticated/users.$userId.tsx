@@ -7,11 +7,11 @@ import { PageHeader } from '../../components/PageHeader'
 type Tab = 'posts' | 'comments' | 'likes'
 export type TabData = { posts: Post[] } | { comments: Comment[] } | { likes: Like[] }
 
-type SearchParams = {
+interface SearchParams {
   tab?: 'comments' | 'likes'
 }
 
-type LoaderData = {
+interface LoaderData {
   user: User
   tabData: TabData
 }

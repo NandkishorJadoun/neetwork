@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { LogOut } from "lucide-react";
 import type { JSX } from "react";
 
-type SideBarProp = {
+interface SideBarProp {
     navItems: { to: string, name: string, icon: JSX.Element }[],
     handleLogout: () => void
 }

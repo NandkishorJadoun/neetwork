@@ -1,4 +1,4 @@
-import express, { Router } from "express"
+import express, { type Router } from "express"
 import { passport } from "../configs/passport.js";
 import { createComment, createPost, deletePost, getAllPosts, getPostById, getLikesByPostId,likePost, unlikePost } from "../controllers/posts.controller.js";
 

@@ -132,7 +132,7 @@ function RouteComponent() {
               id="fullname"
               required
               value={formData.fullname}
-              onChange={(e) => setFormData({ ...formData, fullname: e.target.value })}
+              onChange={(e) => { setFormData({ ...formData, fullname: e.target.value }); }}
               className="rounded-md w-full border border-(--app-border) bg-transparent px-3 py-2 text-sm text-(--app-text) outline-none placeholder:text-(--app-muted) focus:border-(--app-accent)"
             />
             <FormErrors fieldName="fullname" errors={errors} />
@@ -147,7 +147,7 @@ function RouteComponent() {
               id="about"
               rows={4}
               value={formData.about}
-              onChange={(e) => setFormData({ ...formData, about: e.target.value })}
+              onChange={(e) => { setFormData({ ...formData, about: e.target.value }); }}
               className="w-full rounded-md resize-none border border-(--app-border) bg-transparent px-3 py-2 text-sm text-(--app-text) outline-none placeholder:text-(--app-muted) focus:border-(--app-accent)"
             />
             <FormErrors fieldName="about" errors={errors} />
@@ -156,7 +156,7 @@ function RouteComponent() {
           <div className="flex items-center gap-3 pt-2">
             <button
               type="button"
-              onClick={() => router.history.back()}
+              onClick={() => { router.history.back(); }}
               className="flex-1 rounded-md border border-(--app-border) px-4 py-2 text-sm font-medium text-(--app-text) transition-colors hover:bg-(--app-surface)"
             >
               Cancel

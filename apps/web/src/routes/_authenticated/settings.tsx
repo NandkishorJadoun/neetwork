@@ -58,7 +58,7 @@ function RouteComponent() {
             {accents.map((color) => (
               <button
                 key={color}
-                onClick={() => setAccent(color)}
+                onClick={() => { setAccent(color); }}
                 className={`size-8 rounded-full border-2 ${accentClasses[color]} ${accent === color ? "border-(--app-text)" : "border-transparent"}`}
               />
             ))}
@@ -71,7 +71,7 @@ function RouteComponent() {
             {backgrounds.map((bg) => (
               <button
                 key={bg}
-                onClick={() => setBackground(bg)}
+                onClick={() => { setBackground(bg); }}
                 className={`size-8 rounded-full border-2 ${bgClasses[bg]} ${background === bg ? "border-(--app-text)" : "border-transparent"}`}
               />
             ))}

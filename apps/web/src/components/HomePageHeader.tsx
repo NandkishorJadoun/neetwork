@@ -15,7 +15,7 @@ export const HomePageHeader = ({ tab }: { tab: ActiveTab }) => {
         <div className='md:hidden flex items-center justify-between pt-3'>
             <Link to='/home' className="text-lg font-bold">Neetwork</Link>
             <button>
-                <Menu size={18} onClick={() => setIsOpen(true)} />
+                <Menu size={18} onClick={() => { setIsOpen(true); }} />
             </button>
         </div>
         <div className="mx-auto flex justify-center gap-6">
