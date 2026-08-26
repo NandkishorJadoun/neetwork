@@ -1,13 +1,22 @@
 import cors from "cors";
-import express, { json, urlencoded, type Express, type Request, type Response, type NextFunction } from "express";
+import helmet from "helmet";
 import multer from "multer";
+import express, { json, urlencoded, type Express, type Request, type Response, type NextFunction } from "express";
 import { authRouter } from "./routes/auth.router.js";
 import { usersRouter } from "./routes/users.router.js";
 import { profileRouter } from "./routes/profile.router.js";
 import { postsRouter } from "./routes/posts.router.js";
 import { UploadValidationError } from "./configs/multer.js";
+import { auth } from "./configs/auth.js";
+import { toNodeHandler } from "better-auth/node";
+import { httpLogger } from "./configs/logger.js";
 
 const app: Express = express()
+
+app.use(httpLogger);
+app.use(helmet());
+
+app.all("/api/auth/*splat", toNodeHandler(auth));
 
 app.use(cors())
 app.use(json())
