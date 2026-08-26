@@ -1,11 +1,11 @@
 import express, { type Router } from "express"
-import { passport } from "../configs/passport.js";
 import { upload } from "../configs/multer.js";
 import { acceptFollowRequest, getAllFollowRequests, getUserProfile, rejectFollowRequest, removeFollower, updateUserProfile } from "../controllers/profile.controller.js";
+import { requireAuth } from "@/middlewares/require-auth.js";
 
 export const profileRouter: Router = express.Router();
 
-profileRouter.use(passport.authenticate("jwt", { session: false }))
+profileRouter.use(requireAuth)
 
 profileRouter.get("/", getUserProfile)
 

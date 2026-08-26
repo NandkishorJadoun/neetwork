@@ -1,9 +1,14 @@
-export { }
+import { type Session, type User } from "better-auth";
 
 declare global {
     namespace Express {
-        interface User {
-            id: string,
+        interface Request {
+            session?: {
+                session: Session;
+                user: User;
+            };
         }
     }
 }
+
+export { };

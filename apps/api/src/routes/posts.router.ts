@@ -1,10 +1,10 @@
 import express, { type Router } from "express"
-import { passport } from "../configs/passport.js";
-import { createComment, createPost, deletePost, getAllPosts, getPostById, getLikesByPostId,likePost, unlikePost } from "../controllers/posts.controller.js";
+import { createComment, createPost, deletePost, getAllPosts, getPostById, getLikesByPostId,likePost, unlikePost } from "@/controllers/posts.controller.js";
+import { requireAuth } from "@/middlewares/require-auth.js";
 
 export const postsRouter: Router = express.Router();
 
-postsRouter.use(passport.authenticate("jwt", { session: false }))
+postsRouter.use(requireAuth)
 
 postsRouter.get("/", getAllPosts)
 
