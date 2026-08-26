@@ -9,30 +9,30 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
-import { Route as LoginCallbackRouteImport } from './routes/login_.callback'
-import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
-import { Route as AuthenticatedHomeRouteImport } from './routes/_authenticated/home'
-import { Route as AuthenticatedFollowUsersRouteImport } from './routes/_authenticated/follow-users'
-import { Route as AuthenticatedFollowRequestsRouteImport } from './routes/_authenticated/follow-requests'
-import { Route as AuthenticatedEditProfileRouteImport } from './routes/_authenticated/edit-profile'
-import { Route as AuthenticatedCreatePostRouteImport } from './routes/_authenticated/create-post'
 import { Route as AuthenticatedAboutRouteImport } from './routes/_authenticated/about'
-import { Route as AuthenticatedUsersUserIdRouteImport } from './routes/_authenticated/users.$userId'
+import { Route as AuthenticatedCreatePostRouteImport } from './routes/_authenticated/create-post'
+import { Route as AuthenticatedEditProfileRouteImport } from './routes/_authenticated/edit-profile'
+import { Route as AuthenticatedFollowRequestsRouteImport } from './routes/_authenticated/follow-requests'
+import { Route as AuthenticatedFollowUsersRouteImport } from './routes/_authenticated/follow-users'
+import { Route as AuthenticatedHomeRouteImport } from './routes/_authenticated/home'
+import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
+import { Route as LoginCallbackRouteImport } from './routes/login_.callback'
 import { Route as AuthenticatedPostsPostIdRouteImport } from './routes/_authenticated/posts.$postId'
-import { Route as AuthenticatedUsersUserIdFollowingsRouteImport } from './routes/_authenticated/users.$userId_.followings'
-import { Route as AuthenticatedUsersUserIdFollowersRouteImport } from './routes/_authenticated/users.$userId_.followers'
+import { Route as AuthenticatedUsersUserIdRouteImport } from './routes/_authenticated/users.$userId'
 import { Route as AuthenticatedPostsPostIdLikesRouteImport } from './routes/_authenticated/posts.$postId_.likes'
+import { Route as AuthenticatedUsersUserIdFollowersRouteImport } from './routes/_authenticated/users.$userId_.followers'
+import { Route as AuthenticatedUsersUserIdFollowingsRouteImport } from './routes/_authenticated/users.$userId_.followings'
 
+const AuthenticatedRoute = AuthenticatedRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthenticatedRoute = AuthenticatedRouteImport.update({
-  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
@@ -40,25 +40,20 @@ const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
-const LoginCallbackRoute = LoginCallbackRouteImport.update({
-  id: '/login_/callback',
-  path: '/login/callback',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
+const AuthenticatedAboutRoute = AuthenticatedAboutRouteImport.update({
+  id: '/about',
+  path: '/about',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
-const AuthenticatedHomeRoute = AuthenticatedHomeRouteImport.update({
-  id: '/home',
-  path: '/home',
+const AuthenticatedCreatePostRoute = AuthenticatedCreatePostRouteImport.update({
+  id: '/create-post',
+  path: '/create-post',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
-const AuthenticatedFollowUsersRoute =
-  AuthenticatedFollowUsersRouteImport.update({
-    id: '/follow-users',
-    path: '/follow-users',
+const AuthenticatedEditProfileRoute =
+  AuthenticatedEditProfileRouteImport.update({
+    id: '/edit-profile',
+    path: '/edit-profile',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedFollowRequestsRoute =
@@ -67,38 +62,43 @@ const AuthenticatedFollowRequestsRoute =
     path: '/follow-requests',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
-const AuthenticatedEditProfileRoute =
-  AuthenticatedEditProfileRouteImport.update({
-    id: '/edit-profile',
-    path: '/edit-profile',
+const AuthenticatedFollowUsersRoute =
+  AuthenticatedFollowUsersRouteImport.update({
+    id: '/follow-users',
+    path: '/follow-users',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
-const AuthenticatedCreatePostRoute = AuthenticatedCreatePostRouteImport.update({
-  id: '/create-post',
-  path: '/create-post',
+const AuthenticatedHomeRoute = AuthenticatedHomeRouteImport.update({
+  id: '/home',
+  path: '/home',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
-const AuthenticatedAboutRoute = AuthenticatedAboutRouteImport.update({
-  id: '/about',
-  path: '/about',
+const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
-const AuthenticatedUsersUserIdRoute =
-  AuthenticatedUsersUserIdRouteImport.update({
-    id: '/users/$userId',
-    path: '/users/$userId',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
+const LoginCallbackRoute = LoginCallbackRouteImport.update({
+  id: '/login_/callback',
+  path: '/login/callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedPostsPostIdRoute =
   AuthenticatedPostsPostIdRouteImport.update({
     id: '/posts/$postId',
     path: '/posts/$postId',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
-const AuthenticatedUsersUserIdFollowingsRoute =
-  AuthenticatedUsersUserIdFollowingsRouteImport.update({
-    id: '/users/$userId_/followings',
-    path: '/users/$userId/followings',
+const AuthenticatedUsersUserIdRoute =
+  AuthenticatedUsersUserIdRouteImport.update({
+    id: '/users/$userId',
+    path: '/users/$userId',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedPostsPostIdLikesRoute =
+  AuthenticatedPostsPostIdLikesRouteImport.update({
+    id: '/posts/$postId_/likes',
+    path: '/posts/$postId/likes',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedUsersUserIdFollowersRoute =
@@ -107,10 +107,10 @@ const AuthenticatedUsersUserIdFollowersRoute =
     path: '/users/$userId/followers',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
-const AuthenticatedPostsPostIdLikesRoute =
-  AuthenticatedPostsPostIdLikesRouteImport.update({
-    id: '/posts/$postId_/likes',
-    path: '/posts/$postId/likes',
+const AuthenticatedUsersUserIdFollowingsRoute =
+  AuthenticatedUsersUserIdFollowingsRouteImport.update({
+    id: '/users/$userId_/followings',
+    path: '/users/$userId/followings',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 
@@ -230,18 +230,18 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/_authenticated': {
       id: '/_authenticated'
       path: ''
       fullPath: '/'
       preLoaderRoute: typeof AuthenticatedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/': {
@@ -251,46 +251,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/login_/callback': {
-      id: '/login_/callback'
-      path: '/login/callback'
-      fullPath: '/login/callback'
-      preLoaderRoute: typeof LoginCallbackRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_authenticated/settings': {
-      id: '/_authenticated/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof AuthenticatedSettingsRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
-    '/_authenticated/home': {
-      id: '/_authenticated/home'
-      path: '/home'
-      fullPath: '/home'
-      preLoaderRoute: typeof AuthenticatedHomeRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
-    '/_authenticated/follow-users': {
-      id: '/_authenticated/follow-users'
-      path: '/follow-users'
-      fullPath: '/follow-users'
-      preLoaderRoute: typeof AuthenticatedFollowUsersRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
-    '/_authenticated/follow-requests': {
-      id: '/_authenticated/follow-requests'
-      path: '/follow-requests'
-      fullPath: '/follow-requests'
-      preLoaderRoute: typeof AuthenticatedFollowRequestsRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
-    '/_authenticated/edit-profile': {
-      id: '/_authenticated/edit-profile'
-      path: '/edit-profile'
-      fullPath: '/edit-profile'
-      preLoaderRoute: typeof AuthenticatedEditProfileRouteImport
+    '/_authenticated/about': {
+      id: '/_authenticated/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AuthenticatedAboutRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/create-post': {
@@ -300,11 +265,53 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCreatePostRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/about': {
-      id: '/_authenticated/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AuthenticatedAboutRouteImport
+    '/_authenticated/edit-profile': {
+      id: '/_authenticated/edit-profile'
+      path: '/edit-profile'
+      fullPath: '/edit-profile'
+      preLoaderRoute: typeof AuthenticatedEditProfileRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/follow-requests': {
+      id: '/_authenticated/follow-requests'
+      path: '/follow-requests'
+      fullPath: '/follow-requests'
+      preLoaderRoute: typeof AuthenticatedFollowRequestsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/follow-users': {
+      id: '/_authenticated/follow-users'
+      path: '/follow-users'
+      fullPath: '/follow-users'
+      preLoaderRoute: typeof AuthenticatedFollowUsersRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/home': {
+      id: '/_authenticated/home'
+      path: '/home'
+      fullPath: '/home'
+      preLoaderRoute: typeof AuthenticatedHomeRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/settings': {
+      id: '/_authenticated/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AuthenticatedSettingsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/login_/callback': {
+      id: '/login_/callback'
+      path: '/login/callback'
+      fullPath: '/login/callback'
+      preLoaderRoute: typeof LoginCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/posts/$postId': {
+      id: '/_authenticated/posts/$postId'
+      path: '/posts/$postId'
+      fullPath: '/posts/$postId'
+      preLoaderRoute: typeof AuthenticatedPostsPostIdRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/users/$userId': {
@@ -314,18 +321,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedUsersUserIdRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/posts/$postId': {
-      id: '/_authenticated/posts/$postId'
-      path: '/posts/$postId'
-      fullPath: '/posts/$postId'
-      preLoaderRoute: typeof AuthenticatedPostsPostIdRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
-    '/_authenticated/users/$userId_/followings': {
-      id: '/_authenticated/users/$userId_/followings'
-      path: '/users/$userId/followings'
-      fullPath: '/users/$userId/followings'
-      preLoaderRoute: typeof AuthenticatedUsersUserIdFollowingsRouteImport
+    '/_authenticated/posts/$postId_/likes': {
+      id: '/_authenticated/posts/$postId_/likes'
+      path: '/posts/$postId/likes'
+      fullPath: '/posts/$postId/likes'
+      preLoaderRoute: typeof AuthenticatedPostsPostIdLikesRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/users/$userId_/followers': {
@@ -335,11 +335,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedUsersUserIdFollowersRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/posts/$postId_/likes': {
-      id: '/_authenticated/posts/$postId_/likes'
-      path: '/posts/$postId/likes'
-      fullPath: '/posts/$postId/likes'
-      preLoaderRoute: typeof AuthenticatedPostsPostIdLikesRouteImport
+    '/_authenticated/users/$userId_/followings': {
+      id: '/_authenticated/users/$userId_/followings'
+      path: '/users/$userId/followings'
+      fullPath: '/users/$userId/followings'
+      preLoaderRoute: typeof AuthenticatedUsersUserIdFollowingsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
   }

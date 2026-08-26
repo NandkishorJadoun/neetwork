@@ -5,6 +5,10 @@ import { tanstackRouter } from '@tanstack/router-plugin/vite'
 import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
+  build: {
+    outDir: "../api/public",
+    emptyOutDir: true,
+  },
   plugins: [
     tailwindcss(),
     tanstackRouter({
@@ -14,4 +18,9 @@ export default defineConfig({
     react(),
     babel({ presets: [reactCompilerPreset()] }),
   ],
+  server: {
+    proxy: {
+      "/api": "http://localhost:3000"
+    }
+  }
 })
