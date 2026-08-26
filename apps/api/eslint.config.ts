@@ -9,7 +9,7 @@ export default defineConfig(
         },
     },
     {
-        files: ['src/schemas/env.schema.ts', 'src/configs/prisma.ts', 'prisma.config.ts'],
+        files: ['src/configs/env.ts', 'src/configs/prisma.ts', 'prisma.config.ts'],
         rules: {
             'no-restricted-properties': 'off',
         },

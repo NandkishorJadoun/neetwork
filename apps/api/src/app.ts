@@ -11,7 +11,6 @@ import { usersRouter } from "./routes/users.router.js";
 import { profileRouter } from "./routes/profile.router.js";
 import { postsRouter } from "./routes/posts.router.js";
 import { UploadValidationError } from "./configs/multer.js";
-import { requireAuth } from "./middlewares/require-auth.js";
 
 const publicPath = path.join(process.cwd(), 'public');
 
@@ -34,13 +33,6 @@ if (env.NODE_ENV === "development") {
     }))
 }
 
-app.get("/api/protected", requireAuth, (req, res) => {
-	res.json({
-		message: "This is protected data",
-		user: req.session?.user
-	});
-});
-
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 
@@ -60,7 +52,7 @@ app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
     res.status(500).json({ message: "Internal Server Error" })
 })
 
-app.get('*splat', (req, res) => {
+app.get('*splat', (_req, res) => {
     res.sendFile(path.join(publicPath, 'index.html'));
 });
 

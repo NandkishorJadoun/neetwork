@@ -6,6 +6,11 @@
     "lib": [
       "esnext"
     ],
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    },
     "moduleResolution": "nodenext",
     "target": "ES2023",
     "esModuleInterop": true,
