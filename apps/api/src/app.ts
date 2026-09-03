@@ -1,4 +1,4 @@
-import express, { type Express, type Request, type Response, type NextFunction } from "express";
+import express, { type Request, type Response, type NextFunction } from "express";
 import cors from "cors";
 import helmet from "helmet";
 import multer from "multer";
@@ -14,7 +14,7 @@ import { UploadValidationError } from "./configs/multer.js";
 
 const publicPath = path.join(process.cwd(), 'public');
 
-const app: Express = express()
+const app = express()
 
 app.use(express.static(publicPath));
 
@@ -23,12 +23,10 @@ app.use(helmet());
 
 app.all("/api/auth/*splat", toNodeHandler(auth));
 
-// add cors middleware for developement 
-
 if (env.NODE_ENV === "development") {
     app.use(cors({
         origin: "http://localhost:5173",
-        methods: ["GET", "POST", "PUT", "DELETE"], 
+        methods: ["GET", "POST", "PUT", "DELETE"],
         credentials: true,
     }))
 }

@@ -1,8 +1,8 @@
 import { auth } from "@/configs/auth.js";
 import { fromNodeHeaders } from "better-auth/node";
-import { type Request, type Response, type NextFunction } from "express";
+import { type RequestHandler } from "express";
 
-export const requireAuth = async (req: Request, res: Response, next: NextFunction) => {
+export const requireAuth: RequestHandler = async (req, res, next) => {
     const session = await auth.api.getSession({
         headers: fromNodeHeaders(req.headers),
     });
@@ -12,5 +12,6 @@ export const requireAuth = async (req: Request, res: Response, next: NextFunctio
     }
 
     req.session = session;
+    req.user = session.user;
     next();
 };

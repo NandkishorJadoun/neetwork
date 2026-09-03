@@ -7,8 +7,7 @@ declare global {
                 session: Session;
                 user: User;
             };
+            user?: User;
         }
     }
 }
-
-export { };
