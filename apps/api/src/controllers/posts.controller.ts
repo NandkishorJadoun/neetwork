@@ -1,24 +1,32 @@
 import { prisma } from "../configs/prisma.js";
 import type { Request, Response, NextFunction } from "express";
-import { CommentFormSchema, PostFormSchema } from "../schemas/form-validation.schema.js";
-import { ZodError } from "zod";
+import { CommentFormSchema, PostFormSchema } from "../configs/schemas.js";
+import { ZodError, z } from "zod/v4";
 import { Prisma } from "../../generated/prisma/index.js";
+import { GetAllPostsSuccessSchema, GetPostByIdSuccessSchema, type DeletePostResponse, type GetAllPostsResponse, type GetPostByIdResponse } from "@neetwork/contracts/schemas/posts.js";
 
-export const getAllPosts = async (req: Request, res: Response, next: NextFunction) => {
+const GetAllPostsQuerySchema = z.strictObject({
+  cursor: z.cuid2().optional(),
+  users: z.literal("following").optional(),
+})
+
+const PostParamsSchema = z.strictObject({
+  postId: z.cuid2(),
+});
+
+export const getAllPosts = async (req: Request, res: Response<GetAllPostsResponse>, next: NextFunction) => {
   if (!req.user) {
-    return res.status(401).json({ message: "Unauthorized" });
+    return res.status(401).json({ success: false, message: "Unauthorized" });
   }
 
   const { id } = req.user;
-  const { cursor, users } = req.query;
-  const isFollowingTab = users === "following";
-  const isValidCursor = typeof cursor === "string" && cursor.length > 0 && cursor !== 'null'
+  const { cursor, users } = GetAllPostsQuerySchema.parse(req.query)
 
   const LIMIT = 10;
 
   try {
     const posts = await prisma.post.findMany({
-      ...(isFollowingTab ? {
+      ...(users ? {
         where: {
           OR: [
             {
@@ -37,7 +45,7 @@ export const getAllPosts = async (req: Request, res: Response, next: NextFunctio
           ]
         }
       } : {}),
-      ...(isValidCursor ? {
+      ...(cursor ? {
         cursor: {
           id: cursor
         },
@@ -50,9 +58,8 @@ export const getAllPosts = async (req: Request, res: Response, next: NextFunctio
       include: {
         author: {
           select: {
-            avatar: true,
-            username: true,
-            fullname: true
+            image: true,
+            name: true,
           }
         },
         _count: {
@@ -70,9 +77,14 @@ export const getAllPosts = async (req: Request, res: Response, next: NextFunctio
     })
 
     const hasNextPage = posts.length === LIMIT;
-    const nextCursor = hasNextPage ? posts.at(-1)?.id : null;
+    const lastPost = posts.at(-1);
 
-    res.status(200).json({ posts, nextCursor })
+    const nextCursor = hasNextPage && lastPost
+      ? lastPost.id : null;
+
+    const response = GetAllPostsSuccessSchema.parse({ success: true, posts, nextCursor })
+
+    res.status(200).json(response)
 
   } catch (error) {
     next(error)
@@ -106,17 +118,19 @@ export const createPost = async (req: Request, res: Response, next: NextFunction
   }
 }
 
-export const getPostById = async (req: Request, res: Response, next: NextFunction) => {
+export const getPostById = async (req: Request, res: Response<GetPostByIdResponse>, next: NextFunction) => {
   if (!req.user) {
-    return res.status(401).json({ message: "Unauthorized" });
+    return res.status(401).json({ success: false, message: "Unauthorized" });
   }
 
   const { id: userId } = req.user;
-  const { postId } = req.params
+  const params = PostParamsSchema.safeParse(req.params)
 
-  if (Array.isArray(postId) || !postId) {
-    return res.status(400).json({ message: "Invalid Post ID" })
+  if (!params.success) {
+    return res.status(400).json({ success: false, message: "Invalid Post ID" });
   }
+
+  const { postId } = params.data
 
   try {
     const post = await prisma.post.findUnique({
@@ -129,14 +143,20 @@ export const getPostById = async (req: Request, res: Response, next: NextFunctio
             created_at: "desc"
           },
           include: {
-            author: true
+            author: {
+              omit: {
+                email: true,
+                emailVerified: true,
+                about: true,
+                isAnonymous: true,
+              }
+            },
           }
         },
         author: {
           select: {
-            avatar: true,
-            username: true,
-            fullname: true
+            image: true,
+            name: true,
           }
         },
         _count: {
@@ -154,40 +174,46 @@ export const getPostById = async (req: Request, res: Response, next: NextFunctio
     })
 
     if (!post) {
-      return res.status(404).json({ message: `Post with ID "${postId}" not found` })
+      return res.status(404).json({ success: false, message: "Post not found" })
     }
 
-    return res.status(200).json({ post })
+    const response = GetPostByIdSuccessSchema.parse({ success: true, post })
+
+    return res.status(200).json(response)
 
   } catch (error) {
     next(error)
   }
 }
 
-export const deletePost = async (req: Request, res: Response, next: NextFunction) => {
+export const deletePost = async (req: Request, res: Response<DeletePostResponse>, next: NextFunction) => {
+
   if (!req.user) {
-    return res.status(401).json({ message: "Unauthorized" });
+    return res.status(401).json({ success: false, message: "Unauthorized" });
   }
 
-  const userId = req.user.id;
-  const id = req.params.postId
+  const params = PostParamsSchema.safeParse(req.params)
 
-  if (Array.isArray(id) || !id) {
-    return res.status(400).json({ message: "Invalid Post ID" })
+  if (!params.success) {
+    return res.status(400).json({ success: false, message: "Invalid Post ID" });
   }
+
+  const { postId } = params.data
 
   try {
     await prisma.post.delete({
-      where: { id, userId }
+      where: {
+        id: postId,
+        userId: req.user.id
+      }
     })
 
-    return res.status(204).send()
+    return res.status(200).json({ success: true })
 
   } catch (error) {
-    if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      if (error.code === "P2025") {
-        return res.status(404).json({ message: "No record found" })
-      }
+    if (error instanceof Prisma.PrismaClientKnownRequestError
+      && error.code === "P2025") {
+      return res.status(404).json({ success: false, message: "No record found" })
     }
     next(error)
   }
@@ -227,11 +253,13 @@ export const createComment = async (req: Request, res: Response, next: NextFunct
 
 export const getLikesByPostId = async (req: Request, res: Response, next: NextFunction) => {
 
-  const { postId } = req.params
+  const params = PostParamsSchema.safeParse(req.params)
 
-  if (Array.isArray(postId) || !postId) {
-    return res.status(400).json({ message: "Invalid Post ID" })
+  if (!params.success) {
+    return res.status(400).json({ success: false, message: "Invalid Post ID" });
   }
+
+  const { postId } = params.data
 
   try {
     const likes = await prisma.like.findMany({
@@ -241,9 +269,8 @@ export const getLikesByPostId = async (req: Request, res: Response, next: NextFu
         user: {
           select: {
             id: true,
-            avatar: true,
-            fullname: true,
-            username: true
+            image: true,
+            name: true,
           },
         },
       },
