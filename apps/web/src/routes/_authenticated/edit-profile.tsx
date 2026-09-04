@@ -1,37 +1,47 @@
-import { createFileRoute, useNavigate, useRouter } from '@tanstack/react-router'
-import { useEffect, useState } from 'react'
-import type { User, ValidationError } from '../../types'
-import { FormErrors } from '../../components/FormErrors'
-import { PageHeader } from '../../components/PageHeader'
+import {
+  createFileRoute,
+  useNavigate,
+  useRouter,
+} from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import type { User, ValidationError } from "../../types";
+import { FormErrors } from "../../components/FormErrors";
+import { PageHeader } from "../../components/PageHeader";
+import { z } from "zod/v4/mini";
+import { GetUserProfileResponseSchema } from "@neetwork/contracts";
 
-export const Route = createFileRoute('/_authenticated/edit-profile')({
+export const Route = createFileRoute("/_authenticated/edit-profile")({
   loader: async ({ context }) => {
-    const token = context.auth.user?.token
-    const options = { headers: { Authorization: `Bearer ${token}` } }
-    const url = `${import.meta.env.VITE_API_URL}/me`
-    const res = await fetch(url, options)
+    const token = context.auth.user?.token;
+    const options = { headers: { Authorization: `Bearer ${token}` } };
+    const url = "api/me";
+    const res = await fetch(url, options);
+    const json: unknown = await res.json();
+    const data = GetUserProfileResponseSchema.parse(json);
 
-    if (!res.ok) {
-      throw new Error("Failed to load user's info")
+    if (!data.success) {
+      throw new Error(data.message);
     }
 
-    const { user } = await res.json();
-    return { user, token }
+    const { user } = data;
+    return { user, token };
   },
   component: RouteComponent,
-})
+});
 
 function RouteComponent() {
-
   const navigate = useNavigate();
   const router = useRouter();
-  const { user, token }: { user: User, token: string } = Route.useLoaderData()
+  const { user, token }: { user: User; token: string } = Route.useLoaderData();
 
   const [avatar, setAvatar] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
-  const [formData, setFormData] = useState({ fullname: user.fullname, about: user.about || "" })
-  const [errors, setErrors] = useState<ValidationError[] | null>(null)
-  const [isLoading, setIsLoading] = useState(false)
+  const [formData, setFormData] = useState({
+    fullname: user.fullname,
+    about: user.about ?? "",
+  });
+  const [errors, setErrors] = useState<ValidationError[] | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     return () => {
@@ -44,25 +54,25 @@ function RouteComponent() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) {
-      setPreview(null)
-      setAvatar(null)
-      return
+      setPreview(null);
+      setAvatar(null);
+      return;
     }
-    setAvatar(file)
+    setAvatar(file);
     setPreview(URL.createObjectURL(file));
   };
 
   const formSubmitHandler = async (e: React.SubmitEvent) => {
     e.preventDefault();
-    setIsLoading(true)
-    setErrors(null)
-    const url = `${import.meta.env.VITE_API_URL}/me`
-    const formBody = new FormData()
+    setIsLoading(true);
+    setErrors(null);
+    const url = `${import.meta.env.VITE_API_URL}/me`;
+    const formBody = new FormData();
 
-    formBody.append("fullname", formData.fullname)
-    formBody.append("about", formData.about)
+    formBody.append("fullname", formData.fullname);
+    formBody.append("about", formData.about);
     if (avatar) {
-      formBody.append("avatar", avatar)
+      formBody.append("avatar", avatar);
     }
 
     const options = {
@@ -70,26 +80,25 @@ function RouteComponent() {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-      body: formBody
-    }
+      body: formBody,
+    };
 
     try {
-      const res = await fetch(url, options)
+      const res = await fetch(url, options);
 
       if (!res.ok) {
-        const { errors } = await res.json()
-        setErrors(errors)
-        return
+        const { errors } = await res.json();
+        setErrors(errors);
+        return;
       }
 
-      navigate({ to: "/users/$userId", params: { userId: user.id } })
-
+      navigate({ to: "/users/$userId", params: { userId: user.id } });
     } catch (error) {
-      console.error(error)
+      console.error(error);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <>
@@ -122,9 +131,12 @@ function RouteComponent() {
           </div>
 
           <div className="space-y-1">
-            <label htmlFor="fullname" className="block text-sm font-medium text-(--app-text)">
+            <label
+              htmlFor="fullname"
+              className="block text-sm font-medium text-(--app-text)"
+            >
               Full Name
-              <span className='text-red-500'> *</span>
+              <span className="text-red-500"> *</span>
             </label>
             <input
               type="text"
@@ -132,14 +144,19 @@ function RouteComponent() {
               id="fullname"
               required
               value={formData.fullname}
-              onChange={(e) => { setFormData({ ...formData, fullname: e.target.value }); }}
+              onChange={(e) => {
+                setFormData({ ...formData, fullname: e.target.value });
+              }}
               className="rounded-md w-full border border-(--app-border) bg-transparent px-3 py-2 text-sm text-(--app-text) outline-none placeholder:text-(--app-muted) focus:border-(--app-accent)"
             />
             <FormErrors fieldName="fullname" errors={errors} />
           </div>
 
           <div className="space-y-1">
-            <label htmlFor="about" className="block text-sm font-medium text-(--app-text)">
+            <label
+              htmlFor="about"
+              className="block text-sm font-medium text-(--app-text)"
+            >
               About
             </label>
             <textarea
@@ -147,7 +164,9 @@ function RouteComponent() {
               id="about"
               rows={4}
               value={formData.about}
-              onChange={(e) => { setFormData({ ...formData, about: e.target.value }); }}
+              onChange={(e) => {
+                setFormData({ ...formData, about: e.target.value });
+              }}
               className="w-full rounded-md resize-none border border-(--app-border) bg-transparent px-3 py-2 text-sm text-(--app-text) outline-none placeholder:text-(--app-muted) focus:border-(--app-accent)"
             />
             <FormErrors fieldName="about" errors={errors} />
@@ -156,7 +175,9 @@ function RouteComponent() {
           <div className="flex items-center gap-3 pt-2">
             <button
               type="button"
-              onClick={() => { router.history.back(); }}
+              onClick={() => {
+                router.history.back();
+              }}
               className="flex-1 rounded-md border border-(--app-border) px-4 py-2 text-sm font-medium text-(--app-text) transition-colors hover:bg-(--app-surface)"
             >
               Cancel
@@ -172,5 +193,5 @@ function RouteComponent() {
         </form>
       </div>
     </>
-  )
+  );
 }
