@@ -1,9 +1,14 @@
 {
+  "name": "neetwork",
+  "version": "1.0.0",
+  "license": "MIT",
   "private": true,
-  "packageManager": "pnpm@11.5.0",
+  "packageManager": "pnpm@12.0.0",
   "scripts": {
     "dev": "pnpm --parallel --filter api --filter web dev",
     "dev:api": "pnpm --filter api dev",
-    "dev:web": "pnpm --filter web dev"
+    "dev:web": "pnpm --filter web dev",
+    "lint": "pnpm run --parallel lint",
+    "type-check": "pnpm run --parallel type-check"
   }
 }
