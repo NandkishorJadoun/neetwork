@@ -1,0 +1,7 @@
+{
+  "name": "@neetwork/contracts",
+  "type": "module",
+  "dependencies": {
+    "zod": "^4.5.2"
+  }
+}

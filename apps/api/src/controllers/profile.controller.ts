@@ -127,7 +127,11 @@ export const getAllFollowRequests = async (
   }
 };
 
-export const acceptFollowRequest = async (req: Request, res: Response<AcceptFollowRequestResponse>, next: NextFunction) => {
+export const acceptFollowRequest = async (
+  req: Request,
+  res: Response<AcceptFollowRequestResponse>,
+  next: NextFunction
+) => {
   if (!req.user) {
     return res.status(401).json({ success: false, message: "Unauthorized" });
   }
@@ -163,7 +167,11 @@ export const acceptFollowRequest = async (req: Request, res: Response<AcceptFoll
   }
 };
 
-export const rejectFollowRequest = async (req: Request, res: Response<RejectFollowRequestResponse>, next: NextFunction) => {
+export const rejectFollowRequest = async (
+  req: Request,
+  res: Response<RejectFollowRequestResponse>,
+  next: NextFunction
+) => {
   if (!req.user) {
     return res.status(401).json({ success: false, message: "Unauthorized" });
   }
@@ -195,7 +203,11 @@ export const rejectFollowRequest = async (req: Request, res: Response<RejectFoll
   }
 };
 
-export const removeFollower = async (req: Request, res: Response<RemoveFollowerResponse>, next: NextFunction) => {
+export const removeFollower = async (
+  req: Request,
+  res: Response<RemoveFollowerResponse>,
+  next: NextFunction
+) => {
   if (!req.user) {
     return res.status(401).json({ success: false, message: "Unauthorized" });
   }

@@ -2,7 +2,11 @@ import type { Request, Response, NextFunction } from "express";
 import { prisma } from "../configs/prisma.js";
 import { Prisma } from "../../generated/prisma/index.js";
 
-export const getAllNonFollowingUsers = async (req: Request, res: Response, next: NextFunction) => {
+export const getAllNonFollowingUsers = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   if (!req.user) {
     return res.status(401).json({ message: "Unauthorized" });
   }
@@ -14,20 +18,28 @@ export const getAllNonFollowingUsers = async (req: Request, res: Response, next:
       where: {
         id: { not: id },
         followers: {
-          none: { fromId: id }
-        }
+          none: { senderId: id },
+        },
       },
-    })
+      select: {
+        id: true,
+        name: true,
+        image: true,
+      }
+    });
 
-    return res.status(200).json({ users })
-
+    return res.status(200).json({ users });
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
-export const getUserById = async (req: Request, res: Response, next: NextFunction) => {
-  const { userId } = req.params
+export const getUserById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const { userId } = req.params;
 
   if (!req.user) {
     return res.status(401).json({ message: "Unauthorized" });
@@ -36,7 +48,7 @@ export const getUserById = async (req: Request, res: Response, next: NextFunctio
   const { id } = req.user;
 
   if (Array.isArray(userId) || !userId) {
-    return res.status(400).json({ message: "Invalid User ID" })
+    return res.status(400).json({ message: "Invalid User ID" });
   }
 
   try {
@@ -49,44 +61,49 @@ export const getUserById = async (req: Request, res: Response, next: NextFunctio
           select: {
             followers: {
               where: {
-                status: "ACCEPTED"
-              }
+                status: "ACCEPTED",
+              },
             },
             followings: {
               where: {
-                status: "ACCEPTED"
-              }
+                status: "ACCEPTED",
+              },
             },
-          }
+          },
         },
         followers: {
           where: {
             fromId: id,
-          }
-        }
-      }
-    })
+          },
+        },
+      },
+    });
 
     if (!user) {
-      return res.status(404).json({ message: `User with ID "${userId}" not found` })
+      return res
+        .status(404)
+        .json({ message: `User with ID "${userId}" not found` });
     }
 
-    return res.status(200).json({ user })
+    return res.status(200).json({ user });
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
-export const getPostsByUserId = async (req: Request, res: Response, next: NextFunction) => {
-
-  const { params, user } = req
+export const getPostsByUserId = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const { params, user } = req;
 
   if (!user) {
     return res.status(401).json({ message: "Unauthorized" });
   }
 
   if (Array.isArray(params.userId) || !params.userId) {
-    return res.status(400).json({ message: "Invalid User ID" })
+    return res.status(400).json({ message: "Invalid User ID" });
   }
 
   const { id } = user;
@@ -96,45 +113,49 @@ export const getPostsByUserId = async (req: Request, res: Response, next: NextFu
     const posts = await prisma.post.findMany({
       where: { userId },
       orderBy: {
-        created_at: 'desc',
+        created_at: "desc",
       },
       include: {
         author: {
           select: {
             avatar: true,
             username: true,
-            fullname: true
-          }
+            fullname: true,
+          },
         },
         _count: {
           select: {
             likes: true,
-            comments: true
-          }
+            comments: true,
+          },
         },
         likes: {
           where: {
-            userId: id
-          }
-        }
-      }
-    })
+            userId: id,
+          },
+        },
+      },
+    });
 
-    return res.status(200).json({ posts })
+    return res.status(200).json({ posts });
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
-export const getCommentsByUserId = async (req: Request, res: Response, next: NextFunction) => {
-  const { params, user } = req
+export const getCommentsByUserId = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const { params, user } = req;
 
   if (!user) {
     return res.status(401).json({ message: "Unauthorized" });
   }
 
   if (Array.isArray(params.userId) || !params.userId) {
-    return res.status(400).json({ message: "Invalid User ID" })
+    return res.status(400).json({ message: "Invalid User ID" });
   }
 
   const { id } = user;
@@ -144,7 +165,7 @@ export const getCommentsByUserId = async (req: Request, res: Response, next: Nex
     const comments = await prisma.comment.findMany({
       where: { userId },
       orderBy: {
-        created_at: "desc"
+        created_at: "desc",
       },
       include: {
         author: {
@@ -152,8 +173,8 @@ export const getCommentsByUserId = async (req: Request, res: Response, next: Nex
             id: true,
             fullname: true,
             username: true,
-            avatar: true
-          }
+            avatar: true,
+          },
         },
         post: {
           include: {
@@ -161,40 +182,44 @@ export const getCommentsByUserId = async (req: Request, res: Response, next: Nex
               select: {
                 avatar: true,
                 username: true,
-                fullname: true
-              }
+                fullname: true,
+              },
             },
             _count: {
               select: {
                 likes: true,
-                comments: true
-              }
+                comments: true,
+              },
             },
             likes: {
               where: {
-                userId: id
-              }
-            }
-          }
-        }
-      }
-    })
+                userId: id,
+              },
+            },
+          },
+        },
+      },
+    });
 
-    return res.status(200).json({ comments })
+    return res.status(200).json({ comments });
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
-export const getLikedPostsByUserId = async (req: Request, res: Response, next: NextFunction) => {
-  const { params, user } = req
+export const getLikedPostsByUserId = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const { params, user } = req;
 
   if (!user) {
     return res.status(401).json({ message: "Unauthorized" });
   }
 
   if (Array.isArray(params.userId) || !params.userId) {
-    return res.status(400).json({ message: "Invalid User ID" })
+    return res.status(400).json({ message: "Invalid User ID" });
   }
 
   const { id } = user;
@@ -204,7 +229,7 @@ export const getLikedPostsByUserId = async (req: Request, res: Response, next: N
     const likes = await prisma.like.findMany({
       where: { userId },
       orderBy: {
-        id: "desc"
+        id: "desc",
       },
       select: {
         id: true,
@@ -214,137 +239,92 @@ export const getLikedPostsByUserId = async (req: Request, res: Response, next: N
               select: {
                 avatar: true,
                 username: true,
-                fullname: true
-              }
+                fullname: true,
+              },
             },
             _count: {
               select: {
                 likes: true,
-                comments: true
-              }
+                comments: true,
+              },
             },
             likes: {
               where: {
-                userId: id
-              }
-            }
-          }
-        }
-      }
-    })
+                userId: id,
+              },
+            },
+          },
+        },
+      },
+    });
 
-    return res.status(200).json({ likes })
+    return res.status(200).json({ likes });
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
-export const getFollowersByUserId = async (req: Request, res: Response, next: NextFunction) => {
-  const { userId } = req.params
+export const getFollowersByUserId = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const { userId } = req.params;
 
   if (Array.isArray(userId) || !userId) {
-    return res.status(400).json({ message: "Invalid User ID" })
+    return res.status(400).json({ message: "Invalid User ID" });
   }
 
   try {
     const followers = await prisma.follow.findMany({
       where: {
         toId: userId,
-        status: "ACCEPTED"
+        status: "ACCEPTED",
       },
       include: {
-        sender: true
-      }
-    })
+        sender: true,
+      },
+    });
 
-    return res.status(200).json({ followers })
+    return res.status(200).json({ followers });
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
-export const getFollowingsByUserId = async (req: Request, res: Response, next: NextFunction) => {
-  const { userId } = req.params
+export const getFollowingsByUserId = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const { userId } = req.params;
 
   if (Array.isArray(userId) || !userId) {
-    return res.status(400).json({ message: "Invalid User ID" })
+    return res.status(400).json({ message: "Invalid User ID" });
   }
 
   try {
     const followings = await prisma.follow.findMany({
       where: {
         fromId: userId,
-        status: "ACCEPTED"
+        status: "ACCEPTED",
       },
       include: {
-        receiver: true
-      }
-    })
+        receiver: true,
+      },
+    });
 
-    return res.status(200).json({ followings })
+    return res.status(200).json({ followings });
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
-export const sendFollowRequest = async (req: Request, res: Response, next: NextFunction) => {
-  if (!req.user) {
-    return res.status(401).json({ message: "Unauthorized" });
-  }
-
-  const fromId = req.user.id;
-  const toId = req.params.userId
-
-  if (Array.isArray(toId) || !toId) {
-    return res.status(400).json({ message: "Invalid User ID" })
-  }
-
-  try {
-    const followRequest = await prisma.follow.create({
-      data: { fromId, toId }
-    })
-
-    return res.status(200).json({ followRequest })
-  } catch (error) {
-    if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      if (error.code === "P2002") {
-        return res.status(409).json({ message: "You can't send multiple follow request to a user." })
-      }
-    }
-    next(error)
-  }
-}
-
-export const deleteFollowRequest = async (req: Request, res: Response, next: NextFunction) => {
-  if (!req.user) {
-    return res.status(401).json({ message: "Unauthorized" });
-  }
-
-  const fromId = req.user.id;
-  const toId = req.params.userId
-
-  if (Array.isArray(toId) || !toId) {
-    return res.status(400).json({ message: "Invalid User ID" })
-  }
-
-  try {
-    await prisma.follow.delete({
-      where: { fromId_toId: { fromId, toId } }
-    })
-
-    return res.status(204).send()
-
-  } catch (error) {
-    if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      if (error.code === "P2025") {
-        return res.status(404).json({ message: "No record found for delete operation" })
-      }
-    }
-    next(error)
-  }
-}
-
-export const removeFollowerByUserId = async (req: Request, res: Response, next: NextFunction) => {
+export const sendFollowRequest = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   if (!req.user) {
     return res.status(401).json({ message: "Unauthorized" });
   }
@@ -353,25 +333,94 @@ export const removeFollowerByUserId = async (req: Request, res: Response, next: 
   const toId = req.params.userId;
 
   if (Array.isArray(toId) || !toId) {
-    return res.status(400).json({ message: "Invalid User ID" })
+    return res.status(400).json({ message: "Invalid User ID" });
+  }
+
+  try {
+    const followRequest = await prisma.follow.create({
+      data: { fromId, toId },
+    });
+
+    return res.status(200).json({ followRequest });
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === "P2002") {
+        return res.status(409).json({
+          message: "You can't send multiple follow request to a user.",
+        });
+      }
+    }
+    next(error);
+  }
+};
+
+export const deleteFollowRequest = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  if (!req.user) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  const fromId = req.user.id;
+  const toId = req.params.userId;
+
+  if (Array.isArray(toId) || !toId) {
+    return res.status(400).json({ message: "Invalid User ID" });
+  }
+
+  try {
+    await prisma.follow.delete({
+      where: { fromId_toId: { fromId, toId } },
+    });
+
+    return res.status(204).send();
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === "P2025") {
+        return res
+          .status(404)
+          .json({ message: "No record found for delete operation" });
+      }
+    }
+    next(error);
+  }
+};
+
+export const removeFollowerByUserId = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  if (!req.user) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  const fromId = req.user.id;
+  const toId = req.params.userId;
+
+  if (Array.isArray(toId) || !toId) {
+    return res.status(400).json({ message: "Invalid User ID" });
   }
 
   try {
     await prisma.follow.delete({
       where: {
         fromId_toId: { fromId, toId },
-        status: "ACCEPTED"
-      }
-    })
+        status: "ACCEPTED",
+      },
+    });
 
-    return res.status(204).send()
-
+    return res.status(204).send();
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === "P2025") {
-        return res.status(404).json({ message: "No record found for delete operation" })
+        return res
+          .status(404)
+          .json({ message: "No record found for delete operation" });
       }
     }
-    next(error)
+    next(error);
   }
-}
+};
