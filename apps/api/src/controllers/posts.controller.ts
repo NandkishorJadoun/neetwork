@@ -16,12 +16,12 @@ import {
 } from "@neetwork/contracts/schemas/posts.js";
 
 const GetAllPostsQuerySchema = z.strictObject({
-  cursor: z.cuid2().optional(),
+  cursor: z.uuidv7().optional(),
   users: z.literal("following").optional(),
 });
 
 const PostParamsSchema = z.strictObject({
-  postId: z.cuid2(),
+  postId: z.uuidv7(),
 });
 
 export const getAllPosts = async (

@@ -23,7 +23,7 @@ import {
 } from "@neetwork/contracts/schemas/users.js";
 
 const UserParamsSchema = z.strictObject({
-  userId: z.cuid2(),
+  userId: z.uuidv7(),
 });
 
 export const getAllNonFollowingUsers = async (
@@ -122,7 +122,7 @@ export const getUserById = async (
     if (!user) {
       return res
         .status(404)
-        .json({ success: false, message: `User with ID "${userId}" not found` });
+        .json({ success: false, message: `User not found` });
     }
 
     const response = GetUserByIdSuccessSchema.parse({ success: true, user });

@@ -1,4 +1,4 @@
-import { auth } from "@/configs/auth.js";
+import { auth } from "../configs/auth.js";
 import { fromNodeHeaders } from "better-auth/node";
 import { type RequestHandler } from "express";
 

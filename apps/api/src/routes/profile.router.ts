@@ -1,7 +1,7 @@
 import express from "express"
 import { upload } from "../configs/multer.js";
 import { acceptFollowRequest, getAllFollowRequests, getUserProfile, rejectFollowRequest, removeFollower, updateUserProfile } from "../controllers/profile.controller.js";
-import { requireAuth } from "@/middlewares/require-auth.js";
+import { requireAuth } from "../middlewares/require-auth.js";
 
 export const profileRouter = express.Router();
 

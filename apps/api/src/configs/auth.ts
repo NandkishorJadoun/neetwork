@@ -1,13 +1,18 @@
-import { betterAuth } from "better-auth";
+import { betterAuth, type BetterAuthOptions } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { prisma } from "./prisma.js";
 import { env } from "./env.js";
 import { anonymous } from "better-auth/plugins"
 
-export const auth = betterAuth({
+export const baseAuthConfig = {
     database: prismaAdapter(prisma, {
-        provider: "postgresql"
+        provider: "postgresql",
     }),
+    advanced: {
+        database: {
+            generateId: false,
+        },
+    },
     emailAndPassword: {
         enabled: true,
     },
@@ -25,9 +30,11 @@ export const auth = betterAuth({
         cookieCache: {
             enabled: true,
             maxAge: 5 * 60,
-        }
+        },
     },
     plugins: [
-        anonymous()
-    ]
-});
+        anonymous(),
+    ],
+} satisfies BetterAuthOptions;
+
+export const auth = betterAuth(baseAuthConfig);

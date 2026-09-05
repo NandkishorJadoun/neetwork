@@ -12,7 +12,7 @@ import {
 } from "@neetwork/contracts/schemas/profile.js";
 
 const FollowRequestBodySchema = z.strictObject({
-  userId: z.cuid2(),
+  userId: z.uuidv7(),
 })
 
 export const getUserProfile = async (

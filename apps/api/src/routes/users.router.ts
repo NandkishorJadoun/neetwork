@@ -1,6 +1,6 @@
 import express from "express"
 import { deleteFollowRequest, getAllNonFollowingUsers, getCommentsByUserId, getFollowersByUserId, getFollowingsByUserId, getLikedPostsByUserId, getPostsByUserId, getUserById, removeFollowerByUserId, sendFollowRequest } from "../controllers/users.controller.js";
-import { requireAuth } from "@/middlewares/require-auth.js";
+import { requireAuth } from "../middlewares/require-auth.js";
 
 export const usersRouter = express.Router();
 

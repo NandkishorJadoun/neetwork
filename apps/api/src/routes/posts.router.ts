@@ -1,6 +1,6 @@
 import express from "express"
-import { createComment, createPost, deletePost, getAllPosts, getPostById, getLikesByPostId,likePost, unlikePost } from "@/controllers/posts.controller.js";
-import { requireAuth } from "@/middlewares/require-auth.js";
+import { createComment, createPost, deletePost, getAllPosts, getPostById, getLikesByPostId,likePost, unlikePost } from "../controllers/posts.controller.js";
+import { requireAuth } from "../middlewares/require-auth.js";
 
 export const postsRouter = express.Router();
 
