@@ -5,10 +5,9 @@
     "outDir": "dist",
     "module": "nodenext",
     "moduleResolution": "nodenext",
-    "lib": ["esnext"],
-    "paths": {
-      "@/*": ["./src/*"]
-    },
+    "lib": [
+      "esnext"
+    ],
     "esModuleInterop": true,
     "sourceMap": true,
     "declaration": true,
@@ -18,6 +17,15 @@
     "isolatedModules": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src"],
-  "exclude": ["eslint.config.ts", "prisma.config.ts", "generated", "tests", "node_modules", "dist"]
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "eslint.config.ts",
+    "prisma.config.ts",
+    "generated",
+    "tests",
+    "node_modules",
+    "dist"
+  ]
 }
