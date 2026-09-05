@@ -8,7 +8,7 @@ datasource db {
 }
 
 model User {
-  id         String    @id @default(cuid(2))
+  id         String    @id @default(uuid(7))
   about      String?
   posts      Post[]
   comments   Comment[]
@@ -32,7 +32,7 @@ model User {
 }
 
 model Session {
-  id        String   @id
+  id        String   @id @default(uuid(7))
   expiresAt DateTime
   token     String
   createdAt DateTime @default(now())
@@ -48,7 +48,7 @@ model Session {
 }
 
 model Account {
-  id                    String    @id
+  id                    String   @id @default(uuid(7))
   issuer                String
   accountId             String
   providerId            String
@@ -70,7 +70,7 @@ model Account {
 }
 
 model Verification {
-  id         String   @id
+  id         String   @id @default(uuid(7))
   identifier String
   value      String
   expiresAt  DateTime
@@ -82,7 +82,7 @@ model Verification {
 }
 
 model Post {
-  id         String    @id @default(cuid(2))
+  id         String    @id @default(uuid(7))
   text       String
   created_at DateTime  @default(now())
   author     User      @relation(fields: [userId], references: [id])
@@ -94,7 +94,7 @@ model Post {
 }
 
 model Comment {
-  id         String   @id @default(cuid(2))
+  id         String   @id @default(uuid(7))
   text       String
   created_at DateTime @default(now())
   author     User     @relation(fields: [userId], references: [id])
@@ -106,7 +106,7 @@ model Comment {
 }
 
 model Like {
-  id     String @id @default(cuid(2))
+  id     String @id @default(uuid(7))
   user   User   @relation(fields: [userId], references: [id])
   userId String
   post   Post   @relation(fields: [postId], references: [id])
@@ -117,7 +117,7 @@ model Like {
 }
 
 model Follow {
-  id         String @id @default(cuid(2))
+  id         String @id @default(uuid(7))
   sender     User   @relation(fields: [senderId], references: [id], name: "followings")
   receiver   User   @relation(fields: [receiverId], references: [id], name: "followers")
   status     Status @default(PENDING)
