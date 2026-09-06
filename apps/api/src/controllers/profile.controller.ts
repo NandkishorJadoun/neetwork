@@ -11,7 +11,7 @@ import {
   type RemoveFollowerResponse,
 } from "@neetwork/contracts/schemas/profile.js";
 
-const FollowRequestBodySchema = z.strictObject({
+const FollowRequestParamsSchema = z.strictObject({
   userId: z.uuidv7(),
 })
 
@@ -35,7 +35,10 @@ export const getUserProfile = async (
     if (!userData) {
       return res
         .status(404)
-        .json({ success: false, message: "User not found" });
+        .json({
+          success: false,
+          message: "User not found"
+        });
     }
 
     const user = {
@@ -83,7 +86,7 @@ export const updateUserProfile: RequestHandler = async (req, res, next) => {
     if (error instanceof ZodError) {
       return res.status(422).json({
         errors: error.issues.map((issue) =>
-          Object({ fieldName: issue.path[0], message: issue.message }),
+        ({ fieldName: issue.path[0], message: issue.message }),
         ),
       });
     }
@@ -104,7 +107,7 @@ export const getAllFollowRequests = async (
 
   try {
     const followRequests = await prisma.follow.findMany({
-      where: { toId: id, status: "PENDING" },
+      where: { receiverId: id, status: "PENDING" },
       include: {
         sender: {
           select: {
@@ -136,19 +139,19 @@ export const acceptFollowRequest = async (
     return res.status(401).json({ success: false, message: "Unauthorized" });
   }
 
-  const body = FollowRequestBodySchema.safeParse(req.body)
+  const params = FollowRequestParamsSchema.safeParse(req.params)
 
-  if (!body.success) {
+  if (!params.success) {
     return res.status(404).json({ success: false, message: "Invalid User ID" });
   }
 
-  const toId = req.user.id;
-  const fromId = body.data.userId;
+  const receiverId = req.user.id;
+  const senderId = params.data.userId;
 
   try {
     await prisma.follow.update({
       where: {
-        fromId_toId: { fromId, toId },
+        senderId_receiverId: { senderId, receiverId },
         status: "PENDING",
       },
       data: {
@@ -176,19 +179,19 @@ export const rejectFollowRequest = async (
     return res.status(401).json({ success: false, message: "Unauthorized" });
   }
 
-  const body = FollowRequestBodySchema.safeParse(req.body)
+  const params = FollowRequestParamsSchema.safeParse(req.params)
 
-  if (!body.success) {
+  if (!params.success) {
     return res.status(404).json({ success: false, message: "Invalid User ID" });
   }
 
-  const toId = req.user.id;
-  const fromId = body.data.userId;
+  const receiverId = req.user.id;
+  const senderId = params.data.userId;
 
   try {
     await prisma.follow.delete({
       where: {
-        fromId_toId: { fromId, toId },
+        senderId_receiverId: { senderId, receiverId },
         status: "PENDING",
       },
     });
@@ -212,19 +215,19 @@ export const removeFollower = async (
     return res.status(401).json({ success: false, message: "Unauthorized" });
   }
 
-  const body = FollowRequestBodySchema.safeParse(req.body)
+  const params = FollowRequestParamsSchema.safeParse(req.params)
 
-  if (!body.success) {
+  if (!params.success) {
     return res.status(404).json({ success: false, message: "Invalid User ID" });
   }
 
-  const toId = req.user.id;
-  const fromId = body.data.userId;
+  const receiverId = req.user.id;
+  const senderId = params.data.userId;
 
   try {
     await prisma.follow.delete({
       where: {
-        fromId_toId: { fromId, toId },
+        senderId_receiverId: { senderId, receiverId },
         status: "ACCEPTED",
       },
     });

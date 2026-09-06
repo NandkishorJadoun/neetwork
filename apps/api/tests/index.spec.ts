@@ -3,7 +3,7 @@ import { expect, test } from 'vitest'
 import request from "supertest"
 
 test("index route returns 200", async () => {
-    const res = await request(app).get("/")
+    const res = await request(app).get("/api/health")
 
     expect(res.headers["content-type"]).match(/json/)
     expect(res.status).toBe(200)

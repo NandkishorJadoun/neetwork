@@ -137,7 +137,7 @@ export const createPost = async (
     if (error instanceof ZodError) {
       return res.status(422).json({
         errors: error.issues.map((issue) =>
-          Object({ fieldName: issue.path[0], message: issue.message }),
+          ({ fieldName: issue.path[0], message: issue.message }),
         ),
       });
     }
@@ -158,7 +158,7 @@ export const getPostById = async (
   const params = PostParamsSchema.safeParse(req.params);
 
   if (!params.success) {
-    return res.status(400).json({ success: false, message: "Invalid Post ID" });
+    return res.status(404).json({ success: false, message: "Invalid Post ID" });
   }
 
   const { postId } = params.data;
@@ -230,7 +230,7 @@ export const deletePost = async (
   const params = PostParamsSchema.safeParse(req.params);
 
   if (!params.success) {
-    return res.status(400).json({ success: false, message: "Invalid Post ID" });
+    return res.status(404).json({ success: false, message: "Invalid Post ID" });
   }
 
   try {
@@ -286,7 +286,7 @@ export const createComment = async (
     if (error instanceof ZodError) {
       return res.status(422).json({
         errors: error.issues.map((issue) =>
-          Object({ fieldName: issue.path[0], message: issue.message }),
+          ({ fieldName: issue.path[0], message: issue.message }),
         ),
       });
     }
@@ -383,7 +383,7 @@ export const unlikePost = async (
   const params = PostParamsSchema.safeParse(req.params);
 
   if (!params.success) {
-    return res.status(400).json({ success: false, message: "Invalid Post ID" });
+    return res.status(404).json({ success: false, message: "Invalid Post ID" });
   }
 
   try {
