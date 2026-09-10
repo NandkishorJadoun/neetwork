@@ -27,13 +27,13 @@ beforeAll(async () => {
       }))
     )
   )
-  
+
   const userA = users[0];
   const cookied = (await test.getAuthHeaders({ userId: userA.id })).get("cookie")
   if (!cookied) {
     throw new Error("Cookie not found");
   }
-  
+
   cookie = cookied;
 })
 
@@ -239,12 +239,11 @@ describe("GET /users/:userId/followings", () => {
 describe("POST /users/:userId/follow-request", () => {
   afterEach(async () => await prisma.follow.deleteMany())
 
-
   it("will send a follow request", async () => {
     const userB = users[1];
 
     const res = await request(app)
-      .post(`/api/users/${userB.id}/follow-request`)
+      .post(`/api/follow/${userB.id}`)
       .set('Cookie', cookie)
 
     expect(res.status).toBe(200)
@@ -254,11 +253,11 @@ describe("POST /users/:userId/follow-request", () => {
     const userB = users[1];
 
     await request(app)
-      .post(`/api/users/${userB.id}/follow-request`)
+      .post(`/api/follow/${userB.id}`)
       .set('Cookie', cookie)
 
     const res = await request(app)
-      .post(`/api/users/${userB.id}/follow-request`)
+      .post(`/api/follow/${userB.id}`)
       .set('Cookie', cookie)
 
     expect(res.status).toBe(409)
@@ -274,7 +273,7 @@ describe("DELETE /users/:userId/follow-request", () => {
 
     const userB = users[1];
     const res = await request(app)
-      .delete(`/api/users/${userB.id}/follow-request`)
+      .delete(`/api/follow/${userB.id}`)
       .set('Cookie', cookie)
 
     expect(res.status).toBe(200)
@@ -285,14 +284,14 @@ describe("DELETE /users/:userId/follow-request", () => {
     const userId = "FakeUserId"
 
     const res = await request(app)
-      .delete(`/api/users/${userId}/follow-request`)
+      .delete(`/api/follow/${userId}`)
       .set('Cookie', cookie)
 
     expect(res.status).toBe(400)
   })
 })
 
-describe("DELETE /users/:userId/follow", () => {
+describe("DELETE /follow/:userId", () => {
 
   beforeEach(async () => await prisma.follow.create({ data: { senderId: users[0].id, receiverId: users[1].id, status: "ACCEPTED" } }))
   afterEach(async () => await prisma.follow.deleteMany())
@@ -301,7 +300,7 @@ describe("DELETE /users/:userId/follow", () => {
 
     const userB = users[1];
     const res = await request(app)
-      .delete(`/api/users/${userB.id}/follow`)
+      .delete(`/api/follow/${userB.id}`)
       .set('Cookie', cookie)
 
     expect(res.status).toBe(200)
@@ -311,7 +310,7 @@ describe("DELETE /users/:userId/follow", () => {
   it("should respond with 404 Not Found when attempting to remove a user whom the user is not following", async () => {
     const userId = "FakeUserId"
     const res = await request(app)
-      .delete(`/api/users/${userId}/follow`)
+      .delete(`/api/follow/${userId}`)
       .set('Cookie', cookie)
 
     expect(res.status).toBe(400)

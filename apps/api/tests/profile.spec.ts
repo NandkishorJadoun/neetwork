@@ -49,12 +49,12 @@ beforeAll(async () => {
 
 afterAll(async () => prisma.$disconnect())
 
-describe("GET /api/me", () => {
+describe("GET /api/account", () => {
   it("should respond with 200 and user profile data", async () => {
     const user = users[0];
 
     const res = await request(app)
-      .get("/api/me")
+      .get("/api/account")
       .set("Cookie", cookie)
 
     expect(res.status).toEqual(200)
@@ -62,7 +62,7 @@ describe("GET /api/me", () => {
   })
 })
 
-/* describe("PATCH /api/me", () => {
+/* describe("PATCH /api/account", () => {
     const [user] = users;
  
     it("should respond with 422 Unprocessable Entity and a validation error when the 'fullname' field is empty", async () => {
@@ -118,7 +118,7 @@ describe("GET /api/me", () => {
     })
 }) */
 
-describe("GET /api/me/follow-requests", () => {
+describe("GET /api/follow-requests", () => {
 
   beforeEach(async () => {
     const [userA, userB, userC] = users;
@@ -144,7 +144,7 @@ describe("GET /api/me/follow-requests", () => {
     }
 
     const res = await request(app)
-      .get("/api/me/follow-requests")
+      .get("/api/follow-requests")
       .set("Cookie", cookie)
 
     const followRequests = res.body.followRequests
@@ -158,7 +158,7 @@ describe("GET /api/me/follow-requests", () => {
   it("should return an empty array when the authenticated user has no pending incoming follow requests", async () => {
 
     const res = await request(app)
-      .get("/api/me/follow-requests")
+      .get("/api/follow-requests")
       .set("Cookie", cookie)
 
     expect(res.status).toBe(200)
@@ -166,7 +166,7 @@ describe("GET /api/me/follow-requests", () => {
   })
 })
 
-describe("PATCH /api/me/follow-requests/:userId", () => {
+describe("PATCH /api/follow-requests/:userId", () => {
 
   // UserB sends a follow request to userA
   beforeEach(async () => {
@@ -186,7 +186,7 @@ describe("PATCH /api/me/follow-requests/:userId", () => {
     const userB = users[1]
 
     const res = await request(app)
-      .patch(`/api/me/follow-requests/${userB.id}`)
+      .patch(`/api/follow-requests/${userB.id}`)
       .set("Cookie", cookie)
 
     expect(res.status).toBe(200)
@@ -198,7 +198,7 @@ describe("PATCH /api/me/follow-requests/:userId", () => {
     const userId = "FakeUserId"
 
     const res = await request(app)
-      .patch(`/api/me/follow-requests/${userId}`)
+      .patch(`/api/follow-requests/${userId}`)
       .set("Cookie", cookie)
 
     expect(res.status).toBe(404)
@@ -221,7 +221,7 @@ describe("DELETE /api/me/follow-requests/:userId", () => {
     const userB = users[1];
 
     const res = await request(app)
-      .delete(`/api/me/follow-requests/${userB.id}`)
+      .delete(`/api/follow-requests/${userB.id}`)
       .set("Cookie", cookie)
 
     expect(res.status).toBe(200)
@@ -233,7 +233,7 @@ describe("DELETE /api/me/follow-requests/:userId", () => {
     const userId = "FakeUserId"
 
     const res = await request(app)
-      .delete(`/api/me/follow-requests/${userId}`)
+      .delete(`/api/follow-requests/${userId}`)
       .set("Cookie", cookie)
 
     expect(res.status).toBe(404)
@@ -257,7 +257,7 @@ describe("DELETE /api/me/followers/:userId", () => {
     const userB = users[1];
 
     const res = await request(app)
-      .delete(`/api/me/followers/${userB.id}`)
+      .delete(`/api/followers/${userB.id}`)
       .set("Cookie", cookie)
 
     expect(res.status).toBe(200)
@@ -267,7 +267,7 @@ describe("DELETE /api/me/followers/:userId", () => {
     const userId = "FakeUserId"
 
     const res = await request(app)
-      .delete(`/api/me/followers/${userId}`)
+      .delete(`/api/followers/${userId}`)
       .set("Cookie", cookie)
 
     expect(res.status).toBe(404)

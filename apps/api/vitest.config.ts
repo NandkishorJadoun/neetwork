@@ -1,4 +1,5 @@
-import { defineConfig } from 'vitest/config'
+import { defineConfig } from 'vitest/config';
+process.loadEnvFile();
 
 export default defineConfig({
     test: {
