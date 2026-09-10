@@ -28,7 +28,7 @@ export default defineConfig(
         },
     },
     {
-        files: ['**/*.config.ts', '**/*.spec.ts', '**/*.test.ts', '**/prisma/**/*.ts'],
+        files: ['**/*.config.ts', '**/*.spec.ts', '**/*.test.ts', '**/tests/helpers.ts', '**/prisma/**/*.ts'],
         extends: [tseslint.configs.disableTypeChecked],
     },
 );

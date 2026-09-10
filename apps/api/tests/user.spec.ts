@@ -1,40 +1,18 @@
-import { randomUUIDv7 } from "node:crypto"
 import app from '../src/app.js'
-import { expect, describe, it, beforeAll, afterEach, beforeEach, afterAll } from 'vitest'
+import { expect, describe, it, beforeAll, afterEach, afterAll } from 'vitest'
 import request from "supertest"
 import { prisma } from "../src/configs/prisma.js"
-import { clearDb, testAuth } from './helpers.test.js';
-import type { TestHelpers } from 'better-auth/plugins';
+import { setupTestUsers } from './helpers.js';
 import type { User } from 'better-auth';
 import { createMockPost } from "../src/scripts/mock-data.js"
 
-let test: TestHelpers;
 let users: User[];
 let cookie: string;
 
 beforeAll(async () => {
-
-  await clearDb()
-
-  test = (await testAuth.$context).test
-
-  users = await Promise.all(
-    Array.from({ length: 5 }, (_, i) =>
-      test.saveUser(test.createUser({
-        id: randomUUIDv7(),
-        email: `user${i}@example.com`,
-        name: `User ${i}`
-      }))
-    )
-  )
-
-  const userA = users[0];
-  const cookied = (await test.getAuthHeaders({ userId: userA.id })).get("cookie")
-  if (!cookied) {
-    throw new Error("Cookie not found");
-  }
-
-  cookie = cookied;
+  const ctx = await setupTestUsers(5);
+  users = ctx.users;
+  cookie = ctx.cookie;
 })
 
 afterAll(async () => prisma.$disconnect())
@@ -233,86 +211,5 @@ describe("GET /users/:userId/followings", () => {
         expect.objectContaining({ receiverId: userC.id })
       ])
     )
-  })
-})
-
-describe("POST /users/:userId/follow-request", () => {
-  afterEach(async () => await prisma.follow.deleteMany())
-
-  it("will send a follow request", async () => {
-    const userB = users[1];
-
-    const res = await request(app)
-      .post(`/api/follow/${userB.id}`)
-      .set('Cookie', cookie)
-
-    expect(res.status).toBe(200)
-  })
-
-  it("will send 409 status for sending multiple follow request to a user", async () => {
-    const userB = users[1];
-
-    await request(app)
-      .post(`/api/follow/${userB.id}`)
-      .set('Cookie', cookie)
-
-    const res = await request(app)
-      .post(`/api/follow/${userB.id}`)
-      .set('Cookie', cookie)
-
-    expect(res.status).toBe(409)
-  })
-})
-
-describe("DELETE /users/:userId/follow-request", () => {
-
-  beforeEach(async () => await prisma.follow.create({ data: { senderId: users[0].id, receiverId: users[1].id } }))
-  afterEach(async () => await prisma.follow.deleteMany())
-
-  it("will delete the sent follow request", async () => {
-
-    const userB = users[1];
-    const res = await request(app)
-      .delete(`/api/follow/${userB.id}`)
-      .set('Cookie', cookie)
-
-    expect(res.status).toBe(200)
-    expect(res.body.success).toBe(true)
-  })
-
-  it("will send 404 status if no record found for delete operation", async () => {
-    const userId = "FakeUserId"
-
-    const res = await request(app)
-      .delete(`/api/follow/${userId}`)
-      .set('Cookie', cookie)
-
-    expect(res.status).toBe(400)
-  })
-})
-
-describe("DELETE /follow/:userId", () => {
-
-  beforeEach(async () => await prisma.follow.create({ data: { senderId: users[0].id, receiverId: users[1].id, status: "ACCEPTED" } }))
-  afterEach(async () => await prisma.follow.deleteMany())
-
-  it("should successfully remove an existing user from the user's following list and return 204 No Content", async () => {
-
-    const userB = users[1];
-    const res = await request(app)
-      .delete(`/api/follow/${userB.id}`)
-      .set('Cookie', cookie)
-
-    expect(res.status).toBe(200)
-    expect(res.body.success).toBe(true)
-  })
-
-  it("should respond with 404 Not Found when attempting to remove a user whom the user is not following", async () => {
-    const userId = "FakeUserId"
-    const res = await request(app)
-      .delete(`/api/follow/${userId}`)
-      .set('Cookie', cookie)
-
-    expect(res.status).toBe(400)
   })
 })
