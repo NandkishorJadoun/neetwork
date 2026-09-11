@@ -1,5 +1,5 @@
 import { z } from "zod/v4";
-import { apiResponse, SuccessSchema } from "../shared/api-response.js";
+import { apiResponse } from "../shared/api-response.js";
 import {
   CommentWithAuthorAndPostSchema,
   FollowRecordSchema,
@@ -99,14 +99,4 @@ export const GetFollowingsByUserIdSchema = apiResponse(
 
 export type GetFollowingsByUserIdResponse = z.infer<
   typeof GetFollowingsByUserIdSchema
->;
-
-export const SendFollowRequestSchema = apiResponse(SuccessSchema);
-
-export type SendFollowRequestResponse = z.infer<typeof SendFollowRequestSchema>;
-
-export const unfollowUserByIdSchema = apiResponse(SuccessSchema);
-
-export type unfollowUserByIdResponse = z.infer<
-  typeof unfollowUserByIdSchema
 >;

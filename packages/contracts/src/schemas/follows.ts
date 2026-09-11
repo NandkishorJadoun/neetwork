@@ -1,23 +1,15 @@
 import { z } from "zod/v4";
 import { apiResponse, SuccessSchema } from "../shared/api-response.js";
-import {
-  FollowRequestWithSenderPreviewSchema,
-  UserPreviewSchema,
-} from "../shared/entities.js";
+import { FollowRequestWithSenderPreviewSchema } from "../shared/entities.js";
 
-export const GetUserProfileSuccessSchema = z.strictObject({
-  success: z.literal(true),
-  user: UserPreviewSchema.extend({
-    about: z.string().nullable(),
-  }),
-});
+export const SendFollowRequestSchema = apiResponse(SuccessSchema);
 
-export const GetUserProfileResponseSchema = apiResponse(
-  GetUserProfileSuccessSchema,
-);
+export type SendFollowRequestResponse = z.infer<typeof SendFollowRequestSchema>;
 
-export type GetUserProfileResponse = z.infer<
-  typeof GetUserProfileResponseSchema
+export const unfollowUserByIdSchema = apiResponse(SuccessSchema);
+
+export type unfollowUserByIdResponse = z.infer<
+  typeof unfollowUserByIdSchema
 >;
 
 export const GetAllFollowRequestsSuccessSchema = z.strictObject({

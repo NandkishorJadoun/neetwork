@@ -8,7 +8,7 @@ import {
     type DeletePostResponse,
     type GetAllPostsResponse,
     type GetPostByIdResponse,
-} from "@neetwork/contracts/schemas/posts.js";
+} from "@neetwork/contracts";
 import { findAllPost, findPostById, insertPost, removePostById } from "./posts.service.js";
 
 const GetAllPostsQuerySchema = z.strictObject({

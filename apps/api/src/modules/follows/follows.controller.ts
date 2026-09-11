@@ -1,9 +1,16 @@
-import type { unfollowUserByIdResponse, SendFollowRequestResponse } from "@neetwork/contracts/schemas/users.js";
 import type { Request, Response, NextFunction } from "express";
 import { z } from "zod/v4";
 import { PrismaClientKnownRequestError } from "../../../generated/prisma/runtime/client.js";
 import { createFollowRequest, deleteFollowRequest, findAllFollowRequests, removeFollowerById, unfollowUser, updateFollowRequest } from "./follows.service.js";
-import { GetAllFollowRequestsSuccessSchema, type AcceptFollowRequestResponse, type GetAllFollowRequestsResponse, type RejectFollowRequestResponse, type RemoveFollowerResponse } from "@neetwork/contracts/schemas/profile.js";
+import {
+    GetAllFollowRequestsSuccessSchema,
+    type AcceptFollowRequestResponse,
+    type GetAllFollowRequestsResponse,
+    type RejectFollowRequestResponse,
+    type RemoveFollowerResponse,
+    type unfollowUserByIdResponse,
+    type SendFollowRequestResponse
+} from "@neetwork/contracts";
 
 const UserParamsSchema = z.strictObject({
     userId: z.uuidv7(),

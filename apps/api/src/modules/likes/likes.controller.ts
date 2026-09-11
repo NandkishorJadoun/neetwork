@@ -1,4 +1,4 @@
-import { GetLikesByPostIdSuccessSchema, type GetLikesByPostIdResponse, type LikePostResponse, type UnlikePostResponse } from "@neetwork/contracts/schemas/posts.js";
+import { GetLikesByPostIdSuccessSchema, type GetLikesByPostIdResponse, type LikePostResponse, type UnlikePostResponse } from "@neetwork/contracts";
 import type { Response, Request, NextFunction } from "express";
 import { z } from "zod";
 import { PrismaClientKnownRequestError } from "../../../generated/prisma/runtime/client.js";

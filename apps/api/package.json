@@ -8,7 +8,7 @@
     "test": "vitest",
     "dev": "tsx watch --env-file=.env src/server.ts",
     "type-check": "tsc --noEmit",
-    "build": "prisma generate && tsc",
+    "build": "pnpm --filter @neetwork/contracts build && prisma generate && tsc",
     "lint": "eslint .",
     "postinstall": "prisma generate",
     "start": "node ./dist/server.js"

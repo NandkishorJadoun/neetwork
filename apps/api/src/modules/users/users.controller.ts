@@ -16,7 +16,7 @@ import {
     type GetLikedPostsByUserIdResponse,
     type GetPostsByUserIdResponse,
     type GetUserByIdResponse,
-} from "@neetwork/contracts/schemas/users.js";
+} from "@neetwork/contracts";
 
 import { findNonFollowingUsers, findUserProfile } from "./users.service.js";
 import { findUserFollowers, findUserFollowings } from "../follows/follows.service.js";

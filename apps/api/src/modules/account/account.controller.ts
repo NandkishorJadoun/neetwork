@@ -1,9 +1,9 @@
-import { GetUserProfileSuccessSchema, type GetUserProfileResponse } from "@neetwork/contracts/schemas/profile.js";
 import type { Response, Request, NextFunction, RequestHandler } from "express";
 import { findUserProfile, updateUserInfo } from "./account.service.js";
 import { uploadOnCloudinary } from "../../configs/cloudinary.js";
 import { PatchFormDataSchema } from "../../configs/schemas.js";
 import { ZodError } from "zod";
+import { GetUserProfileSuccessSchema, type GetUserProfileResponse } from "@neetwork/contracts";
 
 export const getUserAccount = async (
   req: Request,
