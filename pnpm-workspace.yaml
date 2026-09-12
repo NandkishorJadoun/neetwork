@@ -8,3 +8,6 @@ allowBuilds:
   prisma: true
 
 fetchTimeout: 300000
+
+minimumReleaseAgeExclude:
+  - lucide-react@1.45.0
