@@ -1,5 +1,6 @@
 import app from '../src/app.js'
-import { expect, describe, it, beforeAll, afterAll, afterEach } from 'vitest'
+import { describe, it, before, after, afterEach } from 'node:test'
+import assert from 'node:assert/strict'
 import request from "supertest"
 import { prisma } from "../src/configs/prisma.js"
 import { createMockPost } from "../src/scripts/mock-data.js"
@@ -11,7 +12,7 @@ let users: User[];
 let posts: Post[];
 let cookie: string;
 
-beforeAll(async () => {
+before(async () => {
   const ctx = await setupTestUsers(5);
   users = ctx.users;
   cookie = ctx.cookie;
@@ -26,7 +27,7 @@ beforeAll(async () => {
   posts = mockPosts as Post[];
 })
 
-afterAll(async () => prisma.$disconnect())
+after(async () => prisma.$disconnect())
 
 describe("GET /api/posts", () => {
 
@@ -40,9 +41,9 @@ describe("GET /api/posts", () => {
       return current.created_at > latest.created_at ? current : latest;
     });
 
-    expect(res.status).toBe(200)
-    expect(res.body.posts.length).toEqual(10)
-    expect(res.body.posts[0].text).toBe(latestPost.text)
+    assert.strictEqual(res.status, 200)
+    assert.strictEqual(res.body.posts.length, 10)
+    assert.strictEqual(res.body.posts[0].text, latestPost.text)
   })
 })
 
@@ -55,8 +56,8 @@ describe.todo("POST /api/posts", () => {
       .set("Cookie", cookie)
       .send({ content: "" })
 
-    expect(res.status).toBe(422)
-    expect(res.body.errors).toContainEqual({ fieldName: "content", message: "Post cannot be empty" })
+    assert.strictEqual(res.status, 422)
+    assert.ok(res.body.errors.some((e: { fieldName: string; message: string }) => e.fieldName === "content" && e.message === "Post cannot be empty"))
   })
 
   it("should create and successfully return post with status 201 Created", async () => {
@@ -65,8 +66,8 @@ describe.todo("POST /api/posts", () => {
       .set("Cookie", cookie)
       .send({ content: "This is a post!" })
 
-    expect(res.status).toBe(201)
-    expect(res.body.post.text).toEqual("This is a post!")
+    assert.strictEqual(res.status, 201)
+    assert.strictEqual(res.body.post.text, "This is a post!")
   })
 })
 
@@ -78,8 +79,8 @@ describe("GET /api/posts/:postId", () => {
       .get(`/api/posts/${postId}`)
       .set("Cookie", cookie)
 
-    expect(res.status).toBe(404)
-    expect(res.body.message).toBe("Invalid Post ID")
+    assert.strictEqual(res.status, 404)
+    assert.strictEqual(res.body.message, "Invalid Post ID")
   })
 
   it("should send 200 status with post data", async () => {
@@ -88,8 +89,8 @@ describe("GET /api/posts/:postId", () => {
       .get(`/api/posts/${post.id}`)
       .set("Cookie", cookie)
 
-    expect(res.status).toBe(200)
-    expect(res.body.post.id).toBe(post.id)
+    assert.strictEqual(res.status, 200)
+    assert.strictEqual(res.body.post.id, post.id)
   })
 })
 
@@ -103,8 +104,8 @@ describe("DELETE /api/posts/:postId", () => {
       .delete(`/api/posts/${postId}`)
       .set("Cookie", cookie)
 
-    expect(res.status).toBe(404)
-    expect(res.body.message).toBe("Invalid Post ID")
+    assert.strictEqual(res.status, 404)
+    assert.strictEqual(res.body.message, "Invalid Post ID")
   })
 
   it("should successfully delete post and send status 204", async () => {
@@ -116,7 +117,7 @@ describe("DELETE /api/posts/:postId", () => {
       .delete(`/api/posts/${post.id}`)
       .set("Cookie", cookie)
 
-    expect(res.status).toBe(200)
-    expect(res.body.success).toBe(true)
+    assert.strictEqual(res.status, 200)
+    assert.strictEqual(res.body.success, true)
   })
 })

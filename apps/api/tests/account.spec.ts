@@ -1,31 +1,22 @@
 import app from '../src/app.js'
-import { expect, describe, it, beforeAll, afterAll, vi } from 'vitest'
+import { describe, it, before, after } from 'node:test'
+import assert from 'node:assert/strict'
 import request from "supertest"
 import { prisma } from "../src/configs/prisma.js"
 import { setupTestUsers } from './helpers.js';
 import type { User } from 'better-auth';
 import type { UploadValidationError } from '../src/configs/multer.js';
 
-// mock uploadOnCloudinary function
-
-vi.mock("../src/configs/cloudinary", () => {
-  return {
-    uploadOnCloudinary: vi.fn().mockResolvedValue({
-      secure_url: "https://cloudinary.com"
-    })
-  }
-})
-
 let users: User[];
 let cookie: string;
 
-beforeAll(async () => {
+before(async () => {
   const ctx = await setupTestUsers(5);
   users = ctx.users;
   cookie = ctx.cookie;
 })
 
-afterAll(async () => prisma.$disconnect())
+after(async () => prisma.$disconnect())
 
 describe("GET /api/account", () => {
   it("should respond with 200 and user profile data", async () => {
@@ -35,8 +26,8 @@ describe("GET /api/account", () => {
       .get("/api/account")
       .set("Cookie", cookie)
 
-    expect(res.status).toEqual(200)
-    expect(res.body.user.id).toEqual(user.id)
+    assert.strictEqual(res.status, 200)
+    assert.strictEqual(res.body.user.id, user.id)
   })
 })
 
@@ -51,8 +42,8 @@ describe.todo("PATCH /api/account", () => {
 
     const fullnameError = res.body.errors.find((e: UploadValidationError) => e.field === "fullname")
 
-    expect(res.status).toBe(422)
-    expect(fullnameError.message).toBe("Name field can't be empty")
+    assert.strictEqual(res.status, 422)
+    assert.strictEqual(fullnameError.message, "Name field can't be empty")
   })
 
   it("should respond with 200 OK and return the updated user profile when valid text data is provided", async () => {
@@ -62,9 +53,9 @@ describe.todo("PATCH /api/account", () => {
       .field("fullname", "John doe")
       .field("about", "Lorem ipsum")
 
-    expect(res.status).toBe(200)
-    expect(res.body.user.fullname).toBe("John doe")
-    expect(res.body.user.about).toBe("Lorem ipsum")
+    assert.strictEqual(res.status, 200)
+    assert.strictEqual(res.body.user.fullname, "John doe")
+    assert.strictEqual(res.body.user.about, "Lorem ipsum")
   })
 
   it("should respond with 415 Unsupported Media Type when the uploaded avatar file is not an image", async () => {
@@ -77,7 +68,7 @@ describe.todo("PATCH /api/account", () => {
       .field("about", "Lorem ipsum")
       .attach('avatar', mockBuffer, 'video.mp4')
 
-    expect(res.status).toBe(415)
+    assert.strictEqual(res.status, 415)
   })
 
   it("should successfully update and return the new avatar URL when a valid image file is uploaded", async () => {
@@ -90,7 +81,7 @@ describe.todo("PATCH /api/account", () => {
       .field("about", "Lorem ipsum")
       .attach('avatar', mockBuffer, 'image.png')
 
-    expect(res.status).toBe(200)
-    expect(res.body.user.avatar).toBe("https://cloudinary.com")
+    assert.strictEqual(res.status, 200)
+    assert.strictEqual(res.body.user.avatar, "https://cloudinary.com")
   })
 })

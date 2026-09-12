@@ -1,5 +1,6 @@
 import app from '../src/app.js'
-import { expect, describe, it, beforeAll, afterEach, afterAll } from 'vitest'
+import { describe, it, before, afterEach, after } from 'node:test'
+import assert from 'node:assert/strict'
 import request from "supertest"
 import { prisma } from "../src/configs/prisma.js"
 import { setupTestUsers } from './helpers.js';
@@ -9,13 +10,13 @@ import { createMockPost } from "../src/scripts/mock-data.js"
 let users: User[];
 let cookie: string;
 
-beforeAll(async () => {
+before(async () => {
   const ctx = await setupTestUsers(5);
   users = ctx.users;
   cookie = ctx.cookie;
 })
 
-afterAll(async () => prisma.$disconnect())
+after(async () => prisma.$disconnect())
 
 describe("GET /users", () => {
 
@@ -27,8 +28,8 @@ describe("GET /users", () => {
       .get("/api/users")
       .set("Cookie", cookie);
 
-    expect(res.status).toBe(200);
-    expect(res.body.users).toHaveLength(4);
+    assert.strictEqual(res.status, 200);
+    assert.strictEqual(res.body.users.length, 4);
   });
 
   it("does not show users who the current user has already sent a follow request to", async () => {
@@ -45,8 +46,8 @@ describe("GET /users", () => {
       .get("/api/users")
       .set("Cookie", cookie);
 
-    expect(res.status).toBe(200);
-    expect(res.body.users).toHaveLength(3);
+    assert.strictEqual(res.status, 200);
+    assert.strictEqual(res.body.users.length, 3);
   });
 });
 
@@ -58,8 +59,8 @@ describe("GET /users/:userId", () => {
       .get(`/api/users/${userId}`)
       .set("Cookie", cookie);
 
-    expect(res.status).toBe(400)
-    expect(res.body.message).toBe("Invalid User ID")
+    assert.strictEqual(res.status, 400)
+    assert.strictEqual(res.body.message, "Invalid User ID")
   })
 
   it("will send the user info", async () => {
@@ -69,9 +70,9 @@ describe("GET /users/:userId", () => {
       .get(`/api/users/${userB.id}`)
       .set("Cookie", cookie);
 
-    expect(res.status).toBe(200)
-    expect(res.body.user.id).toBe(userB.id)
-    expect(res.body.user.name).toBe(userB.name)
+    assert.strictEqual(res.status, 200)
+    assert.strictEqual(res.body.user.id, userB.id)
+    assert.strictEqual(res.body.user.name, userB.name)
   })
 })
 
@@ -87,8 +88,8 @@ describe("GET /users/:userId/posts", () => {
       .get(`/api/users/${userB.id}/posts`)
       .set("Cookie", cookie);
 
-    expect(res.status).toBe(200)
-    expect(res.body.posts.length).toEqual(2)
+    assert.strictEqual(res.status, 200)
+    assert.strictEqual(res.body.posts.length, 2)
   })
 })
 
@@ -118,14 +119,10 @@ describe("GET /users/:userId/comments", () => {
       .get(`/api/users/${userB.id}/comments`).
       set('Cookie', cookie)
 
-    expect(res.status).toBe(200)
-    expect(res.body.comments.length).toEqual(2)
-    expect(res.body.comments).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({ text: 'First Comment' }),
-        expect.objectContaining({ text: 'Second Comment' })
-      ])
-    )
+    assert.strictEqual(res.status, 200)
+    assert.strictEqual(res.body.comments.length, 2)
+    assert.ok(res.body.comments.some((c: { text: string }) => c.text === 'First Comment'))
+    assert.ok(res.body.comments.some((c: { text: string }) => c.text === 'Second Comment'))
   })
 })
 
@@ -154,8 +151,8 @@ describe("GET /users/:userId/likes", () => {
       .get(`/api/users/${userB.id}/likes`)
       .set('Cookie', cookie)
 
-    expect(res.status).toBe(200)
-    expect(res.body.likes.length).toEqual(2)
+    assert.strictEqual(res.status, 200)
+    assert.strictEqual(res.body.likes.length, 2)
   })
 })
 
@@ -174,14 +171,10 @@ describe("GET /users/:userId/followers", () => {
 
     const res = await request(app).get(`/api/users/${userB.id}/followers`).set('Cookie', cookie)
 
-    expect(res.status).toBe(200)
-    expect(res.body.followers.length).toEqual(2)
-    expect(res.body.followers).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({ senderId: userA.id }),
-        expect.objectContaining({ senderId: userC.id })
-      ])
-    )
+    assert.strictEqual(res.status, 200)
+    assert.strictEqual(res.body.followers.length, 2)
+    assert.ok(res.body.followers.some((f: { senderId: string }) => f.senderId === userA.id))
+    assert.ok(res.body.followers.some((f: { senderId: string }) => f.senderId === userC.id))
   })
 })
 
@@ -203,13 +196,9 @@ describe("GET /users/:userId/followings", () => {
       .get(`/api/users/${userB.id}/followings`)
       .set('Cookie', cookie)
 
-    expect(res.status).toBe(200)
-    expect(res.body.followings.length).toEqual(2)
-    expect(res.body.followings).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({ receiverId: userA.id }),
-        expect.objectContaining({ receiverId: userC.id })
-      ])
-    )
+    assert.strictEqual(res.status, 200)
+    assert.strictEqual(res.body.followings.length, 2)
+    assert.ok(res.body.followings.some((f: { receiverId: string }) => f.receiverId === userA.id))
+    assert.ok(res.body.followings.some((f: { receiverId: string }) => f.receiverId === userC.id))
   })
 })

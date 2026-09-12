@@ -1,5 +1,6 @@
 import app from '../src/app.js'
-import { expect, describe, it, beforeAll, afterAll, afterEach, beforeEach } from 'vitest'
+import { describe, it, before, after, afterEach, beforeEach } from 'node:test'
+import assert from 'node:assert/strict'
 import request from "supertest"
 import { prisma } from "../src/configs/prisma.js"
 import { createMockPost } from "../src/scripts/mock-data.js"
@@ -11,7 +12,7 @@ let users: User[];
 let posts: Post[];
 let cookie: string;
 
-beforeAll(async () => {
+before(async () => {
   const ctx = await setupTestUsers(5);
   users = ctx.users;
   cookie = ctx.cookie;
@@ -23,7 +24,7 @@ beforeAll(async () => {
   posts = [post];
 })
 
-afterAll(async () => prisma.$disconnect())
+after(async () => prisma.$disconnect())
 
 describe("POST /api/posts/:postId/like", () => {
 
@@ -37,7 +38,7 @@ describe("POST /api/posts/:postId/like", () => {
       .post(`/api/posts/${post.id}/like`)
       .set("Cookie", cookie)
 
-    expect(res.status).toBe(200)
+    assert.strictEqual(res.status, 200)
   })
 
   it("should send 409 status for liking the post multiple times", async () => {
@@ -54,8 +55,8 @@ describe("POST /api/posts/:postId/like", () => {
       .post(`/api/posts/${post.id}/like`)
       .set("Cookie", cookie)
 
-    expect(res.status).toBe(409)
-    expect(res.body.message).toBe("You can't like a post multiple times.")
+    assert.strictEqual(res.status, 409)
+    assert.strictEqual(res.body.message, "You can't like a post multiple times.")
   })
 })
 
@@ -76,8 +77,8 @@ describe("DELETE /api/posts/:postId/like", () => {
       .delete(`/api/posts/${postId}/like`)
       .set("Cookie", cookie)
 
-    expect(res.status).toBe(404)
-    expect(res.body.message).toBe("Invalid Post ID")
+    assert.strictEqual(res.status, 404)
+    assert.strictEqual(res.body.message, "Invalid Post ID")
   })
 
   it("should successfully remove the like from the post and send 204 status", async () => {
@@ -85,7 +86,7 @@ describe("DELETE /api/posts/:postId/like", () => {
       .delete(`/api/posts/${posts[0].id}/like`)
       .set("Cookie", cookie)
 
-    expect(res.status).toBe(200)
-    expect(res.body.success).toBe(true)
+    assert.strictEqual(res.status, 200)
+    assert.strictEqual(res.body.success, true)
   })
 })

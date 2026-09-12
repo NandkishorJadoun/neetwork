@@ -1,5 +1,6 @@
 import app from '../src/app.js'
-import { expect, describe, it, beforeAll, afterEach, beforeEach, afterAll } from 'vitest'
+import { describe, it, before, afterEach, beforeEach, after } from 'node:test'
+import assert from 'node:assert/strict'
 import request from "supertest"
 import { prisma } from "../src/configs/prisma.js"
 import { getCookieForUser, setupTestUsers } from './helpers.js';
@@ -11,14 +12,14 @@ let test: TestHelpers;
 let users: User[];
 let cookie: string;
 
-beforeAll(async () => {
+before(async () => {
   const ctx = await setupTestUsers(5);
   test = ctx.test;
   users = ctx.users;
   cookie = ctx.cookie;
 })
 
-afterAll(async () => prisma.$disconnect())
+after(async () => prisma.$disconnect())
 
 describe("POST /api/follow/:userId", () => {
   afterEach(async () => await prisma.follow.deleteMany())
@@ -30,7 +31,7 @@ describe("POST /api/follow/:userId", () => {
       .post(`/api/follow/${userB.id}`)
       .set('Cookie', cookie)
 
-    expect(res.status).toBe(200)
+    assert.strictEqual(res.status, 200)
   })
 
   it("will send 409 status for sending multiple follow request to a user", async () => {
@@ -44,7 +45,7 @@ describe("POST /api/follow/:userId", () => {
       .post(`/api/follow/${userB.id}`)
       .set('Cookie', cookie)
 
-    expect(res.status).toBe(409)
+    assert.strictEqual(res.status, 409)
   })
 })
 
@@ -60,8 +61,8 @@ describe("DELETE /api/follow/:userId (cancel sent follow request)", () => {
       .delete(`/api/follow/${userB.id}`)
       .set('Cookie', cookie)
 
-    expect(res.status).toBe(200)
-    expect(res.body.success).toBe(true)
+    assert.strictEqual(res.status, 200)
+    assert.strictEqual(res.body.success, true)
   })
 
   it("will send 404 status if no record found for delete operation", async () => {
@@ -71,7 +72,7 @@ describe("DELETE /api/follow/:userId (cancel sent follow request)", () => {
       .delete(`/api/follow/${userId}`)
       .set('Cookie', cookie)
 
-    expect(res.status).toBe(400)
+    assert.strictEqual(res.status, 400)
   })
 })
 
@@ -87,8 +88,8 @@ describe("DELETE /api/follow/:userId (unfollow)", () => {
       .delete(`/api/follow/${userB.id}`)
       .set('Cookie', cookie)
 
-    expect(res.status).toBe(200)
-    expect(res.body.success).toBe(true)
+    assert.strictEqual(res.status, 200)
+    assert.strictEqual(res.body.success, true)
   })
 
   it("should respond with 404 Not Found when attempting to remove a user whom the user is not following", async () => {
@@ -98,7 +99,7 @@ describe("DELETE /api/follow/:userId (unfollow)", () => {
       .delete(`/api/follow/${userId}`)
       .set('Cookie', cookie)
 
-    expect(res.status).toBe(400)
+    assert.strictEqual(res.status, 400)
   })
 })
 
@@ -130,9 +131,9 @@ describe("GET /api/follow-requests", () => {
     const followRequests = res.body.followRequests
       .map((e: Follow) => e.senderId)
 
-    expect(res.status).toBe(200)
-    expect(res.body.followRequests.length).toBe(2)
-    expect(followRequests).toEqual([userA.id, userB.id])
+    assert.strictEqual(res.status, 200)
+    assert.strictEqual(res.body.followRequests.length, 2)
+    assert.deepStrictEqual(followRequests, [userA.id, userB.id])
   })
 
   it("should return an empty array when the authenticated user has no pending incoming follow requests", async () => {
@@ -141,8 +142,8 @@ describe("GET /api/follow-requests", () => {
       .get("/api/follow-requests")
       .set("Cookie", cookie)
 
-    expect(res.status).toBe(200)
-    expect(res.body.followRequests.length).toBe(0)
+    assert.strictEqual(res.status, 200)
+    assert.strictEqual(res.body.followRequests.length, 0)
   })
 })
 
@@ -169,8 +170,8 @@ describe("PATCH /api/follow-requests/:userId", () => {
       .patch(`/api/follow-requests/${userB.id}`)
       .set("Cookie", cookie)
 
-    expect(res.status).toBe(200)
-    expect(res.body.success).toBe(true)
+    assert.strictEqual(res.status, 200)
+    assert.strictEqual(res.body.success, true)
   })
 
   it("should respond with 404 Not Found when attempting to accept a follow request that does not exist", async () => {
@@ -181,8 +182,8 @@ describe("PATCH /api/follow-requests/:userId", () => {
       .patch(`/api/follow-requests/${userId}`)
       .set("Cookie", cookie)
 
-    expect(res.status).toBe(404)
-    expect(res.body.message).toBe("Invalid User ID")
+    assert.strictEqual(res.status, 404)
+    assert.strictEqual(res.body.message, "Invalid User ID")
   })
 })
 
@@ -204,8 +205,8 @@ describe("DELETE /api/follow-requests/:userId", () => {
       .delete(`/api/follow-requests/${userB.id}`)
       .set("Cookie", cookie)
 
-    expect(res.status).toBe(200)
-    expect(res.body.success).toBe(true)
+    assert.strictEqual(res.status, 200)
+    assert.strictEqual(res.body.success, true)
   })
 
   it("should respond with 404 Not Found when attempting to reject a follow request that does not exist", async () => {
@@ -216,8 +217,8 @@ describe("DELETE /api/follow-requests/:userId", () => {
       .delete(`/api/follow-requests/${userId}`)
       .set("Cookie", cookie)
 
-    expect(res.status).toBe(404)
-    expect(res.body.message).toBe("Invalid User ID")
+    assert.strictEqual(res.status, 404)
+    assert.strictEqual(res.body.message, "Invalid User ID")
 
   })
 })
@@ -240,7 +241,7 @@ describe("DELETE /api/followers/:userId", () => {
       .delete(`/api/followers/${userB.id}`)
       .set("Cookie", cookie)
 
-    expect(res.status).toBe(200)
+    assert.strictEqual(res.status, 200)
   })
 
   it("should respond with 404 Not Found when attempting to remove a follower who is not actually following the user", async () => {
@@ -250,7 +251,7 @@ describe("DELETE /api/followers/:userId", () => {
       .delete(`/api/followers/${userId}`)
       .set("Cookie", cookie)
 
-    expect(res.status).toBe(404)
-    expect(res.body.message).toBe("Invalid User ID")
+    assert.strictEqual(res.status, 404)
+    assert.strictEqual(res.body.message, "Invalid User ID")
   })
 })

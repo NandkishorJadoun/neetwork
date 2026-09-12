@@ -1,5 +1,6 @@
 import app from '../src/app.js'
-import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest'
+import { after, afterEach, before, describe, it } from 'node:test'
+import assert from 'node:assert/strict'
 import { prisma } from '../src/configs/prisma';
 import request from "supertest";
 import type { User } from 'better-auth';
@@ -11,7 +12,7 @@ let users: User[];
 let posts: Post[];
 let cookie: string;
 
-beforeAll(async () => {
+before(async () => {
   const ctx = await setupTestUsers(5);
   users = ctx.users;
   cookie = ctx.cookie;
@@ -23,7 +24,7 @@ beforeAll(async () => {
   posts = [post];
 })
 
-afterAll(async () => prisma.$disconnect())
+after(async () => prisma.$disconnect())
 
 describe.todo("POST /api/posts/:postId/comment", () => {
 
@@ -37,8 +38,8 @@ describe.todo("POST /api/posts/:postId/comment", () => {
       .set("Cookie", cookie)
       .send({ content: "" })
 
-    expect(res.status).toBe(422)
-    expect(res.body.errors).toContainEqual({ fieldName: "content", message: "Comment cannot be empty" })
+    assert.strictEqual(res.status, 422)
+    assert.ok(res.body.errors.some((e: { fieldName: string; message: string }) => e.fieldName === "content" && e.message === "Comment cannot be empty"))
   })
 
   it("should create and successfully return comment with status 201 Created", async () => {
@@ -50,7 +51,7 @@ describe.todo("POST /api/posts/:postId/comment", () => {
       .set("Cookie", cookie)
       .send({ content: "This is a comment!" })
 
-    expect(res.status).toBe(201)
-    expect(res.body.comment.text).toEqual("This is a comment!")
+    assert.strictEqual(res.status, 201)
+    assert.strictEqual(res.body.comment.text, "This is a comment!")
   })
 })
