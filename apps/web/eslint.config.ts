@@ -1,32 +1,20 @@
-import neetwork from '@neetwork/eslint-config';
-import globals from 'globals'
-import reactHooks from 'eslint-plugin-react-hooks'
-import reactRefresh from 'eslint-plugin-react-refresh'
 import pluginRouter from '@tanstack/eslint-plugin-router'
 import pluginQuery from '@tanstack/eslint-plugin-query'
-import { defineConfig, globalIgnores } from 'eslint/config'
+import createConfig from "@neetwork/eslint-config/create-config";
 
-export default defineConfig([
-  ...neetwork,
-  ...pluginRouter.configs['flat/recommended'],
-  ...pluginQuery.configs['flat/recommended'],
-  globalIgnores(['src/routeTree.gen.ts']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      reactHooks.configs.flat.recommended,
-      reactRefresh.configs.vite,
-    ],
-    languageOptions: {
-      globals: globals.browser,
-    },
+export default createConfig({
+  react: true,
+}, {
+  plugins: {
+    "@tanstack/query": pluginQuery,
+    "@tanstack/router": pluginRouter,
   },
-  {
-    rules: {
-      'react-refresh/only-export-components': [
-        "off",
-        { allowConstantExport: true }
-      ]
-    }
-  }
-])
+  rules: {
+    "antfu/top-level-function": "off",
+    "@tanstack/query/exhaustive-deps": "error",
+    "unicorn/filename-case": ["error", {
+      case: "kebabCase",
+      ignore: ["README.md", "~__root.tsx"],
+    }],
+  },
+});
