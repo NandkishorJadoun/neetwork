@@ -1,3 +1,3 @@
-import config from '@neetwork/eslint-config';
+import config from "@neetwork/eslint-config";
 
 export default config;

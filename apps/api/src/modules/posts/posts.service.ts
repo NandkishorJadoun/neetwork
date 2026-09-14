@@ -1,41 +1,35 @@
 import { prisma } from "../../configs/prisma.js";
 
-export const findAllPost = async (
-  userId: string,
-  limit: number,
-  isFollowingTab: boolean,
-  cursor?: string,
-) => {
-
+export async function findAllPost(userId: string, limit: number, isFollowingTab: boolean, cursor?: string) {
   return prisma.post.findMany({
     ...(isFollowingTab
       ? {
-        where: {
-          OR: [
-            {
-              userId,
-            },
-            {
-              author: {
-                followers: {
-                  some: {
-                    senderId: userId,
-                    status: "ACCEPTED",
+          where: {
+            OR: [
+              {
+                userId,
+              },
+              {
+                author: {
+                  followers: {
+                    some: {
+                      senderId: userId,
+                      status: "ACCEPTED",
+                    },
                   },
                 },
               },
-            },
-          ],
-        },
-      }
+            ],
+          },
+        }
       : {}),
     ...(cursor
       ? {
-        cursor: {
-          id: cursor,
-        },
-        skip: 1,
-      }
+          cursor: {
+            id: cursor,
+          },
+          skip: 1,
+        }
       : {}),
     take: limit,
     orderBy: {
@@ -63,10 +57,7 @@ export const findAllPost = async (
   });
 }
 
-export const insertPost = async (
-  userId: string,
-  content: string
-) => {
+export async function insertPost(userId: string, content: string) {
   return prisma.post.create({
     data: {
       userId,
@@ -75,10 +66,7 @@ export const insertPost = async (
   });
 }
 
-export const findPostById = async (
-  userId: string,
-  postId: string
-) => {
+export async function findPostById(userId: string, postId: string) {
   return prisma.post.findUnique({
     where: {
       id: postId,
@@ -120,25 +108,19 @@ export const findPostById = async (
   });
 }
 
-export const removePostById = async (
-  userId: string,
-  postId: string
-) => {
+export async function removePostById(userId: string, postId: string) {
   return prisma.post.delete({
     where: {
       id: postId,
       userId,
     },
-  })
+  });
 }
 
-export const findPostsById = async (
-  userId: string,
-  viewerId: string
-) => {
+export async function findPostsById(userId: string, viewerId: string) {
   return prisma.post.findMany({
     where: {
-      userId: viewerId
+      userId: viewerId,
     },
     orderBy: {
       created_at: "desc",
@@ -162,5 +144,5 @@ export const findPostsById = async (
         },
       },
     },
-  })
+  });
 }

@@ -1,29 +1,26 @@
-import type { Response, Request, NextFunction, RequestHandler } from "express";
-import { findUserProfile, updateUserInfo } from "./account.service.js";
+import type { GetUserProfileResponse } from "@neetwork/contracts";
+import type { NextFunction, Request, RequestHandler, Response } from "express";
+import { GetUserProfileSuccessSchema } from "@neetwork/contracts";
+import { ZodError } from "zod";
 import { uploadOnCloudinary } from "../../configs/cloudinary.js";
 import { PatchFormDataSchema } from "../../configs/schemas.js";
-import { ZodError } from "zod";
-import { GetUserProfileSuccessSchema, type GetUserProfileResponse } from "@neetwork/contracts";
+import { findUserProfile, updateUserInfo } from "./account.service.js";
 
-export const getUserAccount = async (
-  req: Request,
-  res: Response<GetUserProfileResponse>,
-  next: NextFunction,
-) => {
+export async function getUserAccount(req: Request, res: Response<GetUserProfileResponse>, next: NextFunction) {
   if (!req.user) {
     return res.status(401).json({
       success: false,
-      message: "Unauthorized"
+      message: "Unauthorized",
     });
   }
 
   try {
-    const user = await findUserProfile(req.user.id)
+    const user = await findUserProfile(req.user.id);
 
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: "User not found"
+        message: "User not found",
       });
     }
 
@@ -33,10 +30,11 @@ export const getUserAccount = async (
     });
 
     return res.status(200).json(response);
-  } catch (error) {
+  }
+  catch (error) {
     next(error);
   }
-};
+}
 
 export const updateUserAccount: RequestHandler = async (req, res, next) => {
   const { file } = req;
@@ -57,11 +55,12 @@ export const updateUserAccount: RequestHandler = async (req, res, next) => {
     const user = await updateUserInfo(req.user.id, image, fullname, about);
 
     return res.status(200).json({ user });
-  } catch (error) {
+  }
+  catch (error) {
     if (error instanceof ZodError) {
       return res.status(422).json({
-        errors: error.issues.map((issue) =>
-        ({ fieldName: issue.path[0], message: issue.message }),
+        errors: error.issues.map(issue =>
+          ({ fieldName: issue.path[0], message: issue.message }),
         ),
       });
     }

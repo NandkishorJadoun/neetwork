@@ -1,13 +1,14 @@
-import { type Session, type User } from "better-auth";
+import type { Session, User } from "better-auth";
 
 declare global {
-    namespace Express {
-        interface Request {
-            session?: {
-                session: Session;
-                user: User;
-            };
-            user?: User;
-        }
+  namespace Express {
+    // eslint-disable-next-line ts/consistent-type-definitions
+    interface Request {
+      session?: {
+        session: Session;
+        user: User;
+      };
+      user?: User;
     }
+  }
 }

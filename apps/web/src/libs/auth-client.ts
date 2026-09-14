@@ -9,6 +9,6 @@ await authClient.signIn.email({
 
 type AuthUser = typeof authClient.$Infer.Session.user;
 
-export interface AuthState {
+export type AuthState = {
   user: AuthUser | null;
-}
+};

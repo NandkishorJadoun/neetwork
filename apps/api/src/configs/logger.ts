@@ -1,9 +1,9 @@
+import type { Request, Response } from "express";
 import { pino } from "pino";
 import { pinoHttp } from "pino-http";
 import { env } from "./env.js";
-import { type Request, type Response } from "express"
 
-const isDevelopment = env.NODE_ENV !== 'production';
+const isDevelopment = env.NODE_ENV !== "production";
 
 export const logger = pino({
   ...(isDevelopment && {
@@ -18,7 +18,8 @@ export const logger = pino({
 });
 
 export const httpLogger = pinoHttp({
-  logger, serializers: {
+  logger,
+  serializers: {
     req: (req: Request) => ({
       method: req.method,
       url: req.url,

@@ -25,19 +25,19 @@ export type GetAllFollowRequestsResponse = z.infer<
   typeof GetAllFollowRequestsSchema
 >;
 
-export const AcceptFollowRequestSchema = apiResponse(SuccessSchema)
+export const AcceptFollowRequestSchema = apiResponse(SuccessSchema);
 
 export type AcceptFollowRequestResponse = z.infer<
   typeof AcceptFollowRequestSchema
 >;
 
-export const RejectFollowRequestSchema = apiResponse(SuccessSchema)
+export const RejectFollowRequestSchema = apiResponse(SuccessSchema);
 
 export type RejectFollowRequestResponse = z.infer<
   typeof RejectFollowRequestSchema
 >;
 
-export const RemoveFollowerSchema = apiResponse(SuccessSchema)
+export const RemoveFollowerSchema = apiResponse(SuccessSchema);
 
 export type RemoveFollowerResponse = z.infer<
   typeof RemoveFollowerSchema

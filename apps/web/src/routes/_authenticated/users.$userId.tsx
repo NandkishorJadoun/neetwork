@@ -1,73 +1,76 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
-import type { User, Post, Comment, Like } from '../../types'
-import { ActionButton } from '../../components/ProfileActionButton'
-import { ProfileTabContent } from '../../components/ProfileTabContent'
-import { PageHeader } from '../../components/PageHeader'
+import type { Comment, Like, Post, User } from "../../types";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { PageHeader } from "../../components/page-header";
+import { ActionButton } from "../../components/profile-action-button";
+import { ProfileTabContent } from "../../components/profile-tab-content";
 
-type Tab = 'posts' | 'comments' | 'likes'
-export type TabData = { posts: Post[] } | { comments: Comment[] } | { likes: Like[] }
+type Tab = "posts" | "comments" | "likes";
+export type TabData = { posts: Post[] } | { comments: Comment[] } | { likes: Like[] };
 
-interface SearchParams {
-  tab?: 'comments' | 'likes'
-}
+type SearchParams = {
+  tab?: "comments" | "likes";
+};
 
-interface LoaderData {
-  user: User
-  tabData: TabData
-}
+type LoaderData = {
+  user: User;
+  tabData: TabData;
+};
 
 function getTab(search: SearchParams): Tab {
-  if (!search.tab) return 'posts'
-  return search.tab
+  if (!search.tab)
+    return "posts";
+  return search.tab;
 }
 
-export const Route = createFileRoute('/_authenticated/users/$userId')({
+export const Route = createFileRoute("/_authenticated/users/$userId")({
   validateSearch: (search: Record<string, unknown>): SearchParams => {
     return {
       tab:
-        search.tab === 'comments' || search.tab === 'likes'
+        search.tab === "comments" || search.tab === "likes"
           ? search.tab
           : undefined,
-    }
+    };
   },
   loaderDeps: ({ search }) => ({ tab: getTab(search) }),
   loader: async ({ context, params: { userId }, deps: { tab } }) => {
-    const token = context.auth.user?.token
-    const options = { headers: { Authorization: `Bearer ${token}` } }
-    const baseUrl = `${import.meta.env.VITE_API_URL}/users/${userId}`
-    const tabUrl = `${baseUrl}/${tab}`
+    const token = context.auth.user?.token;
+    const options = { headers: { Authorization: `Bearer ${token}` } };
+    const baseUrl = `${import.meta.env.VITE_API_URL}/users/${userId}`;
+    const tabUrl = `${baseUrl}/${tab}`;
 
     const [userRes, tabRes] = await Promise.all([
       fetch(baseUrl, options),
       fetch(tabUrl, options),
-    ])
+    ]);
 
-    if (!userRes.ok) throw new Error('Failed to load user')
-    if (!tabRes.ok) throw new Error('Failed to load tab data')
+    if (!userRes.ok)
+      throw new Error("Failed to load user");
+    if (!tabRes.ok)
+      throw new Error("Failed to load tab data");
 
-    const { user } = await userRes.json()
-    const tabData = await tabRes.json()
+    const { user } = await userRes.json();
+    const tabData = await tabRes.json();
 
-    return { user, tabData }
+    return { user, tabData };
   },
   component: RouteComponent,
-})
+});
 
 function RouteComponent() {
-  const { user, tabData }: LoaderData = Route.useLoaderData()
-  const activeTab = Route.useSearch().tab
+  const { user, tabData }: LoaderData = Route.useLoaderData();
+  const activeTab = Route.useSearch().tab;
 
-  const tabBase =
-    'px-4 py-3 text-sm font-medium text-(--app-muted) transition-colors'
-  const tabActive = 'text-(--app-text) border-b-2 border-(--app-accent)'
+  const tabBase
+    = "px-4 py-3 text-sm font-medium text-(--app-muted) transition-colors";
+  const tabActive = "text-(--app-text) border-b-2 border-(--app-accent)";
 
   return (
     <>
       <section>
         <PageHeader>
-          <p className='text-center'>User Profile</p>
+          <p className="text-center">User Profile</p>
         </PageHeader>
-        <div className='p-4 pb-0'>
+        <div className="p-4 pb-0">
           <img
             src={user.avatar}
             alt={`${user.username}'s avatar`}
@@ -80,7 +83,8 @@ function RouteComponent() {
             </h1>
 
             <p className="text-sm text-(--app-muted)">
-              @{user.username}
+              @
+              {user.username}
             </p>
           </div>
 
@@ -97,7 +101,8 @@ function RouteComponent() {
             >
               <span className="font-semibold">
                 {user._count.followers}
-              </span>{' '}
+              </span>
+              {" "}
               <span className="text-(--app-muted)">
                 Followers
               </span>
@@ -109,7 +114,8 @@ function RouteComponent() {
             >
               <span className="font-semibold">
                 {user._count.followings}
-              </span>{' '}
+              </span>
+              {" "}
               <span className="text-(--app-muted)">
                 Following
               </span>
@@ -128,7 +134,7 @@ function RouteComponent() {
             <Link
               to="/users/$userId"
               params={{ userId: user.id }}
-              className={`${tabBase} ${!activeTab ? tabActive : ''}`}
+              className={`${tabBase} ${!activeTab ? tabActive : ""}`}
             >
               Posts
             </Link>
@@ -136,8 +142,8 @@ function RouteComponent() {
             <Link
               to="/users/$userId"
               params={{ userId: user.id }}
-              search={{ tab: 'comments' }}
-              className={`${tabBase} ${activeTab === 'comments' ? tabActive : ''}`}
+              search={{ tab: "comments" }}
+              className={`${tabBase} ${activeTab === "comments" ? tabActive : ""}`}
             >
               Comments
             </Link>
@@ -145,8 +151,8 @@ function RouteComponent() {
             <Link
               to="/users/$userId"
               params={{ userId: user.id }}
-              search={{ tab: 'likes' }}
-              className={`${tabBase} ${activeTab === 'likes' ? tabActive : ''}`}
+              search={{ tab: "likes" }}
+              className={`${tabBase} ${activeTab === "likes" ? tabActive : ""}`}
             >
               Likes
             </Link>
@@ -158,5 +164,5 @@ function RouteComponent() {
         </div>
       </section>
     </>
-  )
+  );
 }

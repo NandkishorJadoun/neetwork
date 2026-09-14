@@ -1,5 +1,13 @@
-import createConfig from '@neetwork/eslint-config/create-config';
+import createConfig from "@neetwork/eslint-config/create-config";
 
 export default createConfig({
-    ignores: ["src/db/migrations/*", "public/*"],
+  ignores: ["prisma/migrations/**", "public/**"],
+  rules: {
+    "test/no-import-node-test": "off",
+  },
+}).append({
+  files: ["src/configs/env.ts"],
+  rules: {
+    "n/no-process-env": "off",
+  },
 });

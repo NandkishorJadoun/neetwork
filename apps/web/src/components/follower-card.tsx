@@ -1,38 +1,39 @@
+import type { Follow } from "../types";
+import { Link, useRouter } from "@tanstack/react-router";
 import { useState } from "react";
 import { useAuth } from "../context/auth";
-import { Link, useRouter } from "@tanstack/react-router";
-import type { Follow } from "../types";
 
-interface FollowerCardProp {
-  follower: Follow,
-  isCurrentUser: boolean
-}
+type FollowerCardProp = {
+  follower: Follow;
+  isCurrentUser: boolean;
+};
 
 export const FollowerCard = ({ follower, isCurrentUser }: FollowerCardProp) => {
-  const { user } = useAuth()
-  const [isLoading, setIsLoading] = useState(false)
-  const router = useRouter()
+  const { user } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
   const { sender } = follower;
 
   const removeFollower = async () => {
-    setIsLoading(true)
+    setIsLoading(true);
     const url = `${import.meta.env.VITE_API_URL}/me/followers/${follower.fromId}`;
     const options = {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${user?.token}`
+        "Authorization": `Bearer ${user?.token}`,
       },
-    }
+    };
 
     try {
       await fetch(url, options);
       router.invalidate();
-    } catch (error) {
+    }
+    catch (error) {
       console.error(error);
     }
-    setIsLoading(false)
-  }
+    setIsLoading(false);
+  };
 
   return (
     <div className="flex items-center justify-between gap-3 border-b border-(--app-border) px-4 py-3">
@@ -53,19 +54,22 @@ export const FollowerCard = ({ follower, isCurrentUser }: FollowerCardProp) => {
           </p>
 
           <p className="truncate text-sm text-(--app-muted)">
-            @{sender.username}
+            @
+            {sender.username}
           </p>
         </div>
       </Link>
 
-      {isCurrentUser &&
-        <button
-          disabled={isLoading}
-          onClick={removeFollower}
-          className="shrink-0 rounded-md border border-(--app-border) px-3 py-1.5 text-sm font-medium hover:bg-(--app-surface) disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          {isLoading ? "Removing..." : "Remove"}
-        </button>}
+      {isCurrentUser
+        && (
+          <button
+            disabled={isLoading}
+            onClick={removeFollower}
+            className="shrink-0 rounded-md border border-(--app-border) px-3 py-1.5 text-sm font-medium hover:bg-(--app-surface) disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {isLoading ? "Removing..." : "Remove"}
+          </button>
+        )}
     </div>
-  )
-}
+  );
+};

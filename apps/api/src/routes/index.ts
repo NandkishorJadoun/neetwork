@@ -1,12 +1,12 @@
 import express from "express";
 
 import { requireAuth } from "../middlewares/require-auth.js";
-import { usersRouter } from "../modules/users/users.route.js";
 import { accountRouter } from "../modules/account/account.route.js";
-import { postsRouter } from "../modules/posts/posts.route.js";
-import { likesRouter } from "../modules/likes/likes.route.js";
-import { followsRouter } from "../modules/follows/follows.route.js";
 import { commentsRouter } from "../modules/comments/comments.route.js";
+import { followsRouter } from "../modules/follows/follows.route.js";
+import { likesRouter } from "../modules/likes/likes.route.js";
+import { postsRouter } from "../modules/posts/posts.route.js";
+import { usersRouter } from "../modules/users/users.route.js";
 
 export const appRouter = express.Router();
 

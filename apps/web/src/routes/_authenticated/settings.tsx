@@ -1,10 +1,10 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute } from "@tanstack/react-router";
+import { PageHeader } from "../../components/page-header";
 import { useThemeSettings } from "../../context/theme";
-import { PageHeader } from '../../components/PageHeader';
 
-export const Route = createFileRoute('/_authenticated/settings')({
+export const Route = createFileRoute("/_authenticated/settings")({
   component: RouteComponent,
-})
+});
 
 const accents = ["blue", "red", "yellow", "green", "purple", "pink"] as const;
 const backgrounds = ["slate", "gray", "zinc", "stone", "neutral"] as const;
@@ -23,12 +23,12 @@ const bgClasses = {
   gray: "bg-gray-600",
   zinc: "bg-zinc-600",
   stone: "bg-stone-600",
-  neutral: "bg-neutral-600"
-}
+  neutral: "bg-neutral-600",
+};
 
 function RouteComponent() {
-  const { theme, setTheme, accent, setAccent, background, setBackground } =
-    useThemeSettings();
+  const { theme, setTheme, accent, setAccent, background, setBackground }
+    = useThemeSettings();
 
   return (
     <>
@@ -41,7 +41,7 @@ function RouteComponent() {
             onChange={(e) => {
               const value = e.target.value;
               if (value === "dark" || value === "light" || value === "system") {
-                setTheme(value)
+                setTheme(value);
               }
             }}
             className="rounded-md border border-(--app-border) bg-(--app-surface)/50 px-3 py-2 outline-(--app-accent)"
@@ -55,7 +55,7 @@ function RouteComponent() {
         <section className="space-y-3">
           <h2 className="text-sm font-medium">Accent colors</h2>
           <div className="flex gap-3">
-            {accents.map((color) => (
+            {accents.map(color => (
               <button
                 key={color}
                 onClick={() => { setAccent(color); }}
@@ -68,7 +68,7 @@ function RouteComponent() {
         <section className="space-y-3">
           <h2 className="text-sm font-medium">Background shade</h2>
           <div className="flex gap-3">
-            {backgrounds.map((bg) => (
+            {backgrounds.map(bg => (
               <button
                 key={bg}
                 onClick={() => { setBackground(bg); }}

@@ -1,14 +1,13 @@
+import type { User, ValidationError } from "../../types";
+import { GetUserProfileResponseSchema } from "@neetwork/contracts";
 import {
   createFileRoute,
   useNavigate,
   useRouter,
 } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import type { User, ValidationError } from "../../types";
-import { FormErrors } from "../../components/FormErrors";
-import { PageHeader } from "../../components/PageHeader";
-import { z } from "zod/v4/mini";
-import { GetUserProfileResponseSchema } from "@neetwork/contracts";
+import { FormErrors } from "../../components/form-errors";
+import { PageHeader } from "../../components/page-header";
 
 export const Route = createFileRoute("/_authenticated/edit-profile")({
   loader: async ({ context }) => {
@@ -93,9 +92,11 @@ function RouteComponent() {
       }
 
       navigate({ to: "/users/$userId", params: { userId: user.id } });
-    } catch (error) {
+    }
+    catch (error) {
       console.error(error);
-    } finally {
+    }
+    finally {
       setIsLoading(false);
     }
   };

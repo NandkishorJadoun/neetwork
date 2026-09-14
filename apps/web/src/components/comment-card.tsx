@@ -1,10 +1,10 @@
-import { Link } from "@tanstack/react-router"
-import type { User } from "../types"
+import type { User } from "../types";
+import { Link } from "@tanstack/react-router";
 
-interface CommentCardProp {
-  text: string,
-  author: User,
-}
+type CommentCardProp = {
+  text: string;
+  author: User;
+};
 
 export const CommentCard = ({ text, author }: CommentCardProp) => {
   return (
@@ -31,7 +31,8 @@ export const CommentCard = ({ text, author }: CommentCardProp) => {
             {author.fullname}
           </p>
           <span className="truncate text-sm text-(--app-muted)">
-            @{author.username}
+            @
+            {author.username}
           </span>
         </Link>
 
@@ -40,5 +41,5 @@ export const CommentCard = ({ text, author }: CommentCardProp) => {
         </p>
       </div>
     </div>
-  )
-}
+  );
+};

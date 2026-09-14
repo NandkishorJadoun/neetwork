@@ -1,12 +1,9 @@
 import { prisma } from "../../configs/prisma.js";
 
-export const findCommentsByUserId = async (
-  userId: string,
-  viewerId: string
-) => {
+export async function findCommentsByUserId(userId: string, viewerId: string) {
   return prisma.comment.findMany({
     where: {
-      userId: viewerId
+      userId: viewerId,
     },
     orderBy: {
       created_at: "desc",
@@ -46,11 +43,7 @@ export const findCommentsByUserId = async (
   });
 }
 
-export const insertComment = async (
-  userId: string,
-  postId: string,
-  text: string
-) => {
+export async function insertComment(userId: string, postId: string, text: string) {
   return await prisma.comment.create({
     data: {
       text,
@@ -58,5 +51,4 @@ export const insertComment = async (
       postId,
     },
   });
-
 }

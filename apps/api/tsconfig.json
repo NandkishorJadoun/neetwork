@@ -1,19 +1,19 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "rootDir": "src",
-    "outDir": "dist",
-    "module": "nodenext",
-    "moduleResolution": "nodenext",
     "lib": [
       "esnext"
     ],
-    "esModuleInterop": true,
-    "sourceMap": true,
+    "rootDir": "src",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "exactOptionalPropertyTypes": true,
+    "noUncheckedIndexedAccess": true,
     "declaration": true,
     "declarationMap": true,
-    "noUncheckedIndexedAccess": true,
-    "exactOptionalPropertyTypes": true,
+    "outDir": "dist",
+    "sourceMap": true,
+    "esModuleInterop": true,
     "isolatedModules": true,
     "noUncheckedSideEffectImports": true
   },

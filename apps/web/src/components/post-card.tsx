@@ -1,41 +1,43 @@
-import { Link } from "@tanstack/react-router";
-import { useAuth } from "../context/auth";
-import { useState, type JSX } from "react";
+import type { JSX } from "react";
 import type { Post } from "../types";
+import { Link } from "@tanstack/react-router";
 import { Heart, MessageCircle } from "lucide-react";
+import { useState } from "react";
+import { useAuth } from "../context/auth";
 
-export const PostCard = ({ post, comment }: { post: Post, comment?: JSX.Element }) => {
+export const PostCard = ({ post, comment }: { post: Post; comment?: JSX.Element }) => {
   const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [isLiked, setIsLiked] = useState(post.likes.length > 0);
-  const [likeCount, setLikeCount] = useState(post._count.likes)
+  const [likeCount, setLikeCount] = useState(post._count.likes);
 
   const likeHandler = async () => {
-    const nextLiked = !isLiked
+    const nextLiked = !isLiked;
 
-    setIsLiked(nextLiked)
-    setLikeCount(prev => prev + (nextLiked ? 1 : -1))
+    setIsLiked(nextLiked);
+    setLikeCount(prev => prev + (nextLiked ? 1 : -1));
 
-    setIsLoading(true)
+    setIsLoading(true);
 
-    const url = `${import.meta.env.VITE_API_URL}/posts/${post.id}/like`
-    const method = nextLiked ? "POST" : "DELETE"
+    const url = `${import.meta.env.VITE_API_URL}/posts/${post.id}/like`;
+    const method = nextLiked ? "POST" : "DELETE";
 
     const options = {
       method,
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${user?.token}`
+        "Authorization": `Bearer ${user?.token}`,
       },
-    }
+    };
 
     try {
       await fetch(url, options);
-    } catch (error) {
+    }
+    catch (error) {
       console.error(error);
     }
-    setIsLoading(false)
-  }
+    setIsLoading(false);
+  };
 
   return (
     <div className="border-b border-(--app-border) px-4 py-3">
@@ -63,7 +65,8 @@ export const PostCard = ({ post, comment }: { post: Post, comment?: JSX.Element 
             </p>
 
             <p className="truncate text-sm text-(--app-muted)">
-              @{post.author.username}
+              @
+              {post.author.username}
             </p>
           </Link>
 
@@ -132,5 +135,5 @@ export const PostCard = ({ post, comment }: { post: Post, comment?: JSX.Element 
         </div>
       )}
     </div>
-  )
-} 
+  );
+};
