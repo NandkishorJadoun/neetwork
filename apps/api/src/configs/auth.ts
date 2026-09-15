@@ -9,6 +9,7 @@ export const baseAuthConfig = {
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),
+  trustedOrigins: ["http://localhost:5173"],
   advanced: {
     database: {
       generateId: false,

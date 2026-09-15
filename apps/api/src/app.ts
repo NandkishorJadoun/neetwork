@@ -20,8 +20,6 @@ app.use(express.static(publicPath));
 app.use(httpLogger);
 app.use(helmet());
 
-app.all("/api/auth/*splat", toNodeHandler(auth));
-
 if (env.NODE_ENV === "development") {
   app.use(cors({
     origin: "http://localhost:5173",
@@ -30,10 +28,11 @@ if (env.NODE_ENV === "development") {
   }));
 }
 
+app.all("/api/auth/*splat", toNodeHandler(auth));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-app.get("/api/health", (_req, res) => res.json({ message: "Server is running..." }));
+app.get("/api/health", (_req, res) => res.json({ message: env.NODE_ENV }));
 app.use("/api/", appRouter);
 
 app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
