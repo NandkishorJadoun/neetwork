@@ -1,7 +1,4 @@
-import process from "node:process";
 import { z } from "zod/v4";
-
-process.loadEnvFile();
 
 const envSchema = z.object({
   NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
