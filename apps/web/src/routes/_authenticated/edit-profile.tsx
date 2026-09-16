@@ -1,18 +1,16 @@
+import { GetUserProfileResponseSchema } from "@neetwork/contracts";
 import {
   createFileRoute,
   useNavigate,
   useRouter,
 } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import type { User, ValidationError } from "../../types";
-import { FormErrors } from "../../components/FormErrors";
-import { PageHeader } from "../../components/PageHeader";
-import { z } from "zod/v4/mini";
-import { GetUserProfileResponseSchema } from "@neetwork/contracts";
+import { FormErrors } from "../../components/form-errors";
+import { PageHeader } from "../../components/page-header";
 
 export const Route = createFileRoute("/_authenticated/edit-profile")({
   loader: async ({ context }) => {
-    const token = context.auth.user?.token;
+    const token = context.user?.token;
     const options = { headers: { Authorization: `Bearer ${token}` } };
     const url = "api/me";
     const res = await fetch(url, options);
@@ -32,7 +30,7 @@ export const Route = createFileRoute("/_authenticated/edit-profile")({
 function RouteComponent() {
   const navigate = useNavigate();
   const router = useRouter();
-  const { user, token }: { user: User; token: string } = Route.useLoaderData();
+  const { user, token } = Route.useLoaderData();
 
   const [avatar, setAvatar] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
@@ -93,9 +91,11 @@ function RouteComponent() {
       }
 
       navigate({ to: "/users/$userId", params: { userId: user.id } });
-    } catch (error) {
+    }
+    catch (error) {
       console.error(error);
-    } finally {
+    }
+    finally {
       setIsLoading(false);
     }
   };

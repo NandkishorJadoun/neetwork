@@ -4,6 +4,6 @@ import { getUserAccount, updateUserAccount } from "./account.controller.js";
 
 export const accountRouter = express.Router();
 
-accountRouter.get("/", getUserAccount)
+accountRouter.get("/", getUserAccount);
 
-accountRouter.patch("/", upload.single("avatar"), updateUserAccount)
+accountRouter.patch("/", upload.single("avatar"), updateUserAccount);

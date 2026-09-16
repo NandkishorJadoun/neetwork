@@ -1,54 +1,53 @@
-import { useRouter } from "@tanstack/react-router"
-import { useState } from "react";
 import type { Post, ValidationError } from "../types";
+import { useRouter } from "@tanstack/react-router";
+import { useState } from "react";
 import { useAuth } from "../context/auth";
-import { CommentCard } from "./CommentCard";
+import { CommentCard } from "./comment-card";
 
-interface CommentSection {
-  post: Post
-  commentRef: React.RefObject<HTMLTextAreaElement | null>,
-}
+type CommentSectionProp = {
+  post: Post;
+  commentRef: React.RefObject<HTMLTextAreaElement | null>;
+};
 
-export const CommentSection = ({ post, commentRef }: CommentSection) => {
+export const CommentSection = ({ post, commentRef }: CommentSectionProp) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [errors, setErrors] = useState<ValidationError[] | null>(null)
-  const [comment, setComment] = useState("")
+  const [errors, setErrors] = useState<ValidationError[] | null>(null);
+  const [comment, setComment] = useState("");
 
   const { user } = useAuth();
   const router = useRouter();
 
   const commentHandler = async (e: React.SubmitEvent) => {
-
-    e.preventDefault()
-    setIsLoading(true)
+    e.preventDefault();
+    setIsLoading(true);
     const url = `${import.meta.env.VITE_API_URL}/posts/${post.id}`;
     const method = "POST";
     const options = {
       method,
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${user?.token}`
+        "Authorization": `Bearer ${user?.token}`,
       },
-      body: JSON.stringify({ content: comment })
-    }
+      body: JSON.stringify({ content: comment }),
+    };
 
     try {
       const res = await fetch(url, options);
       if (!res.ok) {
-        const { errors } = await res.json()
-        setErrors(errors)
-        setIsLoading(false)
-        return
+        const { errors } = await res.json();
+        setErrors(errors);
+        setIsLoading(false);
+        return;
       }
-      setComment("")
-      setErrors(null)
-      setIsLoading(false)
-      router.invalidate()
-
-    } catch (error) {
+      setComment("");
+      setErrors(null);
+      setIsLoading(false);
+      router.invalidate();
+    }
+    catch (error) {
       console.error(error);
     }
-  }
+  };
 
   return (
     <>
@@ -76,7 +75,8 @@ export const CommentSection = ({ post, commentRef }: CommentSection) => {
 
           <div className="flex items-center justify-between">
             <span className="text-xs text-(--app-muted)">
-              {comment.length}/280
+              {comment.length}
+              /280
             </span>
 
             <button
@@ -92,7 +92,7 @@ export const CommentSection = ({ post, commentRef }: CommentSection) => {
                 disabled:opacity-50
               "
             >
-              {isLoading ? 'Posting...' : 'Comment'}
+              {isLoading ? "Posting..." : "Comment"}
             </button>
           </div>
         </form>
@@ -113,24 +113,25 @@ export const CommentSection = ({ post, commentRef }: CommentSection) => {
         </div>
 
         <div className="divide-y divide-(--app-border) px-4">
-          {post.comments.length === 0 ? (
-            <p className="py-6 text-center text-sm text-(--app-muted)">
-              No comments yet
-            </p>
-          ) : (
-            <>
-              {post.comments.map((comment) => {
-                const { id, text, author } = comment
-                return <CommentCard key={id} text={text} author={author} />
-              })}
-              <p className="py-6 text-center text-xs text-(--app-muted)">
-                End of list
-              </p>
-            </>
-          )}
+          {post.comments.length === 0
+            ? (
+                <p className="py-6 text-center text-sm text-(--app-muted)">
+                  No comments yet
+                </p>
+              )
+            : (
+                <>
+                  {post.comments.map((comment) => {
+                    const { id, text, author } = comment;
+                    return <CommentCard key={id} text={text} author={author} />;
+                  })}
+                  <p className="py-6 text-center text-xs text-(--app-muted)">
+                    End of list
+                  </p>
+                </>
+              )}
         </div>
       </div>
     </>
-  )
-}
-
+  );
+};

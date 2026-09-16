@@ -1,9 +1,6 @@
 import { prisma } from "../../configs/prisma.js";
 
-export const findLikedPostsByUserId = async (
-  userId: string,
-  viewerId: string
-) => {
+export async function findLikedPostsByUserId(userId: string, viewerId: string) {
   return prisma.like.findMany({
     where: { userId: viewerId },
     orderBy: {
@@ -36,10 +33,10 @@ export const findLikedPostsByUserId = async (
   });
 }
 
-export const findLikesByPostId = async (postId: string) => {
+export async function findLikesByPostId(postId: string) {
   return prisma.like.findMany({
     where: {
-      postId
+      postId,
     },
     select: {
       id: true,
@@ -54,10 +51,7 @@ export const findLikesByPostId = async (postId: string) => {
   });
 }
 
-export const insertLike = async (
-  userId: string,
-  postId: string
-) => {
+export async function insertLike(userId: string, postId: string) {
   return prisma.like.create({
     data: {
       userId,
@@ -66,16 +60,13 @@ export const insertLike = async (
   });
 }
 
-export const removeLike = async (
-  userId: string,
-  postId: string
-) => {
+export async function removeLike(userId: string, postId: string) {
   return prisma.like.delete({
     where: {
       userId_postId:
       {
         userId,
-        postId
+        postId,
       },
     },
   });

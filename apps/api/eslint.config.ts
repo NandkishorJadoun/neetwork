@@ -1,17 +1,13 @@
-import neetwork from '@neetwork/eslint-config';
-import { defineConfig } from 'eslint/config';
+import createConfig from "@neetwork/eslint-config/create-config";
 
-export default defineConfig(
-    ...neetwork,
-    {
-        rules: {
-            'no-restricted-properties': ['error', { object: 'process', property: 'env', message: 'Use src/schemas/env.schema.ts instead.' }],
-        },
-    },
-    {
-        files: ['src/configs/env.ts', 'src/configs/prisma.ts', 'prisma.config.ts'],
-        rules: {
-            'no-restricted-properties': 'off',
-        },
-    },
-);
+export default createConfig({
+  ignores: ["prisma/migrations/**", "public/**"],
+  rules: {
+    "test/no-import-node-test": "off",
+  },
+}).append({
+  files: ["src/configs/env.ts"],
+  rules: {
+    "n/no-process-env": "off",
+  },
+});

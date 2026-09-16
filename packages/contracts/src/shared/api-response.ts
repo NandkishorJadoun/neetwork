@@ -5,6 +5,6 @@ export const SuccessSchema = z.strictObject({
   success: z.literal(true),
 });
 
-export const apiResponse = <S extends z.core.$ZodTypeDiscriminable>(
-  successSchema: S,
-) => z.discriminatedUnion("success", [successSchema, ApiErrorSchema]);
+export function apiResponse<S extends z.core.$ZodTypeDiscriminable>(successSchema: S) {
+  return z.discriminatedUnion("success", [successSchema, ApiErrorSchema]);
+}

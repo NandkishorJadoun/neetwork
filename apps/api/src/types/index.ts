@@ -1,4 +1,4 @@
-export interface ValidationError {
-    fieldName: string
-    message: string
-}
+export type ValidationError = {
+  fieldName: string;
+  message: string;
+};

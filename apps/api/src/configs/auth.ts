@@ -1,40 +1,42 @@
-import { betterAuth, type BetterAuthOptions } from "better-auth";
+import type { BetterAuthOptions } from "better-auth";
+import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
-import { prisma } from "./prisma.js";
+import { anonymous } from "better-auth/plugins";
 import { env } from "./env.js";
-import { anonymous } from "better-auth/plugins"
+import { prisma } from "./prisma.js";
 
 export const baseAuthConfig = {
-    database: prismaAdapter(prisma, {
-        provider: "postgresql",
-    }),
-    advanced: {
-        database: {
-            generateId: false,
-        },
+  database: prismaAdapter(prisma, {
+    provider: "postgresql",
+  }),
+  trustedOrigins: ["http://localhost:5173"],
+  advanced: {
+    database: {
+      generateId: false,
     },
-    emailAndPassword: {
-        enabled: true,
+  },
+  emailAndPassword: {
+    enabled: true,
+  },
+  socialProviders: {
+    github: {
+      clientId: env.GITHUB_CLIENT_ID,
+      clientSecret: env.GITHUB_CLIENT_SECRET,
     },
-    socialProviders: {
-        github: {
-            clientId: env.GITHUB_CLIENT_ID,
-            clientSecret: env.GITHUB_CLIENT_SECRET,
-        },
-        google: {
-            clientId: env.GOOGLE_CLIENT_ID,
-            clientSecret: env.GOOGLE_CLIENT_SECRET,
-        },
+    google: {
+      clientId: env.GOOGLE_CLIENT_ID,
+      clientSecret: env.GOOGLE_CLIENT_SECRET,
     },
-    session: {
-        cookieCache: {
-            enabled: true,
-            maxAge: 5 * 60,
-        },
+  },
+  session: {
+    cookieCache: {
+      enabled: true,
+      maxAge: 5 * 60,
     },
-    plugins: [
-        anonymous(),
-    ],
+  },
+  plugins: [
+    anonymous(),
+  ],
 } satisfies BetterAuthOptions;
 
 export const auth = betterAuth(baseAuthConfig);

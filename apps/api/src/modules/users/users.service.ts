@@ -1,6 +1,6 @@
 import { prisma } from "../../configs/prisma.js";
 
-export const findNonFollowingUsers = async (userId: string) => {
+export async function findNonFollowingUsers(userId: string) {
   return prisma.user.findMany({
     where: {
       id: { not: userId },
@@ -16,10 +16,7 @@ export const findNonFollowingUsers = async (userId: string) => {
   });
 }
 
-export const findUserProfile = async (
-  userId: string,
-  viewerId: string
-) => {
+export async function findUserProfile(userId: string, viewerId: string) {
   return prisma.user.findUnique({
     where: {
       id: viewerId,
@@ -58,5 +55,4 @@ export const findUserProfile = async (
       },
     },
   });
-};
-
+}

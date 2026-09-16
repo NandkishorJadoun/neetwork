@@ -1,4 +1,3 @@
-import neetwork from '@neetwork/eslint-config';
-import { defineConfig } from 'eslint/config';
+import config from "@neetwork/eslint-config";
 
-export default defineConfig(...neetwork);
+export default config;

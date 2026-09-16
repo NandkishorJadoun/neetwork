@@ -1,21 +1,23 @@
+import process from "node:process";
 import { z } from "zod/v4";
+
+process.loadEnvFile();
 
 const envSchema = z.object({
   NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
   PORT: z.coerce.number().default(3000),
-
-  DATABASE_URL: z.string(),
+  DATABASE_URL: z.url(),
+  TEST_DATABASE_URL: z.url(),
   GITHUB_CLIENT_ID: z.string(),
   GITHUB_CLIENT_SECRET: z.string(),
   GITHUB_CALLBACK_URL: z.url(),
   CLOUDINARY_CLOUD_NAME: z.string(),
   CLOUDINARY_API_KEY: z.string(),
   CLOUDINARY_API_SECRET: z.string(),
-
   BETTER_AUTH_SECRET: z.string(),
   BETTER_AUTH_URL: z.url(),
   GOOGLE_CLIENT_ID: z.string(),
-  GOOGLE_CLIENT_SECRET: z.string()
+  GOOGLE_CLIENT_SECRET: z.string(),
 });
 
 try {

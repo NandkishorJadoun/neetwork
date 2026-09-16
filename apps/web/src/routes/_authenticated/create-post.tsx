@@ -1,51 +1,52 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useState } from 'react'
-import { useAuth } from '../../context/auth'
-import type { ValidationError } from '../../types'
-import { PageHeader } from '../../components/PageHeader'
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
+import { PageHeader } from "../../components/page-header";
 
-export const Route = createFileRoute('/_authenticated/create-post')({
+export const Route = createFileRoute("/_authenticated/create-post")({
   component: RouteComponent,
-})
+});
 
 function RouteComponent() {
-  const [content, setContent] = useState('')
-  const [errors, setErrors] = useState<ValidationError[] | null>(null)
-  const [isLoading, setIsLoading] = useState(false)
-  const navigate = useNavigate()
-  const { user } = useAuth()
+  const [content, setContent] = useState("");
+  const [errors, setErrors] = useState<ValidationError[] | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+  const { user } = Route.useRouteContext();
 
   const submitPostHandler = async (e: React.SubmitEvent) => {
-    e.preventDefault()
-    if (!content.trim()) return
-    setIsLoading(true)
-    setErrors(null)
+    e.preventDefault();
+    if (!content.trim())
+      return;
+    setIsLoading(true);
+    setErrors(null);
 
-    const url = `${import.meta.env.VITE_API_URL}/posts/`
+    const url = `${import.meta.env.VITE_API_URL}/posts/`;
     const options = {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${user?.token}`,
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${user?.token}`,
       },
       body: JSON.stringify({ content }),
-    }
+    };
     try {
-      const res = await fetch(url, options)
+      const res = await fetch(url, options);
 
       if (!res.ok) {
-        const data = await res.json()
-        setErrors(data.errors ?? [])
-        return
+        const data = await res.json();
+        setErrors(data.errors ?? []);
+        return;
       }
 
-      navigate({ to: '/home' })
-    } catch (error) {
-      console.error(error)
-    } finally {
-      setIsLoading(false)
+      navigate({ to: "/home" });
     }
-  }
+    catch (error) {
+      console.error(error);
+    }
+    finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <>
@@ -64,7 +65,8 @@ function RouteComponent() {
 
         <div className="flex items-center justify-between">
           <span className="text-xs text-(--app-muted)">
-            {content.length}/280
+            {content.length}
+            /280
           </span>
 
           <button
@@ -80,18 +82,19 @@ function RouteComponent() {
                 disabled:opacity-50
                 "
           >
-            {isLoading ? 'Posting...' : 'Post'}
+            {isLoading ? "Posting..." : "Post"}
           </button>
-        </div >
+        </div>
 
-        {errors &&
-          <ul className="mt-4 border border-red-500/20 bg-red-500/5 p-3 text-sm text-red-500">
-            {errors.map((error, id) => (
-              <li key={id}>{error.message}</li>
-            ))}
-          </ul>
-        }
+        {errors
+          && (
+            <ul className="mt-4 border border-red-500/20 bg-red-500/5 p-3 text-sm text-red-500">
+              {errors.map((error, id) => (
+                <li key={id}>{error.message}</li>
+              ))}
+            </ul>
+          )}
       </form>
     </>
-  )
+  );
 }

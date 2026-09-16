@@ -1,15 +1,15 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "lib": ["esnext"],
     "rootDir": "src",
-    "outDir": "dist",
     "module": "nodenext",
     "moduleResolution": "nodenext",
-    "lib": ["esnext"],
-    "esModuleInterop": true,
-    "sourceMap": true,
     "declaration": true,
     "declarationMap": true,
+    "outDir": "dist",
+    "sourceMap": true,
+    "esModuleInterop": true,
     "isolatedModules": true
   },
   "include": ["src/index.ts", "src/schemas", "src/shared"]

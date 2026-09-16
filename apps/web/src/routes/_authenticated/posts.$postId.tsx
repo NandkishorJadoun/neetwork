@@ -1,72 +1,75 @@
-import { createFileRoute, Link, useRouter, useLocation } from '@tanstack/react-router'
-import { useEffect, useRef, useState } from 'react'
-import { useAuth } from '../../context/auth'
-import type { Post } from '../../types'
-import { CommentSection } from '../../components/CommentSection'
-import { Heart, MessageCircle } from 'lucide-react'
-import { PageHeader } from '../../components/PageHeader'
+import type { Post } from "../../types";
+import { createFileRoute, Link, useLocation, useRouter } from "@tanstack/react-router";
+import { Heart, MessageCircle } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { CommentSection } from "../../components/comment-section";
+import { PageHeader } from "../../components/page-header";
+import { useAuth } from "../../context/auth";
 
-export const Route = createFileRoute('/_authenticated/posts/$postId')({
+export const Route = createFileRoute("/_authenticated/posts/$postId")({
   loader: async ({ context, params: { postId } }) => {
-    const token = context.auth.user?.token
-    const options = { headers: { Authorization: `Bearer ${token}` } }
-    const baseUrl = `${import.meta.env.VITE_API_URL}/posts/${postId}`
+    const token = context.auth.user?.token;
+    const options = { headers: { Authorization: `Bearer ${token}` } };
+    const baseUrl = `${import.meta.env.VITE_API_URL}/posts/${postId}`;
 
-    const res = await fetch(baseUrl, options)
+    const res = await fetch(baseUrl, options);
 
     if (!res.ok) {
-      throw new Error('Failed to load post')
+      throw new Error("Failed to load post");
     }
 
-    return await res.json()
+    return await res.json();
   },
   component: RouteComponent,
-})
+});
 
 function RouteComponent() {
-  const { post }: { post: Post } = Route.useLoaderData()
-  const { user } = useAuth()
-  const router = useRouter()
-  const { hash } = useLocation()
+  const { post }: { post: Post } = Route.useLoaderData();
+  const { user } = useAuth();
+  const router = useRouter();
+  const { hash } = useLocation();
 
-  const [isLoading, setIsLoading] = useState(false)
-  const commentRef = useRef<HTMLTextAreaElement>(null)
+  const [isLoading, setIsLoading] = useState(false);
+  const commentRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
-    if (hash !== 'comment') return
+    if (hash !== "comment")
+      return;
 
     commentRef.current?.scrollIntoView({
-      behavior: 'smooth',
-      block: 'center',
-    })
+      behavior: "smooth",
+      block: "center",
+    });
 
-    commentRef.current?.focus()
-  }, [hash])
+    commentRef.current?.focus();
+  }, [hash]);
 
-  const isLiked = post.likes.length > 0
+  const isLiked = post.likes.length > 0;
 
   const likeHandler = async () => {
-    setIsLoading(true)
+    setIsLoading(true);
 
-    const url = `${import.meta.env.VITE_API_URL}/posts/${post.id}/like`
-    const method = isLiked ? 'DELETE' : 'POST'
+    const url = `${import.meta.env.VITE_API_URL}/posts/${post.id}/like`;
+    const method = isLiked ? "DELETE" : "POST";
     const options = {
       method,
       headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${user?.token}`,
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${user?.token}`,
       },
-    }
+    };
 
     try {
-      await fetch(url, options)
-      router.invalidate()
-    } catch (error) {
-      console.error(error)
-    } finally {
-      setIsLoading(false)
+      await fetch(url, options);
+      router.invalidate();
     }
-  }
+    catch (error) {
+      console.error(error);
+    }
+    finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <>
@@ -95,7 +98,8 @@ function RouteComponent() {
                 {post.author.fullname}
               </p>
               <span className="truncate text-sm text-(--app-muted)">
-                @{post.author.username}
+                @
+                {post.author.username}
               </span>
             </Link>
 
@@ -112,12 +116,12 @@ function RouteComponent() {
                     rounded-full p-1.5 transition-colors
                     hover:bg-pink-600/10 hover:text-pink-600
                     disabled:cursor-not-allowed disabled:opacity-50
-                    ${isLiked ? 'text-pink-600' : ''}
+                    ${isLiked ? "text-pink-600" : ""}
                   `}
                 >
                   <Heart
                     size={16}
-                    fill={isLiked ? 'currentColor' : 'none'}
+                    fill={isLiked ? "currentColor" : "none"}
                   />
                 </button>
 
@@ -145,8 +149,7 @@ function RouteComponent() {
         </div>
       </section>
 
-
       <CommentSection post={post} commentRef={commentRef} />
     </>
-  )
+  );
 }

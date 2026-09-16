@@ -1,6 +1,6 @@
 import { prisma } from "../../configs/prisma.js";
 
-export const findUserFollowers = async (userId: string) => {
+export async function findUserFollowers(userId: string) {
   return prisma.follow.findMany({
     where: {
       receiverId: userId,
@@ -18,7 +18,7 @@ export const findUserFollowers = async (userId: string) => {
   });
 }
 
-export const findUserFollowings = async (userId: string) => {
+export async function findUserFollowings(userId: string) {
   return prisma.follow.findMany({
     where: {
       senderId: userId,
@@ -36,35 +36,31 @@ export const findUserFollowings = async (userId: string) => {
   });
 }
 
-export const createFollowRequest = async (
-  senderId: string,
-  receiverId: string) => {
+export async function createFollowRequest(senderId: string, receiverId: string) {
   return prisma.follow.create({
     data: {
       senderId,
-      receiverId
+      receiverId,
     },
   });
 }
 
-export const unfollowUser = async (
-  senderId: string,
-  receiverId: string) => {
+export async function unfollowUser(senderId: string, receiverId: string) {
   return prisma.follow.delete({
     where: {
       senderId_receiverId: {
         senderId,
-        receiverId
-      }
+        receiverId,
+      },
     },
   });
 }
 
-export const findAllFollowRequests = async (userId: string) => {
+export async function findAllFollowRequests(userId: string) {
   return await prisma.follow.findMany({
     where: {
       receiverId: userId,
-      status: "PENDING"
+      status: "PENDING",
     },
     include: {
       sender: {
@@ -77,15 +73,12 @@ export const findAllFollowRequests = async (userId: string) => {
   });
 }
 
-export const updateFollowRequest = async (
-  senderId: string,
-  receiverId: string
-) => {
+export async function updateFollowRequest(senderId: string, receiverId: string) {
   return prisma.follow.update({
     where: {
       senderId_receiverId: {
         senderId,
-        receiverId
+        receiverId,
       },
       status: "PENDING",
     },
@@ -95,30 +88,24 @@ export const updateFollowRequest = async (
   });
 }
 
-export const deleteFollowRequest = async (
-  senderId: string,
-  receiverId: string
-) => {
+export async function deleteFollowRequest(senderId: string, receiverId: string) {
   return prisma.follow.delete({
     where: {
       senderId_receiverId: {
         senderId,
-        receiverId
+        receiverId,
       },
       status: "PENDING",
     },
   });
 }
 
-export const removeFollowerById = async (
-  senderId: string,
-  receiverId: string
-) => {
+export async function removeFollowerById(senderId: string, receiverId: string) {
   return prisma.follow.delete({
     where: {
       senderId_receiverId: {
         senderId,
-        receiverId
+        receiverId,
       },
       status: "ACCEPTED",
     },
