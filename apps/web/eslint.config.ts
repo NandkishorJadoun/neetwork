@@ -5,15 +5,10 @@ import pluginRouter from "@tanstack/eslint-plugin-router";
 export default createConfig({
   react: true,
 }, {
-  plugins: {
-    "@tanstack/query": pluginQuery,
-    "@tanstack/router": pluginRouter,
-  },
   rules: {
     "antfu/top-level-function": "off",
-    "@tanstack/query/exhaustive-deps": "error",
   },
-}, {
+}, ...pluginRouter.configs["flat/recommended"], ...pluginQuery.configs["flat/recommended-strict"], {
   ignores: ["src/routeTree.gen.ts"],
 }, {
   files: ["src/routes/**/*.{ts,tsx}"],

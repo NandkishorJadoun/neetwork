@@ -1,4 +1,3 @@
-import type { User, ValidationError } from "../../types";
 import { GetUserProfileResponseSchema } from "@neetwork/contracts";
 import {
   createFileRoute,
@@ -11,7 +10,7 @@ import { PageHeader } from "../../components/page-header";
 
 export const Route = createFileRoute("/_authenticated/edit-profile")({
   loader: async ({ context }) => {
-    const token = context.auth.user?.token;
+    const token = context.user?.token;
     const options = { headers: { Authorization: `Bearer ${token}` } };
     const url = "api/me";
     const res = await fetch(url, options);
@@ -31,7 +30,7 @@ export const Route = createFileRoute("/_authenticated/edit-profile")({
 function RouteComponent() {
   const navigate = useNavigate();
   const router = useRouter();
-  const { user, token }: { user: User; token: string } = Route.useLoaderData();
+  const { user, token } = Route.useLoaderData();
 
   const [avatar, setAvatar] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);

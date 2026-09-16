@@ -4,12 +4,12 @@ import { useState } from "react";
 import { useAuth } from "../context/auth";
 import { CommentCard } from "./comment-card";
 
-type CommentSection = {
+type CommentSectionProp = {
   post: Post;
   commentRef: React.RefObject<HTMLTextAreaElement | null>;
 };
 
-export const CommentSection = ({ post, commentRef }: CommentSection) => {
+export const CommentSection = ({ post, commentRef }: CommentSectionProp) => {
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<ValidationError[] | null>(null);
   const [comment, setComment] = useState("");

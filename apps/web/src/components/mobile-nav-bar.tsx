@@ -13,7 +13,9 @@ type MobileNavbarProp = {
 export function MobileNavbar({ isOpen, setIsOpen, navItems, handleLogout }: MobileNavbarProp) {
   useEffect(() => {
     document.body.style.overflow = isOpen ? "hidden" : "unset";
-    return () => { document.body.style.overflow = "unset"; };
+    return () => {
+      document.body.style.overflow = "unset";
+    };
   }, [isOpen]);
 
   return (

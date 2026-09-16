@@ -1,21 +1,22 @@
-import { createFileRoute, Link, Outlet, redirect, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, redirect } from "@tanstack/react-router";
 import { Home, Info, Pencil, UserRound, UserRoundCog, UserRoundPen, UserRoundPlus, UserRoundSearch } from "lucide-react";
 import { useState } from "react";
-import { MobileBottomNav } from "../components/mobile-bottom-nav";
-import { MobileNavbar } from "../components/mobile-nav-bar";
-import { SideBar } from "../components/side-bar";
-import { useAuth } from "../context/auth";
-import { MobileNavContext } from "../context/mobile-nav";
+import { MobileBottomNav } from "@/components/mobile-bottom-nav";
+import { MobileNavbar } from "@/components/mobile-nav-bar";
+import { SideBar } from "@/components/side-bar";
+import { MobileNavContext } from "@/context/mobile-nav";
+import { getSession, signOut } from "@/libs/auth-client";
 
 export const Route = createFileRoute("/_authenticated")({
-  beforeLoad: ({ context }) => {
-    if (!context.auth.isAuthenticated || !context.auth.user) {
+  beforeLoad: async () => {
+    const { data } = await getSession();
+    if (!data) {
       throw redirect({
-        to: "/login",
+        to: "/signin",
       });
     }
     return {
-      user: context.auth.user,
+      user: data.user,
     };
   },
   component: RouteComponent,
@@ -23,16 +24,16 @@ export const Route = createFileRoute("/_authenticated")({
 
 function RouteComponent() {
   const [isOpen, setIsOpen] = useState(false);
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
+  const { user } = Route.useRouteContext();
+
   const handleLogout = () => {
-    logout();
-    navigate({ to: "/login", replace: true });
+    signOut();
+    // navigate({ to: "/login", replace: true });
   };
 
   const navItems = [
     { to: "/home", name: "Home", icon: <Home size={20} /> },
-    { to: `/users/${user?.id}`, name: "User", icon: <UserRound size={20} /> },
+    { to: `/users/${user.id}`, name: "User", icon: <UserRound size={20} /> },
     { to: "/edit-profile", name: "Edit Profile", icon: <UserRoundPen size={20} /> },
     { to: "/create-post", name: "Create Post", icon: <Pencil size={20} /> },
     { to: "/follow-requests", name: "Follow Requests", icon: <UserRoundPlus size={20} /> },
@@ -60,7 +61,7 @@ function RouteComponent() {
           </main>
         </MobileNavContext>
       </div>
-      <MobileBottomNav />
+      <MobileBottomNav user={user} />
     </>
   );
 }

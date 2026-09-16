@@ -7,7 +7,6 @@
       "ES2023",
       "DOM"
     ],
-    "baseUrl": ".",
     "module": "esnext",
     "moduleResolution": "bundler",
     "paths": {

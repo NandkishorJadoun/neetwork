@@ -1,8 +1,6 @@
-import type { ValidationError } from "../../types";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { PageHeader } from "../../components/page-header";
-import { useAuth } from "../../context/auth";
 
 export const Route = createFileRoute("/_authenticated/create-post")({
   component: RouteComponent,
@@ -13,7 +11,7 @@ function RouteComponent() {
   const [errors, setErrors] = useState<ValidationError[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user } = Route.useRouteContext();
 
   const submitPostHandler = async (e: React.SubmitEvent) => {
     e.preventDefault();

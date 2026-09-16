@@ -18,17 +18,17 @@ const postsQueryOptions = (token: string, activeTab: ActiveTab) =>
   });
 
 export const Route = createFileRoute("/_authenticated/home")({
-  validateSearch: (search: Record<string, unknown>): { users?: "following" } => {
+  validateSearch: (search: Record<string, unknown>): { users: ActiveTab } => {
     return {
-      users: search.users === "following" ? "following" : undefined,
+      users: search.users === "following" ? "following" : "all",
     };
   },
   loaderDeps: ({ search }) => ({ users: search.users }),
   loader: async ({ context, deps }) => {
-    const activeTab = deps.users ?? "all";
-    const { queryClient, user } = context;
-    const { token } = user;
-    await queryClient.ensureInfiniteQueryData(postsQueryOptions(token, activeTab));
+    const activeTab = deps.users;
+    const { queryClient } = context;
+
+    await queryClient.infiniteQuery(postsQueryOptions(token, activeTab));
     return { token };
   },
   component: RouteComponent,
