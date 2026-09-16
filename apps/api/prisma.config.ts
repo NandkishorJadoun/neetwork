@@ -1,14 +1,7 @@
 /// <reference types="node" />
 
-import { existsSync } from "node:fs";
-import process from "node:process";
 import { defineConfig, env } from "prisma/config";
-
-if (existsSync(".env")) {
-  process.loadEnvFile(".env");
-}
-
-process.loadEnvFile();
+import "dotenv/config";
 
 export default defineConfig({
   schema: "prisma/schema.prisma",

@@ -8,8 +8,8 @@
   "keywords": [],
   "main": "index.js",
   "scripts": {
-    "test": "NODE_ENV=test tsx --env-file=.env --test --test-concurrency=1 tests/*.spec.ts",
-    "dev": "tsx watch --env-file=.env src/server.ts",
+    "test": "NODE_ENV=test tsx --test --test-concurrency=1 tests/*.spec.ts",
+    "dev": "tsx watch src/server.ts",
     "type-check": "tsc --noEmit",
     "build": "pnpm --filter @neetwork/contracts build && prisma generate && tsc",
     "lint": "eslint .",
@@ -24,6 +24,7 @@
     "better-auth": "^1.7.3",
     "cloudinary": "^2.10.1",
     "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "helmet": "^8.3.0",
     "multer": "^2.2.0",
