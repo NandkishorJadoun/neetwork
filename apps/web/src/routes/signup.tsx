@@ -16,14 +16,12 @@ function RouteComponent() {
     e.preventDefault();
     setSubmitting(true);
     try {
-      const { error, data } = await signUp.email({ name, email, password });
+      const { error } = await signUp.email({ name, email, password });
       setSubmitting(false);
 
       if (error) {
         console.error(error.message);
       }
-
-      console.log(data);
     }
     catch (error) {
       console.error(error);

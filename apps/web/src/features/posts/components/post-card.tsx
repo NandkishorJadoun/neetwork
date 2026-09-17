@@ -1,42 +1,32 @@
+import type { Post } from "@neetwork/contracts";
 import type { JSX } from "react";
-import type { Post } from "../types";
+import { useMutation } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { Heart, MessageCircle } from "lucide-react";
 import { useState } from "react";
-import { useAuth } from "../context/auth";
+import { likePost, unlikePost } from "../api";
 
 export const PostCard = ({ post, comment }: { post: Post; comment?: JSX.Element }) => {
-  const { user } = useAuth();
-  const [isLoading, setIsLoading] = useState(false);
-  const [isLiked, setIsLiked] = useState(post.likes.length > 0);
+  const [isLiked, setIsLiked] = useState(post.is_liked_by_user);
   const [likeCount, setLikeCount] = useState(post._count.likes);
 
-  const likeHandler = async () => {
-    const nextLiked = !isLiked;
+  const mutation = useMutation({
+    mutationFn: ({ postId, isLiked }: { postId: string; isLiked: boolean }) => {
+      return isLiked ? unlikePost({ postId }) : likePost({ postId });
+    },
+    onSuccess: (_data, variables) => {
+      setIsLiked(!variables.isLiked);
+      setLikeCount(previous =>
+        previous + (!variables.isLiked ? 1 : -1),
+      );
+    },
+  });
 
-    setIsLiked(nextLiked);
-    setLikeCount(prev => prev + (nextLiked ? 1 : -1));
-
-    setIsLoading(true);
-
-    const url = `${import.meta.env.VITE_API_URL}/posts/${post.id}/like`;
-    const method = nextLiked ? "POST" : "DELETE";
-
-    const options = {
-      method,
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${user?.token}`,
-      },
-    };
-
-    try {
-      await fetch(url, options);
-    }
-    catch (error) {
-      console.error(error);
-    }
-    setIsLoading(false);
+  const likeHandler = () => {
+    mutation.mutate({
+      postId: post.id,
+      isLiked,
+    });
   };
 
   return (
@@ -48,8 +38,8 @@ export const PostCard = ({ post, comment }: { post: Post; comment?: JSX.Element 
           className="shrink-0"
         >
           <img
-            src={post.author.avatar}
-            alt={`${post.author.username}'s avatar`}
+            src={post.author.image ?? "/default-avatar.png"}
+            alt={`${post.author.name}'s avatar`}
             className="h-10 w-10 rounded-full object-cover"
           />
         </Link>
@@ -61,12 +51,12 @@ export const PostCard = ({ post, comment }: { post: Post; comment?: JSX.Element 
             className="flex items-center gap-2"
           >
             <p className="truncate font-medium">
-              {post.author.fullname}
+              {post.author.name}
             </p>
 
             <p className="truncate text-sm text-(--app-muted)">
               @
-              {post.author.username}
+              {post.author.name}
             </p>
           </Link>
 
@@ -81,7 +71,7 @@ export const PostCard = ({ post, comment }: { post: Post; comment?: JSX.Element 
           <div className="mt-3 flex items-center gap-6 text-sm text-(--app-muted)">
             <div className="flex items-center gap-1">
               <button
-                disabled={isLoading}
+                disabled={mutation.isPending}
                 onClick={likeHandler}
                 className={`
               rounded-full p-1.5 transition-colors

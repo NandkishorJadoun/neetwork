@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageHeader } from "../../components/page-header";
-import { useThemeSettings } from "../../context/theme";
+import { useThemeSettings } from "../../context/theme-context";
 
 export const Route = createFileRoute("/_authenticated/settings")({
   component: RouteComponent,

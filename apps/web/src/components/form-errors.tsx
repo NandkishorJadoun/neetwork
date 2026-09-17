@@ -18,8 +18,8 @@ export const FormErrors = ({ fieldName, errors }: FormErrorsProps) => {
 
   return (
     <ul className="mt-4 border border-red-500/20 bg-red-500/5 p-3 text-sm text-red-500">
-      {fieldErrors.map((fieldError, index) => (
-        <li key={index}>
+      {fieldErrors.map(fieldError => (
+        <li key={`${fieldError.fieldName}-${fieldError.message}`}>
           {fieldError.message}
         </li>
       ))}
