@@ -16,7 +16,7 @@ import { z } from "zod/v4";
 import { findCommentsByUserId } from "../comments/comments.service.js";
 import { findUserFollowers, findUserFollowings } from "../follows/follows.service.js";
 import { findLikedPostsByUserId } from "../likes/likes.service.js";
-import { findPostsById } from "../posts/posts.service.js";
+import { findPostsByUserId } from "../posts/posts.service.js";
 import { findNonFollowingUsers, findUserProfile } from "./users.service.js";
 
 const UserParamsSchema = z.strictObject({
@@ -92,7 +92,12 @@ export async function getPostsByUserId(req: Request, res: Response<GetPostsByUse
   const { userId: viewerId } = params.data;
 
   try {
-    const posts = await findPostsById(userId, viewerId);
+    const rawPosts = await findPostsByUserId(userId, viewerId);
+
+    const posts = rawPosts.map(({ likes, ...post }) => ({
+      ...post,
+      is_liked_by_user: likes.length > 0,
+    }))
 
     const response = GetPostsByUserIdSuccessSchema.parse({
       success: true,

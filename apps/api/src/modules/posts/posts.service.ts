@@ -117,7 +117,7 @@ export async function removePostById(userId: string, postId: string) {
   });
 }
 
-export async function findPostsById(userId: string, viewerId: string) {
+export async function findPostsByUserId(userId: string, viewerId: string) {
   return prisma.post.findMany({
     where: {
       userId: viewerId,
