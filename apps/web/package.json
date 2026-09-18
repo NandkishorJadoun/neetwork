@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "pnpm --filter @neetwork/contracts build && tsc -b && vite build",
     "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "preview": "vite preview",
     "type-check": "tsc --noEmit"
   },
