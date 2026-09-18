@@ -1,4 +1,4 @@
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
 import { HomePageHeader } from "@/components/home-page-header";
@@ -10,7 +10,7 @@ import { postsQueryOptions } from "../queries";
 export const HomePage = () => {
   const { activeTab } = Route.useLoaderData();
   const { ref, inView } = useInView();
-  const { data, hasNextPage, fetchNextPage } = useInfiniteQuery(postsQueryOptions(activeTab));
+  const { data, hasNextPage, fetchNextPage } = useSuspenseInfiniteQuery(postsQueryOptions(activeTab));
 
   useEffect(() => {
     if (inView && hasNextPage) {
@@ -23,7 +23,7 @@ export const HomePage = () => {
       <HomePageHeader tab={activeTab} />
       <div>
         {
-          data?.pages.flatMap(page => page.posts).map(post => (
+          data.pages.flatMap(page => page.posts).map(post => (
             <PostCard key={post.id} post={post} />
           ))
         }

@@ -1,5 +1,5 @@
 import type { ActiveTab } from "./queries";
-import { GetAllPostsSchema, LikePostSchema, UnlikePostSchema } from "@neetwork/contracts";
+import { GetAllPostsSchema, GetPostByIdSchema, LikePostSchema, UnlikePostSchema } from "@neetwork/contracts";
 
 type FetchPostsArgs = {
   activeTab: ActiveTab;
@@ -85,5 +85,32 @@ export const unlikePost = async ({ postId }: { postId: string }) => {
 
   return {
     success: result.data.success,
+  };
+};
+
+type FetchPostByIdArgs = {
+  postId: string;
+  signal: AbortSignal;
+};
+
+export const fetchPostById = async ({ postId, signal }: FetchPostByIdArgs) => {
+  const response = await fetch(`/api/posts/${postId}`, {
+    credentials: "include",
+    signal,
+  });
+
+  const json: unknown = await response.json();
+  const result = GetPostByIdSchema.safeParse(json);
+
+  if (!result.success) {
+    throw new Error(`Invalid posts response: ${response.status}`);
+  }
+
+  if (!result.data.success) {
+    throw new Error(result.data.message);
+  }
+
+  return {
+    post: result.data.post,
   };
 };

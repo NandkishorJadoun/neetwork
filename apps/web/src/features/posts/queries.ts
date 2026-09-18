@@ -1,5 +1,5 @@
-import { infiniteQueryOptions } from "@tanstack/react-query";
-import { fetchFeedPosts } from "./api";
+import { infiniteQueryOptions, queryOptions } from "@tanstack/react-query";
+import { fetchFeedPosts, fetchPostById } from "./api";
 
 export type ActiveTab = "all" | "following";
 
@@ -9,4 +9,10 @@ export const postsQueryOptions = (activeTab: ActiveTab) =>
     queryFn: ({ pageParam: nextCursor, signal }) => fetchFeedPosts({ activeTab, nextCursor, signal }),
     initialPageParam: "",
     getNextPageParam: ({ nextCursor }) => nextCursor,
+  });
+
+export const postByIdQueryOptions = (postId: string) =>
+  queryOptions({
+    queryKey: ["post", { postId }],
+    queryFn: ({ signal }) => fetchPostById({ postId, signal }),
   });

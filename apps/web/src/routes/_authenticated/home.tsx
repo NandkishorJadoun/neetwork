@@ -10,7 +10,7 @@ export const Route = createFileRoute("/_authenticated/home")({
       };
     },
   loaderDeps: ({ search }) => ({ users: search.users }),
-  loader: async ({ context, deps }) => {
+  loader: ({ context, deps }) => {
     const activeTab = deps.users ?? "all" as const;
     context.queryClient.infiniteQuery(postsQueryOptions(activeTab));
 
