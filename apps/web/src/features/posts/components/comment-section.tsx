@@ -1,7 +1,5 @@
-import type { Post, ValidationError } from "../types";
-import { useRouter } from "@tanstack/react-router";
+import type { Post } from "@neetwork/contracts";
 import { useState } from "react";
-import { useAuth } from "../context/auth";
 import { CommentCard } from "./comment-card";
 
 type CommentSectionProp = {
@@ -10,12 +8,8 @@ type CommentSectionProp = {
 };
 
 export const CommentSection = ({ post, commentRef }: CommentSectionProp) => {
-  const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<ValidationError[] | null>(null);
   const [comment, setComment] = useState("");
-
-  const { user } = useAuth();
-  const router = useRouter();
 
   const commentHandler = async (e: React.SubmitEvent) => {
     e.preventDefault();

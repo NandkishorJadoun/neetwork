@@ -1,9 +1,9 @@
-import type { User } from "../types";
+import type { CommentAuthor } from "@neetwork/contracts";
 import { Link } from "@tanstack/react-router";
 
 type CommentCardProp = {
   text: string;
-  author: User;
+  author: CommentAuthor;
 };
 
 export const CommentCard = ({ text, author }: CommentCardProp) => {
@@ -15,8 +15,8 @@ export const CommentCard = ({ text, author }: CommentCardProp) => {
         className="shrink-0"
       >
         <img
-          src={author.avatar}
-          alt={`${author.username}'s avatar`}
+          src={author.image ?? "/default-avatar.png"}
+          alt={`${author.name}'s avatar`}
           className="h-8 w-8 rounded-full object-cover"
         />
       </Link>
@@ -28,11 +28,11 @@ export const CommentCard = ({ text, author }: CommentCardProp) => {
           className="flex items-center gap-2"
         >
           <p className="truncate text-sm font-medium text-(--app-text)">
-            {author.fullname}
+            {author.name}
           </p>
           <span className="truncate text-sm text-(--app-muted)">
             @
-            {author.username}
+            {author.name}
           </span>
         </Link>
 
