@@ -31,7 +31,7 @@ export const fetchFeedPosts = async ({
   const result = GetAllPostsSchema.safeParse(json);
 
   if (!result.success) {
-    throw new Error(`Invalid posts response: ${response.status}`);
+    throw new Error(`Invalid response: ${response.status}`);
   }
 
   if (!result.data.success) {
@@ -54,7 +54,7 @@ export const likePost = async ({ postId }: { postId: string }) => {
   const result = LikePostSchema.safeParse(json);
 
   if (!result.success) {
-    throw new Error(`Invalid posts response: ${response.status}`);
+    throw new Error(`Invalid response: ${response.status}`);
   }
 
   if (!result.data.success) {
@@ -76,7 +76,7 @@ export const unlikePost = async ({ postId }: { postId: string }) => {
   const result = UnlikePostSchema.safeParse(json);
 
   if (!result.success) {
-    throw new Error(`Invalid posts response: ${response.status}`);
+    throw new Error(`Invalid response: ${response.status}`);
   }
 
   if (!result.data.success) {
@@ -103,7 +103,7 @@ export const fetchPostById = async ({ postId, signal }: FetchPostByIdArgs) => {
   const result = GetPostByIdSchema.safeParse(json);
 
   if (!result.success) {
-    throw new Error(`Invalid posts response: ${response.status}`);
+    throw new Error(`Invalid response: ${response.status}`);
   }
 
   if (!result.data.success) {

@@ -1,4 +1,5 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
+import { queryClient } from "@/libs/query";
 import { likePost, unlikePost } from "./api";
 import { postByIdQueryOptions, postsQueryOptions } from "./queries";
 
@@ -13,8 +14,6 @@ type LikeMutationVariables = {
 };
 
 export const useLikePost = ({ postId, isLiked }: UseLikePostArgs) => {
-  const queryClient = useQueryClient();
-
   const mutation = useMutation({
     mutationFn: ({ postId, isLiked }: LikeMutationVariables) => {
       return isLiked ? unlikePost({ postId }) : likePost({ postId });

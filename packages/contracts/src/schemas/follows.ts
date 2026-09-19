@@ -6,10 +6,10 @@ export const SendFollowRequestSchema = apiResponse(SuccessSchema);
 
 export type SendFollowRequestResponse = z.infer<typeof SendFollowRequestSchema>;
 
-export const unfollowUserByIdSchema = apiResponse(SuccessSchema);
+export const UnfollowUserByIdSchema = apiResponse(SuccessSchema);
 
-export type unfollowUserByIdResponse = z.infer<
-  typeof unfollowUserByIdSchema
+export type UnfollowUserByIdResponse = z.infer<
+  typeof UnfollowUserByIdSchema
 >;
 
 export const GetAllFollowRequestsSuccessSchema = z.strictObject({
