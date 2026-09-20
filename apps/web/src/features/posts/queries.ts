@@ -1,5 +1,5 @@
 import { infiniteQueryOptions, queryOptions } from "@tanstack/react-query";
-import { fetchFeedPosts, fetchPostById } from "./api";
+import { fetchFeedPosts, fetchLikesByPostId, fetchPostById } from "./api";
 
 export type ActiveTab = "all" | "following";
 
@@ -15,4 +15,10 @@ export const postByIdQueryOptions = (postId: string) =>
   queryOptions({
     queryKey: ["post", { postId }],
     queryFn: ({ signal }) => fetchPostById({ postId, signal }),
+  });
+
+export const likesByPostIdQueryOptions = (postId: string) =>
+  queryOptions({
+    queryKey: ["post-likes", { postId }],
+    queryFn: ({ signal }) => fetchLikesByPostId({ postId, signal }),
   });

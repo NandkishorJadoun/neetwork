@@ -1,5 +1,5 @@
 import { queryOptions } from "@tanstack/react-query";
-import { fetchFollowersByUserId, fetchFollowingsByUserId } from "./api";
+import { fetchFollowersByUserId, fetchFollowingsByUserId, fetchNonFollowingUsers } from "./api";
 
 export const followersByUserIdQueryOptions = (userId: string) =>
   queryOptions({
@@ -11,4 +11,10 @@ export const followingsByUserIdQueryOptions = (userId: string) =>
   queryOptions({
     queryKey: ["user-followings", { userId }],
     queryFn: ({ signal }) => fetchFollowingsByUserId({ userId, signal }),
+  });
+
+export const nonFollowingUsersQueryOptions = () =>
+  queryOptions({
+    queryKey: ["non-following-users"],
+    queryFn: ({ signal }) => fetchNonFollowingUsers({ signal }),
   });

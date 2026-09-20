@@ -1,4 +1,4 @@
-import { GetFollowersByUserIdSchema, GetFollowingsByUserIdSchema, RemoveFollowerSchema, UnfollowUserByIdSchema } from "@neetwork/contracts";
+import { GetAllNonFollowingUsersSchema, GetFollowersByUserIdSchema, GetFollowingsByUserIdSchema, RemoveFollowerSchema, SendFollowRequestSchema, UnfollowUserByIdSchema } from "@neetwork/contracts";
 
 type fetchFollowersArgs = {
   userId: string;
@@ -84,6 +84,50 @@ export const removeFollower = async (userId: string) => {
 
   const json: unknown = await response.json();
   const result = RemoveFollowerSchema.safeParse(json);
+
+  if (!result.success) {
+    throw new Error(`Invalid response: ${response.status}`);
+  }
+
+  if (!result.data.success) {
+    throw new Error(result.data.message);
+  }
+
+  return {
+    success: result.data.success,
+  };
+};
+
+export const fetchNonFollowingUsers = async ({ signal }: { signal: AbortSignal }) => {
+  const response = await fetch(`/api/users/`, {
+    credentials: "include",
+    signal,
+  });
+
+  const json: unknown = await response.json();
+  const result = GetAllNonFollowingUsersSchema.safeParse(json);
+
+  if (!result.success) {
+    throw new Error(`Invalid response: ${response.status}`);
+  }
+
+  if (!result.data.success) {
+    throw new Error(result.data.message);
+  }
+
+  return {
+    users: result.data.users,
+  };
+};
+
+export const sendFollowRequest = async (userId: string) => {
+  const response = await fetch(`/api/follow/${userId}`, {
+    method: "POST",
+    credentials: "include",
+  });
+
+  const json: unknown = await response.json();
+  const result = SendFollowRequestSchema.safeParse(json);
 
   if (!result.success) {
     throw new Error(`Invalid response: ${response.status}`);
