@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { queryClient } from "@/libs/query";
 import { removeFollower, sendFollowRequest, unfollowUserById } from "./api";
-import { followersByUserIdQueryOptions, followingsByUserIdQueryOptions, nonFollowingUsersQueryOptions } from "./queries";
+import { followersByUserIdQueryOptions, followingsByUserIdQueryOptions, nonFollowingUsersQueryOptions, userByIdQueryOptions } from "./queries";
 
 export const useUnfollowUser = (listUserId: string, targetId: string) => {
   const { mutate, isPending, error } = useMutation({
@@ -40,4 +40,29 @@ export const useSendFollowRequest = (userId: string) => {
   });
 
   return { mutate, isPending, error };
+};
+
+export type ProfileFollowAction = "follow" | "unfollow";
+
+export const useProfileFollowAction = (profileUserId: string) => {
+  const mutation = useMutation({
+    mutationFn: (action: ProfileFollowAction) => {
+      return action === "follow" ? sendFollowRequest(profileUserId) : unfollowUserById(profileUserId);
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: userByIdQueryOptions(profileUserId).queryKey,
+      });
+    },
+  });
+
+  const handleAction = (action: ProfileFollowAction) => {
+    mutation.mutate(action);
+  };
+
+  return {
+    handleAction,
+    isPending: mutation.isPending,
+    error: mutation.error,
+  };
 };

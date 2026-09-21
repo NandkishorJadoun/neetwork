@@ -39,6 +39,8 @@ export const FollowRecordSchema = z.strictObject({
   status: FollowStatusSchema,
 });
 
+export type FollowRecord = z.infer<typeof FollowRecordSchema>;
+
 export const FollowRecordWithSenderSchema = FollowRecordSchema.extend({
   sender: UserPreviewSchema,
 });

@@ -1,5 +1,5 @@
 import { queryOptions } from "@tanstack/react-query";
-import { fetchFollowersByUserId, fetchFollowingsByUserId, fetchNonFollowingUsers } from "./api";
+import { fetchCommentsByUserId, fetchFollowersByUserId, fetchFollowingsByUserId, fetchLikedPostsByUserId, fetchNonFollowingUsers, fetchPostsByUserId, fetchUserById } from "./api";
 
 export const followersByUserIdQueryOptions = (userId: string) =>
   queryOptions({
@@ -17,4 +17,28 @@ export const nonFollowingUsersQueryOptions = () =>
   queryOptions({
     queryKey: ["non-following-users"],
     queryFn: ({ signal }) => fetchNonFollowingUsers({ signal }),
+  });
+
+export const userByIdQueryOptions = (userId: string) =>
+  queryOptions({
+    queryKey: ["user-profile", { userId }],
+    queryFn: ({ signal }) => fetchUserById({ userId, signal }),
+  });
+
+export const postsByUserIdQueryOptions = (userId: string) =>
+  queryOptions({
+    queryKey: ["user-posts", { userId }],
+    queryFn: ({ signal }) => fetchPostsByUserId({ userId, signal }),
+  });
+
+export const commentsByUserIdQueryOptions = (userId: string) =>
+  queryOptions({
+    queryKey: ["user-comments", { userId }],
+    queryFn: ({ signal }) => fetchCommentsByUserId({ userId, signal }),
+  });
+
+export const likedPostsByUserIdQueryOptions = (userId: string) =>
+  queryOptions({
+    queryKey: ["user-likes", { userId }],
+    queryFn: ({ signal }) => fetchLikedPostsByUserId({ userId, signal }),
   });
