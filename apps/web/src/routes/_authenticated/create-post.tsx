@@ -89,8 +89,8 @@ function RouteComponent() {
         {errors
           && (
             <ul className="mt-4 border border-red-500/20 bg-red-500/5 p-3 text-sm text-red-500">
-              {errors.map((error, id) => (
-                <li key={id}>{error.message}</li>
+              {errors.map(error => (
+                <li key={`${error.fieldName}-${error.message}`}>{error.message}</li>
               ))}
             </ul>
           )}

@@ -1,4 +1,4 @@
-import type { ActiveTab } from "../routes/_authenticated/home";
+import type { ActiveTab } from "@/features/posts/queries";
 import { Link } from "@tanstack/react-router";
 import { Menu } from "lucide-react";
 import { useMobileNav } from "../context/mobile-nav";

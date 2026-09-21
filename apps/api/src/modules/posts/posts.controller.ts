@@ -30,7 +30,12 @@ export async function getAllPosts(req: Request, res: Response<GetAllPostsRespons
   const LIMIT = 10;
 
   try {
-    const posts = await findAllPost(userId, LIMIT, Boolean(followingUsersTab), cursor);
+    const rawPosts = await findAllPost(userId, LIMIT, Boolean(followingUsersTab), cursor);
+
+    const posts = rawPosts.map(({ likes, ...post }) => ({
+      ...post,
+      is_liked_by_user: likes.length > 0,
+    }));
 
     const hasNextPage = posts.length === LIMIT;
     const lastPost = posts.at(-1);
@@ -68,7 +73,7 @@ export async function createPost(req: Request, res: Response, next: NextFunction
     if (error instanceof ZodError) {
       return res.status(422).json({
         errors: error.issues.map(issue =>
-          ({ fieldName: issue.path[0], message: issue.message }),
+        ({ fieldName: issue.path[0], message: issue.message }),
         ),
       });
     }
@@ -91,13 +96,20 @@ export async function getPostById(req: Request, res: Response<GetPostByIdRespons
   const { postId } = params.data;
 
   try {
-    const post = await findPostById(userId, postId);
+    const rawPost = await findPostById(userId, postId);
 
-    if (!post) {
+    if (!rawPost) {
       return res
         .status(404)
         .json({ success: false, message: "Post not found" });
     }
+
+    const { likes, ...rest } = rawPost;
+
+    const post = {
+      ...rest,
+      is_liked_by_user: likes.length > 0,
+    };
 
     const response = GetPostByIdSuccessSchema.parse({ success: true, post });
 

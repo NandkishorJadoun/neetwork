@@ -1,19 +1,5 @@
-import { createContext, use, useEffect, useState } from "react";
-
-type ThemeMode = "light" | "dark" | "system";
-type Accent = "blue" | "red" | "yellow" | "green" | "purple" | "pink";
-type Background = "slate" | "gray" | "zinc" | "stone" | "neutral";
-
-type ThemeSettings = {
-  theme: ThemeMode;
-  accent: Accent;
-  background: Background;
-  setTheme: (theme: ThemeMode) => void;
-  setAccent: (accent: Accent) => void;
-  setBackground: (bg: Background) => void;
-};
-
-const ThemeContext = createContext<ThemeSettings | null>(null);
+import { useEffect, useState } from "react";
+import { ThemeContext } from "./theme-context";
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<ThemeMode>(
@@ -45,11 +31,4 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       {children}
     </ThemeContext>
   );
-}
-
-export function useThemeSettings() {
-  const ctx = use(ThemeContext);
-  if (!ctx)
-    throw new Error("useThemeSettings must be used inside ThemeProvider");
-  return ctx;
 }

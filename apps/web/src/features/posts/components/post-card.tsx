@@ -1,55 +1,35 @@
+import type { Post } from "@neetwork/contracts";
 import type { JSX } from "react";
-import type { Post } from "../types";
 import { Link } from "@tanstack/react-router";
 import { Heart, MessageCircle } from "lucide-react";
-import { useState } from "react";
-import { useAuth } from "../context/auth";
+import { useLikePost } from "../mutations";
 
 export const PostCard = ({ post, comment }: { post: Post; comment?: JSX.Element }) => {
-  const { user } = useAuth();
-  const [isLoading, setIsLoading] = useState(false);
-  const [isLiked, setIsLiked] = useState(post.likes.length > 0);
-  const [likeCount, setLikeCount] = useState(post._count.likes);
+  const {
+    text,
+    userId,
+    id: postId,
+    _count: { likes, comments },
+    author: { name, image },
+    is_liked_by_user: isLikedByUser,
+  } = post;
 
-  const likeHandler = async () => {
-    const nextLiked = !isLiked;
-
-    setIsLiked(nextLiked);
-    setLikeCount(prev => prev + (nextLiked ? 1 : -1));
-
-    setIsLoading(true);
-
-    const url = `${import.meta.env.VITE_API_URL}/posts/${post.id}/like`;
-    const method = nextLiked ? "POST" : "DELETE";
-
-    const options = {
-      method,
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${user?.token}`,
-      },
-    };
-
-    try {
-      await fetch(url, options);
-    }
-    catch (error) {
-      console.error(error);
-    }
-    setIsLoading(false);
-  };
+  const { mutate, isPending } = useLikePost({
+    postId,
+    isLiked: isLikedByUser,
+  });
 
   return (
     <div className="border-b border-(--app-border) px-4 py-3">
       <div className="flex gap-3">
         <Link
           to="/users/$userId"
-          params={{ userId: post.userId }}
+          params={{ userId }}
           className="shrink-0"
         >
           <img
-            src={post.author.avatar}
-            alt={`${post.author.username}'s avatar`}
+            src={image ?? "/default-avatar.png"}
+            alt={`${name}'s avatar`}
             className="h-10 w-10 rounded-full object-cover"
           />
         </Link>
@@ -57,57 +37,57 @@ export const PostCard = ({ post, comment }: { post: Post; comment?: JSX.Element 
         <div className="min-w-0 flex-1">
           <Link
             to="/users/$userId"
-            params={{ userId: post.userId }}
+            params={{ userId }}
             className="flex items-center gap-2"
           >
             <p className="truncate font-medium">
-              {post.author.fullname}
+              {name}
             </p>
 
             <p className="truncate text-sm text-(--app-muted)">
               @
-              {post.author.username}
+              {name}
             </p>
           </Link>
 
           <Link
             to="/posts/$postId"
-            params={{ postId: post.id }}
+            params={{ postId }}
             className="mt-1 block whitespace-pre-wrap wrap-break-word leading-relaxed"
           >
-            {post.text}
+            {text}
           </Link>
 
           <div className="mt-3 flex items-center gap-6 text-sm text-(--app-muted)">
             <div className="flex items-center gap-1">
               <button
-                disabled={isLoading}
-                onClick={likeHandler}
+                disabled={isPending}
+                onClick={() => mutate()}
                 className={`
               rounded-full p-1.5 transition-colors
               hover:bg-pink-600/10
               hover:text-pink-600
-              ${isLiked ? "text-pink-600" : ""}
+                  ${isLikedByUser ? "text-pink-600" : ""}
             `}
               >
                 <Heart
                   size={16}
-                  fill={isLiked ? "currentColor" : "none"}
+                  fill={isLikedByUser ? "currentColor" : "none"}
                 />
               </button>
 
               <Link
                 to="/posts/$postId/likes"
-                params={{ postId: post.id }}
+                params={{ postId }}
               >
-                {likeCount}
+                {likes}
               </Link>
             </div>
 
             <div className="flex items-center gap-1">
               <Link
                 to="/posts/$postId"
-                params={{ postId: post.id }}
+                params={{ postId }}
                 hash="comment"
                 className="
               rounded-full p-1.5 transition-colors
@@ -118,7 +98,7 @@ export const PostCard = ({ post, comment }: { post: Post; comment?: JSX.Element 
                 <MessageCircle size={16} />
               </Link>
 
-              <span>{post._count.comments}</span>
+              <span>{comments}</span>
             </div>
           </div>
         </div>

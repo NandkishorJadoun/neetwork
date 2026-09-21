@@ -1,7 +1,7 @@
 import type { TabData } from "../routes/_authenticated/users.$userId";
 import type { Comment, Like, Post } from "../types";
-import { CommentCard } from "./comment-card";
-import { PostCard } from "./post-card";
+import { CommentCard } from "../features/posts/components/comment-card";
+import { PostCard } from "../features/posts/components/post-card";
 
 const ProfilePostList = ({ posts }: { posts: Post[] }) => {
   return (

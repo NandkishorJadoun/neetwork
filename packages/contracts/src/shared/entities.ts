@@ -11,12 +11,6 @@ export const UserPreviewSchema = z.strictObject({
   image: z.string().nullable(),
 });
 
-export const LikeRefSchema = z.strictObject({
-  id: z.uuidv7(),
-  userId: z.uuidv7(),
-  postId: z.uuidv7(),
-});
-
 export const PostCountsSchema = z.strictObject({
   comments: z.number(),
   likes: z.number(),
@@ -25,12 +19,14 @@ export const PostCountsSchema = z.strictObject({
 export const PostCardSchema = z.strictObject({
   _count: PostCountsSchema,
   author: AuthorPreviewSchema,
-  likes: z.array(LikeRefSchema),
   id: z.uuidv7(),
+  is_liked_by_user: z.boolean(),
   text: z.string(),
   created_at: z.date(),
   userId: z.uuidv7(),
 });
+
+export type Post = z.infer<typeof PostCardSchema>;
 
 export const FollowStatusSchema = z.enum(["PENDING", "ACCEPTED"]);
 
@@ -60,6 +56,8 @@ export const CommentAuthorSchema = z.strictObject({
   createdAt: z.date(),
   updatedAt: z.date(),
 });
+
+export type CommentAuthor = z.infer<typeof CommentAuthorSchema>;
 
 export const CommentWithAuthorSchema = z.strictObject({
   id: z.uuidv7(),

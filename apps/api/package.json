@@ -13,6 +13,7 @@
     "type-check": "tsc --noEmit",
     "build": "pnpm --filter @neetwork/contracts build && prisma generate && tsc",
     "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "start": "node ./dist/server.js"
   },
   "dependencies": {
