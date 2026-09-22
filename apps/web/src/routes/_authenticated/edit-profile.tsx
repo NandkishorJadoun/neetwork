@@ -1,28 +1,25 @@
-import { GetUserProfileResponseSchema } from "@neetwork/contracts";
+import type { FieldError } from "@neetwork/contracts";
+import { toFieldErrors, UpdateProfileInputSchema } from "@neetwork/contracts";
 import {
   createFileRoute,
   useNavigate,
   useRouter,
 } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { FormErrors } from "../../components/form-errors";
 import { PageHeader } from "../../components/page-header";
+import { fetchUserProfile } from "../../features/users/api";
+import { useUpdateProfile } from "../../features/users/mutations";
+import { ApiValidationError } from "../../libs/api-error";
 
 export const Route = createFileRoute("/_authenticated/edit-profile")({
   loader: async ({ context }) => {
-    const token = context.user?.token;
-    const options = { headers: { Authorization: `Bearer ${token}` } };
-    const url = "api/me";
-    const res = await fetch(url, options);
-    const json: unknown = await res.json();
-    const data = GetUserProfileResponseSchema.parse(json);
+    const { user } = await context.queryClient.fetchQuery({
+      queryKey: ["account", "me"],
+      queryFn: ({ signal }) => fetchUserProfile({ signal }),
+    });
 
-    if (!data.success) {
-      throw new Error(data.message);
-    }
-
-    const { user } = data;
-    return { user, token };
+    return { user };
   },
   component: RouteComponent,
 });
@@ -30,104 +27,49 @@ export const Route = createFileRoute("/_authenticated/edit-profile")({
 function RouteComponent() {
   const navigate = useNavigate();
   const router = useRouter();
-  const { user, token } = Route.useLoaderData();
+  const { user } = Route.useLoaderData();
 
-  const [avatar, setAvatar] = useState<File | null>(null);
-  const [preview, setPreview] = useState<string | null>(null);
   const [formData, setFormData] = useState({
-    fullname: user.fullname,
+    fullname: user.name,
     about: user.about ?? "",
   });
-  const [errors, setErrors] = useState<ValidationError[] | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [errors, setErrors] = useState<FieldError[] | null>(null);
+  const { mutate, isPending } = useUpdateProfile();
 
-  useEffect(() => {
-    return () => {
-      if (preview) {
-        URL.revokeObjectURL(preview);
-      }
-    };
-  }, [preview]);
+  const formSubmitHandler = (e: React.SubmitEvent) => {
+    e.preventDefault();
+    setErrors(null);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) {
-      setPreview(null);
-      setAvatar(null);
+    const parsed = UpdateProfileInputSchema.safeParse(formData);
+
+    if (!parsed.success) {
+      setErrors(toFieldErrors(parsed.error.issues));
       return;
     }
-    setAvatar(file);
-    setPreview(URL.createObjectURL(file));
-  };
 
-  const formSubmitHandler = async (e: React.SubmitEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setErrors(null);
-    const url = `${import.meta.env.VITE_API_URL}/me`;
-    const formBody = new FormData();
-
-    formBody.append("fullname", formData.fullname);
-    formBody.append("about", formData.about);
-    if (avatar) {
-      formBody.append("avatar", avatar);
-    }
-
-    const options = {
-      method: "PATCH",
-      headers: {
-        Authorization: `Bearer ${token}`,
+    mutate(parsed.data, {
+      onSuccess: ({ user: updated }) => {
+        navigate({ to: "/users/$userId", params: { userId: updated.id } });
       },
-      body: formBody,
-    };
-
-    try {
-      const res = await fetch(url, options);
-
-      if (!res.ok) {
-        const { errors } = await res.json();
-        setErrors(errors);
-        return;
-      }
-
-      navigate({ to: "/users/$userId", params: { userId: user.id } });
-    }
-    catch (error) {
-      console.error(error);
-    }
-    finally {
-      setIsLoading(false);
-    }
+      onError: (error) => {
+        if (error instanceof ApiValidationError) {
+          setErrors(error.errors);
+        }
+      },
+    });
   };
 
   return (
     <>
-      <PageHeader>Edit post</PageHeader>
+      <PageHeader>Edit profile</PageHeader>
       <div className="md:w-md mx-auto w-full p-4">
         <form onSubmit={formSubmitHandler} className="space-y-6">
           <div className="flex flex-col items-center gap-3">
             <img
-              src={preview ?? user.avatar}
-              alt={`${user.fullname}'s avatar`}
+              src={user.image ?? "/default-avatar.png"}
+              alt={`${user.name}'s avatar`}
               className="h-20 w-20 rounded-full object-cover"
             />
-
-            <label
-              htmlFor="avatar"
-              className="inline-block cursor-pointer border border-(--app-border) px-4 py-2 text-smtext-(--app-text) transition-colors hover:bg-(--app-surface) rounded-md"
-            >
-              Upload photo
-            </label>
-            <input
-              type="file"
-              name="avatar"
-              id="avatar"
-              accept="image/*"
-              className="opacity-0 size-0"
-              onChange={handleFileChange}
-            />
-
-            <FormErrors fieldName="avatar" errors={errors} />
           </div>
 
           <div className="space-y-1">
@@ -184,10 +126,10 @@ function RouteComponent() {
             </button>
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={isPending}
               className="flex-1 border border-(--app-accent) bg-(--app-accent) px-4 py-2 text-sm font-medium text-white rounded-md transition-colors hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {isLoading ? "Saving..." : "Save"}
+              {isPending ? "Saving..." : "Save"}
             </button>
           </div>
         </form>

@@ -109,7 +109,7 @@ export const PostPage = () => {
         </div>
       </section>
 
-      <CommentSection post={post} commentRef={commentRef} />
+      <CommentSection postId={post.id} comments={post.comments} commentRef={commentRef} />
     </>
   );
 };

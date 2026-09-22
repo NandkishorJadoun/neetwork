@@ -1,3 +1,4 @@
+import type { Accent, Background, ThemeMode } from "./theme-context";
 import { useEffect, useState } from "react";
 import { ThemeContext } from "./theme-context";
 

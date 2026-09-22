@@ -4,11 +4,9 @@ import { toNodeHandler } from "better-auth/node";
 import cors from "cors";
 import express from "express";
 import helmet from "helmet";
-import multer from "multer";
 import { auth } from "./configs/auth.js";
 import { env } from "./configs/env.js";
 import { httpLogger, logger } from "./configs/logger.js";
-import { UploadValidationError } from "./configs/multer.js";
 import { appRouter } from "./routes/index.js";
 
 const publicPath = path.join(process.cwd(), "public");
@@ -36,12 +34,6 @@ app.get("/api/health", (_req, res) => res.json({ message: env.NODE_ENV }));
 app.use("/api/", appRouter);
 
 app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
-  if (err instanceof multer.MulterError || err instanceof UploadValidationError) {
-    const { field, message } = err;
-    const status = err instanceof UploadValidationError ? 415 : 400;
-    return res.status(status).json({ errors: [{ fieldName: field, message }] });
-  }
-
   logger.error(err);
   res.status(500).json({ message: "Internal Server Error" });
 });

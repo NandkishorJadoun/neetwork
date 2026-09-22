@@ -14,14 +14,13 @@ export async function findUserProfile(userId: string) {
   });
 }
 
-export async function updateUserInfo(userId: string, image: string | null, fullname: string, about: string | null) {
+export async function updateUserInfo(userId: string, fullname: string, about: string | null) {
   return prisma.user.update({
     where: {
       id: userId,
     },
     data: {
-      ...(image && { image }),
-      fullname,
+      name: fullname,
       about,
     },
     select: {

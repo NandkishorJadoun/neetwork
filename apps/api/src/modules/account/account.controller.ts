@@ -1,9 +1,11 @@
-import type { GetUserProfileResponse } from "@neetwork/contracts";
+import type { GetUserProfileResponse, UpdateProfileResponse } from "@neetwork/contracts";
 import type { NextFunction, Request, RequestHandler, Response } from "express";
-import { GetUserProfileSuccessSchema } from "@neetwork/contracts";
-import { ZodError } from "zod";
-import { uploadOnCloudinary } from "../../configs/cloudinary.js";
-import { PatchFormDataSchema } from "../../configs/schemas.js";
+import {
+  GetUserProfileSuccessSchema,
+  toFieldErrors,
+  UpdateProfileInputSchema,
+  UpdateProfileSuccessSchema,
+} from "@neetwork/contracts";
 import { findUserProfile, updateUserInfo } from "./account.service.js";
 
 export async function getUserAccount(req: Request, res: Response<GetUserProfileResponse>, next: NextFunction) {
@@ -37,33 +39,31 @@ export async function getUserAccount(req: Request, res: Response<GetUserProfileR
 }
 
 export const updateUserAccount: RequestHandler = async (req, res, next) => {
-  const { file } = req;
-
   if (!req.user) {
-    return res.status(401).json({ message: "Unauthorized" });
+    return res.status(401).json({ success: false, message: "Unauthorized" });
   }
-
-  let image = null;
 
   try {
-    if (file) {
-      image = (await uploadOnCloudinary(file)).secure_url;
-    }
+    const parsedBody = UpdateProfileInputSchema.safeParse(req.body);
 
-    const { fullname, about } = PatchFormDataSchema.parse(req.body);
-
-    const user = await updateUserInfo(req.user.id, image, fullname, about);
-
-    return res.status(200).json({ user });
-  }
-  catch (error) {
-    if (error instanceof ZodError) {
+    if (!parsedBody.success) {
       return res.status(422).json({
-        errors: error.issues.map(issue =>
-          ({ fieldName: issue.path[0], message: issue.message }),
-        ),
+        errors: toFieldErrors(parsedBody.error.issues),
       });
     }
+
+    const { about, fullname } = parsedBody.data;
+
+    const user = await updateUserInfo(req.user.id, fullname, about);
+
+    const response: UpdateProfileResponse = UpdateProfileSuccessSchema.parse({
+      success: true,
+      user,
+    });
+
+    return res.status(200).json(response);
+  }
+  catch (error) {
     next(error);
   }
 };

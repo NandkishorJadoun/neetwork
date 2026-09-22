@@ -1,4 +1,22 @@
-import { GetAllNonFollowingUsersSchema, GetCommentsByUserIdSchema, GetFollowersByUserIdSchema, GetFollowingsByUserIdSchema, GetLikedPostsByUserIdSchema, GetPostsByUserIdSchema, GetUserByIdSchema, RemoveFollowerSchema, SendFollowRequestSchema, UnfollowUserByIdSchema } from "@neetwork/contracts";
+import type { UpdateProfileInput } from "@neetwork/contracts";
+import {
+  GetAllNonFollowingUsersSchema,
+  GetCommentsByUserIdSchema,
+  GetFollowersByUserIdSchema,
+  GetFollowingsByUserIdSchema,
+  GetLikedPostsByUserIdSchema,
+  GetPostsByUserIdSchema,
+  GetUserByIdSchema,
+  GetUserProfileResponseSchema,
+  RemoveFollowerSchema,
+  SendFollowRequestSchema,
+  toFieldErrors,
+  UnfollowUserByIdSchema,
+  UpdateProfileInputSchema,
+  UpdateProfileSchema,
+  ValidationErrorsSchema,
+} from "@neetwork/contracts";
+import { ApiValidationError } from "@/libs/api-error";
 
 type fetchFollowersArgs = {
   userId: string;
@@ -232,5 +250,68 @@ export const fetchLikedPostsByUserId = async ({ userId, signal }: fetchUserArgs)
 
   return {
     likes: result.data.likes,
+  };
+};
+
+export const fetchUserProfile = async ({ signal }: { signal: AbortSignal }) => {
+  const response = await fetch("/api/account", {
+    credentials: "include",
+    signal,
+  });
+
+  const json: unknown = await response.json();
+
+  const result = GetUserProfileResponseSchema.safeParse(json);
+  if (!result.success) {
+    throw new Error(`Invalid response: ${response.status}`);
+  }
+
+  if (!result.data.success) {
+    throw new Error(result.data.message);
+  }
+
+  return {
+    user: result.data.user,
+  };
+};
+
+export const updateProfile = async (input: UpdateProfileInput) => {
+  const parsedInput = UpdateProfileInputSchema.safeParse(input);
+
+  if (!parsedInput.success) {
+    throw new ApiValidationError(toFieldErrors(parsedInput.error.issues));
+  }
+
+  const response = await fetch("/api/account", {
+    method: "PATCH",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(parsedInput.data),
+  });
+
+  const json: unknown = await response.json();
+
+  if (!response.ok) {
+    const errResult = ValidationErrorsSchema.safeParse(json);
+
+    if (errResult.success) {
+      throw new ApiValidationError(errResult.data.errors);
+    }
+
+    throw new Error(`Request failed: ${response.status}`);
+  }
+
+  const result = UpdateProfileSchema.safeParse(json);
+
+  if (!result.success) {
+    throw new Error(`Invalid response: ${response.status}`);
+  }
+
+  if (!result.data.success) {
+    throw new Error(result.data.message);
+  }
+
+  return {
+    user: result.data.user,
   };
 };
