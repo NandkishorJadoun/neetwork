@@ -6,7 +6,6 @@ import {
   UpdateProfileInputSchema,
   UpdateProfileSuccessSchema,
 } from "@neetwork/contracts";
-import { z } from "zod/v4";
 import { findUserProfile, updateUserInfo } from "./account.service.js";
 
 export async function getUserAccount(req: Request, res: Response<GetUserProfileResponse>, next: NextFunction) {
@@ -45,7 +44,15 @@ export const updateUserAccount: RequestHandler = async (req, res, next) => {
   }
 
   try {
-    const { fullname, about } = UpdateProfileInputSchema.parse(req.body);
+    const parsedBody = UpdateProfileInputSchema.safeParse(req.body);
+
+    if (!parsedBody.success) {
+      return res.status(422).json({
+        errors: toFieldErrors(parsedBody.error.issues),
+      });
+    }
+
+    const { about, fullname } = parsedBody.data;
 
     const user = await updateUserInfo(req.user.id, fullname, about);
 
@@ -57,11 +64,6 @@ export const updateUserAccount: RequestHandler = async (req, res, next) => {
     return res.status(200).json(response);
   }
   catch (error) {
-    if (error instanceof z.ZodError) {
-      return res.status(422).json({
-        errors: toFieldErrors(error.issues),
-      });
-    }
     next(error);
   }
 };
