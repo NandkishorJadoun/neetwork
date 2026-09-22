@@ -1,46 +1,49 @@
-import type { Post } from "@neetwork/contracts";
+import type { CommentAuthor, FieldError } from "@neetwork/contracts";
+import { CreateCommentInputSchema, toFieldErrors } from "@neetwork/contracts";
 import { useState } from "react";
+import { ApiValidationError } from "@/libs/api-error";
+import { useCreateComment } from "../mutations";
 import { CommentCard } from "./comment-card";
 
+type CommentItem = {
+  id: string;
+  text: string;
+  author: CommentAuthor;
+};
+
 type CommentSectionProp = {
-  post: Post;
+  postId: string;
+  comments: CommentItem[];
   commentRef: React.RefObject<HTMLTextAreaElement | null>;
 };
 
-export const CommentSection = ({ post, commentRef }: CommentSectionProp) => {
-  const [errors, setErrors] = useState<ValidationError[] | null>(null);
+export const CommentSection = ({ postId, comments, commentRef }: CommentSectionProp) => {
+  const [errors, setErrors] = useState<FieldError[] | null>(null);
   const [comment, setComment] = useState("");
+  const { mutate, isPending } = useCreateComment(postId);
 
-  const commentHandler = async (e: React.SubmitEvent) => {
+  const commentHandler = (e: React.SubmitEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-    const url = `${import.meta.env.VITE_API_URL}/posts/${post.id}`;
-    const method = "POST";
-    const options = {
-      method,
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${user?.token}`,
-      },
-      body: JSON.stringify({ content: comment }),
-    };
+    setErrors(null);
 
-    try {
-      const res = await fetch(url, options);
-      if (!res.ok) {
-        const { errors } = await res.json();
-        setErrors(errors);
-        setIsLoading(false);
-        return;
-      }
-      setComment("");
-      setErrors(null);
-      setIsLoading(false);
-      router.invalidate();
+    const parsed = CreateCommentInputSchema.safeParse({ content: comment });
+
+    if (!parsed.success) {
+      setErrors(toFieldErrors(parsed.error.issues));
+      return;
     }
-    catch (error) {
-      console.error(error);
-    }
+
+    mutate(parsed.data, {
+      onSuccess: () => {
+        setComment("");
+        setErrors(null);
+      },
+      onError: (error) => {
+        if (error instanceof ApiValidationError) {
+          setErrors(error.errors);
+        }
+      },
+    });
   };
 
   return (
@@ -74,7 +77,7 @@ export const CommentSection = ({ post, commentRef }: CommentSectionProp) => {
             </span>
 
             <button
-              disabled={comment.trim().length === 0 || isLoading}
+              disabled={comment.trim().length === 0 || isPending}
               type="submit"
               className="
                 rounded-md border border-(--app-border)
@@ -86,7 +89,7 @@ export const CommentSection = ({ post, commentRef }: CommentSectionProp) => {
                 disabled:opacity-50
               "
             >
-              {isLoading ? "Posting..." : "Comment"}
+              {isPending ? "Posting..." : "Comment"}
             </button>
           </div>
         </form>
@@ -107,7 +110,7 @@ export const CommentSection = ({ post, commentRef }: CommentSectionProp) => {
         </div>
 
         <div className="divide-y divide-(--app-border) px-4">
-          {post.comments.length === 0
+          {comments.length === 0
             ? (
                 <p className="py-6 text-center text-sm text-(--app-muted)">
                   No comments yet
@@ -115,7 +118,7 @@ export const CommentSection = ({ post, commentRef }: CommentSectionProp) => {
               )
             : (
                 <>
-                  {post.comments.map((comment) => {
+                  {comments.map((comment) => {
                     const { id, text, author } = comment;
                     return <CommentCard key={id} text={text} author={author} />;
                   })}

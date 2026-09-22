@@ -1,3 +1,4 @@
+import type { Buffer } from "node:buffer";
 import { v2 as cloudinary } from "cloudinary";
 import { env } from "./env.js";
 
@@ -8,7 +9,7 @@ cloudinary.config({
   secure: true,
 });
 
-export async function uploadOnCloudinary(file: Express.Multer.File) {
+export async function uploadOnCloudinary(file: { buffer: Buffer; mimetype: string }) {
   const b64 = file.buffer.toString("base64");
   const dataURI = `data:${file.mimetype};base64,${b64}`;
   const res = await cloudinary.uploader.upload(dataURI, {

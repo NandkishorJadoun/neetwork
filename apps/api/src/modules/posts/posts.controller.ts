@@ -1,22 +1,25 @@
-import type { DeletePostResponse, GetAllPostsResponse, GetPostByIdResponse } from "@neetwork/contracts";
+import type {
+  CreatePostResponse,
+  DeletePostResponse,
+  GetAllPostsResponse,
+  GetPostByIdResponse,
+} from "@neetwork/contracts";
 import type { NextFunction, Request, Response } from "express";
 import {
+  CreatePostInputSchema,
+  CreatePostSuccessSchema,
   GetAllPostsSuccessSchema,
   GetPostByIdSuccessSchema,
-
+  PostIdParamsSchema,
+  toFieldErrors,
 } from "@neetwork/contracts";
-import { z, ZodError } from "zod/v4";
+import { z } from "zod/v4";
 import { Prisma } from "../../../generated/prisma/index.js";
-import { PostFormSchema } from "../../configs/schemas.js";
 import { findAllPost, findPostById, insertPost, removePostById } from "./posts.service.js";
 
 const GetAllPostsQuerySchema = z.strictObject({
   cursor: z.uuidv7().optional(),
   users: z.literal("following").optional(),
-});
-
-const PostParamsSchema = z.strictObject({
-  postId: z.uuidv7(),
 });
 
 export async function getAllPosts(req: Request, res: Response<GetAllPostsResponse>, next: NextFunction) {
@@ -55,26 +58,29 @@ export async function getAllPosts(req: Request, res: Response<GetAllPostsRespons
   }
 }
 
-export async function createPost(req: Request, res: Response, next: NextFunction) {
+export async function createPost(req: Request, res: Response<CreatePostResponse>, next: NextFunction) {
   const { user } = req;
 
   if (!user) {
-    return res.status(401).json({ message: "Unauthorized" });
+    return res.status(401).json({ success: false, message: "Unauthorized" });
   }
 
   try {
-    const { content } = PostFormSchema.parse(req.body);
+    const { content } = CreatePostInputSchema.parse(req.body);
 
     const post = await insertPost(user.id, content);
 
-    return res.status(201).json({ post });
+    const response = CreatePostSuccessSchema.parse({
+      success: true,
+      post,
+    });
+
+    return res.status(201).json(response);
   }
   catch (error) {
-    if (error instanceof ZodError) {
+    if (error instanceof z.ZodError) {
       return res.status(422).json({
-        errors: error.issues.map(issue =>
-        ({ fieldName: issue.path[0], message: issue.message }),
-        ),
+        errors: toFieldErrors(error.issues),
       });
     }
     next(error);
@@ -87,7 +93,7 @@ export async function getPostById(req: Request, res: Response<GetPostByIdRespons
   }
 
   const { id: userId } = req.user;
-  const params = PostParamsSchema.safeParse(req.params);
+  const params = PostIdParamsSchema.safeParse(req.params);
 
   if (!params.success) {
     return res.status(404).json({ success: false, message: "Invalid Post ID" });
@@ -125,7 +131,7 @@ export async function deletePost(req: Request, res: Response<DeletePostResponse>
     return res.status(401).json({ success: false, message: "Unauthorized" });
   }
 
-  const params = PostParamsSchema.safeParse(req.params);
+  const params = PostIdParamsSchema.safeParse(req.params);
 
   if (!params.success) {
     return res.status(404).json({ success: false, message: "Invalid Post ID" });

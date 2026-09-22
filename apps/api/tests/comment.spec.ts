@@ -26,14 +26,14 @@ before(async () => {
 
 after(async () => prisma.$disconnect());
 
-describe.todo("POST /api/posts/:postId/comment", () => {
+describe("POST /api/posts/:postId/comment", () => {
   afterEach(async () => await prisma.comment.deleteMany());
 
   it("should send 422 status with validation object error when comment cant get past schema validation", async () => {
     const post = posts[0];
 
     const res = await request(app)
-      .post(`/api/posts/${post.id}`)
+      .post(`/api/posts/${post.id}/comment`)
       .set("Cookie", cookie)
       .send({ content: "" });
 
@@ -45,11 +45,21 @@ describe.todo("POST /api/posts/:postId/comment", () => {
     const post = posts[0];
 
     const res = await request(app)
-      .post(`/api/posts/${post.id}`)
+      .post(`/api/posts/${post.id}/comment`)
       .set("Cookie", cookie)
       .send({ content: "This is a comment!" });
 
     assert.strictEqual(res.status, 201);
+    assert.strictEqual(res.body.success, true);
     assert.strictEqual(res.body.comment.text, "This is a comment!");
+  });
+
+  it("should send 404 when postId is not a valid uuid", async () => {
+    const res = await request(app)
+      .post("/api/posts/FakePostId/comment")
+      .set("Cookie", cookie)
+      .send({ content: "Hello" });
+
+    assert.strictEqual(res.status, 404);
   });
 });
