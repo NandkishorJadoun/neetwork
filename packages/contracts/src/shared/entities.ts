@@ -11,6 +11,8 @@ export const UserPreviewSchema = z.strictObject({
   image: z.string().nullable(),
 });
 
+export type UserPreview = z.infer<typeof UserPreviewSchema>;
+
 export const PostCountsSchema = z.strictObject({
   comments: z.number(),
   likes: z.number(),
@@ -37,6 +39,8 @@ export const FollowRecordSchema = z.strictObject({
   status: FollowStatusSchema,
 });
 
+export type FollowRecord = z.infer<typeof FollowRecordSchema>;
+
 export const FollowRecordWithSenderSchema = FollowRecordSchema.extend({
   sender: UserPreviewSchema,
 });
@@ -48,6 +52,8 @@ export const FollowRecordWithReceiverSchema = FollowRecordSchema.extend({
 export const FollowRequestWithSenderPreviewSchema = FollowRecordSchema.extend({
   sender: AuthorPreviewSchema,
 });
+
+export type FollowRequestWithSenderPreview = z.infer<typeof FollowRequestWithSenderPreviewSchema>;
 
 export const CommentAuthorSchema = z.strictObject({
   id: z.uuidv7(),

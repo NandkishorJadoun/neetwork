@@ -1,48 +1,10 @@
-import type { User } from "../../types";
 import { createFileRoute } from "@tanstack/react-router";
-import { FollowUserCard } from "../../components/follow-user-card";
-import { PageHeader } from "../../components/page-header";
+import { FollowUsersPage } from "@/features/users/pages/follow-users-page";
+import { nonFollowingUsersQueryOptions } from "@/features/users/queries";
 
 export const Route = createFileRoute("/_authenticated/follow-users")({
-  loader: async ({ context }) => {
-    const token = context.auth.user?.token;
-    const url = `${import.meta.env.VITE_API_URL}/users`;
-    const res = await fetch(url, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    return await res.json();
+  loader: ({ context }) => {
+    context.queryClient.query(nonFollowingUsersQueryOptions());
   },
-  component: RouteComponent,
+  component: FollowUsersPage,
 });
-
-function RouteComponent() {
-  const { users }: { users: User[] } = Route.useLoaderData();
-  return (
-    <>
-      <PageHeader>Follow Users</PageHeader>
-      <div>
-        {users.length === 0
-          ? (
-              <p className="py-6 text-center text-sm text-(--app-muted)">
-                No user to follow
-              </p>
-            )
-          : (
-              <>
-                {
-                  users.map((user) => {
-                    return <FollowUserCard key={user.id} user={user} />;
-                  })
-                }
-              </>
-            )}
-        <p className="py-6 text-center text-xs text-(--app-muted)">
-          End of list
-        </p>
-      </div>
-    </>
-  );
-}

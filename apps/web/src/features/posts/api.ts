@@ -1,5 +1,5 @@
 import type { ActiveTab } from "./queries";
-import { GetAllPostsSchema, GetPostByIdSchema, LikePostSchema, UnlikePostSchema } from "@neetwork/contracts";
+import { GetAllPostsSchema, GetLikesByPostIdSchema, GetPostByIdSchema, LikePostSchema, UnlikePostSchema } from "@neetwork/contracts";
 
 type FetchPostsArgs = {
   activeTab: ActiveTab;
@@ -112,5 +112,32 @@ export const fetchPostById = async ({ postId, signal }: FetchPostByIdArgs) => {
 
   return {
     post: result.data.post,
+  };
+};
+
+type FetchLikesByPostIdArgs = {
+  postId: string;
+  signal: AbortSignal;
+};
+
+export const fetchLikesByPostId = async ({ postId, signal }: FetchLikesByPostIdArgs) => {
+  const response = await fetch(`/api/posts/${postId}/likes`, {
+    credentials: "include",
+    signal,
+  });
+
+  const json: unknown = await response.json();
+  const result = GetLikesByPostIdSchema.safeParse(json);
+
+  if (!result.success) {
+    throw new Error(`Invalid response: ${response.status}`);
+  }
+
+  if (!result.data.success) {
+    throw new Error(result.data.message);
+  }
+
+  return {
+    likes: result.data.likes,
   };
 };
