@@ -6,7 +6,6 @@ import {
   PostIdParamsSchema,
   toFieldErrors,
 } from "@neetwork/contracts";
-import { z } from "zod/v4";
 import { Prisma } from "../../../generated/prisma/index.js";
 import { insertComment } from "./comments.service.js";
 
@@ -24,7 +23,15 @@ export async function createComment(req: Request, res: Response<CreateCommentRes
   }
 
   try {
-    const { content } = CreateCommentInputSchema.parse(req.body);
+    const parsedBody = CreateCommentInputSchema.safeParse(req.body);
+
+    if (!parsedBody.success) {
+      return res.status(422).json({
+        errors: toFieldErrors(parsedBody.error.issues),
+      });
+    }
+
+    const { content } = parsedBody.data;
 
     const comment = await insertComment(user.id, params.data.postId, content);
 
@@ -36,11 +43,6 @@ export async function createComment(req: Request, res: Response<CreateCommentRes
     return res.status(201).json(response);
   }
   catch (error) {
-    if (error instanceof z.ZodError) {
-      return res.status(422).json({
-        errors: toFieldErrors(error.issues),
-      });
-    }
     if (
       error instanceof Prisma.PrismaClientKnownRequestError
       && error.code === "P2003"

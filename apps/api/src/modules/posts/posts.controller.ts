@@ -66,7 +66,15 @@ export async function createPost(req: Request, res: Response<CreatePostResponse>
   }
 
   try {
-    const { content } = CreatePostInputSchema.parse(req.body);
+    const parsedBody = CreatePostInputSchema.safeParse(req.body);
+
+    if (!parsedBody.success) {
+      return res.status(422).json({
+        errors: toFieldErrors(parsedBody.error.issues),
+      });
+    }
+
+    const { content } = parsedBody.data;
 
     const post = await insertPost(user.id, content);
 
@@ -78,11 +86,6 @@ export async function createPost(req: Request, res: Response<CreatePostResponse>
     return res.status(201).json(response);
   }
   catch (error) {
-    if (error instanceof z.ZodError) {
-      return res.status(422).json({
-        errors: toFieldErrors(error.issues),
-      });
-    }
     next(error);
   }
 }

@@ -1,5 +1,5 @@
 import type { GetUserProfileResponse, UpdateProfileResponse } from "@neetwork/contracts";
-import type { NextFunction, Request, RequestHandler, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 import {
   GetUserProfileSuccessSchema,
   toFieldErrors,
@@ -38,7 +38,7 @@ export async function getUserAccount(req: Request, res: Response<GetUserProfileR
   }
 }
 
-export const updateUserAccount: RequestHandler = async (req, res, next) => {
+export async function updateUserAccount(req: Request, res: Response, next: NextFunction) {
   if (!req.user) {
     return res.status(401).json({ success: false, message: "Unauthorized" });
   }
