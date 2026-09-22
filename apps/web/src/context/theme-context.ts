@@ -1,8 +1,8 @@
 import { createContext, use } from "react";
 
-type ThemeMode = "light" | "dark" | "system";
-type Accent = "blue" | "red" | "yellow" | "green" | "purple" | "pink";
-type Background = "slate" | "gray" | "zinc" | "stone" | "neutral";
+export type ThemeMode = "light" | "dark" | "system";
+export type Accent = "blue" | "red" | "yellow" | "green" | "purple" | "pink";
+export type Background = "slate" | "gray" | "zinc" | "stone" | "neutral";
 
 type ThemeSettings = {
   theme: ThemeMode;

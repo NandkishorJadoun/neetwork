@@ -24,7 +24,7 @@ export const PostCardSchema = z.strictObject({
   id: z.uuidv7(),
   is_liked_by_user: z.boolean(),
   text: z.string(),
-  created_at: z.date(),
+  created_at: z.coerce.date(),
   userId: z.uuidv7(),
 });
 
