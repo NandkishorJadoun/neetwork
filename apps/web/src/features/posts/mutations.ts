@@ -29,6 +29,12 @@ export const useLikePost = ({ postId, isLiked }: UseLikePostArgs) => {
         queryClient.invalidateQueries({
           queryKey: postByIdQueryOptions(postId).queryKey,
         }),
+        queryClient.invalidateQueries({
+          predicate: (query) => {
+            const key = query.queryKey[0];
+            return key === "user-posts" || key === "user-comments" || key === "user-likes";
+          },
+        }),
       ]);
     },
   });
