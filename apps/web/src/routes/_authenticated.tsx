@@ -1,4 +1,4 @@
-import { createFileRoute, Link, Outlet, redirect } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, redirect, useNavigate } from "@tanstack/react-router";
 import { Home, Info, Pencil, UserRound, UserRoundCog, UserRoundPen, UserRoundPlus, UserRoundSearch } from "lucide-react";
 import { useState } from "react";
 import { MobileBottomNav } from "@/components/mobile-bottom-nav";
@@ -25,10 +25,11 @@ export const Route = createFileRoute("/_authenticated")({
 function RouteComponent() {
   const [isOpen, setIsOpen] = useState(false);
   const { user } = Route.useRouteContext();
+  const navigate = useNavigate();
 
-  const handleLogout = () => {
-    signOut();
-    // navigate({ to: "/login", replace: true });
+  const handleLogout = async () => {
+    await signOut();
+    navigate({ to: "/signin", replace: true });
   };
 
   const navItems = [
