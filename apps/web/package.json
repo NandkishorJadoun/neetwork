@@ -30,6 +30,7 @@
   },
   "devDependencies": {
     "@neetwork/eslint-config": "workspace:*",
+    "@shadcn/lint": "^0.2.0",
     "@tailwindcss/vite": "^4.3.3",
     "@tanstack/eslint-plugin-query": "^5.102.8",
     "@tanstack/eslint-plugin-router": "^1.162.0",
@@ -38,6 +39,7 @@
     "@types/node": "^26.5.0",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
+    "@typescript-eslint/parser": "^8.71.0",
     "@typescript/native": "npm:typescript@^7.0.2",
     "@vitejs/plugin-react": "^6.1.1",
     "eslint": "^10.10.0",

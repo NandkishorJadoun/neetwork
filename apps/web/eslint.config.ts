@@ -1,9 +1,14 @@
 import createConfig from "@neetwork/eslint-config/create-config";
+import { plugin as shadcn } from "@shadcn/lint";
 import pluginQuery from "@tanstack/eslint-plugin-query";
 import pluginRouter from "@tanstack/eslint-plugin-router";
 
 export default createConfig({
   react: true,
+}, {
+  plugins: {
+    shadcn,
+  },
 }, {
   rules: {
     "antfu/top-level-function": "off",
