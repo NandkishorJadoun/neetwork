@@ -2,6 +2,7 @@ import type { JSX } from "react";
 import { Link } from "@tanstack/react-router";
 import { LogOut, X } from "lucide-react";
 import { useEffect } from "react";
+import { Button } from "@/components/ui/button";
 
 type MobileNavbarProp = {
   isOpen: boolean;
@@ -20,12 +21,12 @@ export function MobileNavbar({ isOpen, setIsOpen, navItems, handleLogout }: Mobi
 
   return (
     <div className="md:block">
-      <nav className={`fixed top-0 right-0 z-40 h-full w-64 bg-(--app-bg) border-l border-(--app-border) transition-transform duration-200 ease-in-out md:hidden ${isOpen ? "translate-x-0" : "translate-x-full"}`}>
-        <div className="flex justify-between border-b border-(--app-border) p-4">
+      <nav className={`fixed top-0 right-0 z-40 h-full w-64 bg-background border-l border-border transition-transform duration-200 ease-in-out md:hidden ${isOpen ? "translate-x-0" : "translate-x-full"}`}>
+        <div className="flex justify-between border-b border-border p-4">
           <p>Menu</p>
-          <button onClick={() => { setIsOpen(false); }}>
-            <X size={18} />
-          </button>
+          <Button variant="ghost" size="icon" onClick={() => { setIsOpen(false); }}>
+            <X />
+          </Button>
         </div>
         <ul className="flex flex-col gap-2 p-2">
           {navItems.map((item) => {
@@ -34,8 +35,8 @@ export function MobileNavbar({ isOpen, setIsOpen, navItems, handleLogout }: Mobi
               <li key={name} onClick={() => { setIsOpen(false); }}>
                 <Link
                   to={to}
-                  activeProps={{ className: "text-(--app-text)" }}
-                  className="flex items-center gap-3 rounded-md p-2 text-(--app-muted) border border-(--app-bg) hover:border-(--app-border) hover:bg-(--app-surface)/70"
+                  activeProps={{ className: "text-foreground" }}
+                  className="flex items-center gap-3 rounded-md p-2 text-muted-foreground border border-transparent hover:border-border hover:bg-muted"
                 >
                   {icon}
                   <p>{name}</p>
@@ -44,10 +45,10 @@ export function MobileNavbar({ isOpen, setIsOpen, navItems, handleLogout }: Mobi
             );
           })}
           <li>
-            <button onClick={handleLogout} className="w-full text-red-500 flex items-center gap-3 rounded-md py-2 pl-2 hover:bg-(--app-surface)/70">
-              <LogOut />
+            <Button variant="ghost" onClick={handleLogout} className="w-full justify-start gap-3 py-2 pl-2 text-destructive hover:bg-muted hover:text-destructive">
+              <LogOut size={20} />
               <p>LogOut</p>
-            </button>
+            </Button>
           </li>
         </ul>
       </nav>

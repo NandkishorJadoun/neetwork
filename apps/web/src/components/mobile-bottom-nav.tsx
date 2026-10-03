@@ -22,7 +22,7 @@ export const MobileBottomNav = ({ user }: { user: User }) => {
   ];
 
   return (
-    <div className={`md:hidden ${opacity} fixed bottom-0 left-0 right-0 flex py-3 items-center justify-around border-t border-(--app-border) bg-(--app-bg)/80 backdrop-blur-md transition-opacity duration-200`}>
+    <div className={`md:hidden ${opacity} fixed bottom-0 left-0 right-0 flex py-3 items-center justify-around border-t border-border bg-background/80 backdrop-blur-md transition-opacity duration-200`}>
       {bottomNavItems.map((item) => {
         const { to, icon: Icon } = item;
         return (
@@ -30,8 +30,8 @@ export const MobileBottomNav = ({ user }: { user: User }) => {
             key={to}
             to={to}
             className="group flex items-center justify-center rounded-md p-2 transition"
-            activeProps={{ className: "text-(--app-text)" }}
-            inactiveProps={{ className: "text-(--app-muted)" }}
+            activeProps={{ className: "text-foreground" }}
+            inactiveProps={{ className: "text-muted-foreground" }}
           >
             {({ isActive }) => (
               <Icon strokeWidth={isActive ? 2.5 : 2} />

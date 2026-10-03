@@ -1,6 +1,7 @@
 import type { JSX } from "react";
 import { Link } from "@tanstack/react-router";
 import { LogOut } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 type SideBarProp = {
   navItems: { to: string; name: string; icon: JSX.Element }[];
@@ -18,8 +19,8 @@ export const SideBar = ({ navItems, handleLogout }: SideBarProp) => {
               <li key={name}>
                 <Link
                   to={to}
-                  activeProps={{ className: "text-(--app-text)" }}
-                  className="flex items-center gap-3 rounded-md py-2 pl-4 text-(--app-muted) hover:bg-(--app-surface)/70"
+                  activeProps={{ className: "text-foreground" }}
+                  className="flex items-center gap-3 rounded-md py-2 pl-4 text-muted-foreground hover:bg-muted"
                 >
                   {icon}
                   <p>{name}</p>
@@ -28,10 +29,10 @@ export const SideBar = ({ navItems, handleLogout }: SideBarProp) => {
             );
           })}
           <li>
-            <button onClick={handleLogout} className="w-full text-red-500 flex items-center gap-3 rounded-md py-2 pl-4 hover:bg-(--app-surface)/70">
-              <LogOut />
+            <Button variant="ghost" onClick={handleLogout} className="w-full justify-start gap-3 py-2 pl-4 text-destructive hover:bg-muted hover:text-destructive">
+              <LogOut size={20} />
               <p>LogOut</p>
-            </button>
+            </Button>
           </li>
         </ul>
       </nav>
