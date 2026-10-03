@@ -14,5 +14,11 @@ export default createConfig({
   files: ["src/routes/**/*.{ts,tsx}"],
   rules: {
     "react-refresh/only-export-components": "off",
+    "unicorn/filename-case": "off",
+  },
+}, {
+  files: ["src/components/ui/**/*.{ts,tsx}"],
+  rules: {
+    "react-refresh/only-export-components": "off",
   },
 });
