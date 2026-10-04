@@ -1,5 +1,7 @@
 import type { CommentAuthor } from "@neetwork/contracts";
 import { Link } from "@tanstack/react-router";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { getInitials } from "@/features/users/utils";
 
 type CommentCardProp = {
   text: string;
@@ -14,11 +16,10 @@ export const CommentCard = ({ text, author }: CommentCardProp) => {
         params={{ userId: author.id }}
         className="shrink-0"
       >
-        <img
-          src={author.image ?? "/default-avatar.png"}
-          alt={`${author.name}'s avatar`}
-          className="h-8 w-8 rounded-full object-cover"
-        />
+        <Avatar>
+          <AvatarImage src={author.image ?? undefined} alt={`${author.name}'s avatar`} />
+          <AvatarFallback>{getInitials(author.name)}</AvatarFallback>
+        </Avatar>
       </Link>
 
       <div className="min-w-0 flex-1">
@@ -27,16 +28,16 @@ export const CommentCard = ({ text, author }: CommentCardProp) => {
           params={{ userId: author.id }}
           className="flex items-center gap-2"
         >
-          <p className="truncate text-sm font-medium text-(--app-text)">
+          <p className="truncate text-sm font-medium text-foreground">
             {author.name}
           </p>
-          <span className="truncate text-sm text-(--app-muted)">
+          <span className="truncate text-sm text-muted-foreground">
             @
             {author.name}
           </span>
         </Link>
 
-        <p className="mt-1 whitespace-pre-wrap wrap-break-word text-sm leading-relaxed text-(--app-text)">
+        <p className="mt-1 whitespace-pre-wrap wrap-break-word text-sm leading-relaxed text-foreground">
           {text}
         </p>
       </div>

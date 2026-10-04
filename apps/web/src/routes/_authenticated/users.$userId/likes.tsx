@@ -7,8 +7,8 @@ import { PostCardSkeleton } from "@/features/posts/components/post-skeleton";
 import { likedPostsByUserIdQueryOptions } from "@/features/users/queries";
 
 export const Route = createFileRoute("/_authenticated/users/$userId/likes")({
-  loader: async ({ context, params: { userId } }) => {
-    await context.queryClient.query(likedPostsByUserIdQueryOptions(userId));
+  loader: ({ context, params: { userId } }) => {
+    context.queryClient.query(likedPostsByUserIdQueryOptions(userId));
   },
   pendingComponent: () => (
     <>

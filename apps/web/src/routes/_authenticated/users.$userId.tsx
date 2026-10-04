@@ -9,8 +9,8 @@ import { userByIdQueryOptions } from "@/features/users/queries";
 import { getInitials } from "@/features/users/utils";
 
 export const Route = createFileRoute("/_authenticated/users/$userId")({
-  loader: async ({ context, params: { userId } }) => {
-    await context.queryClient.query(userByIdQueryOptions(userId));
+  loader: ({ context, params: { userId } }) => {
+    context.queryClient.query(userByIdQueryOptions(userId));
   },
   component: function RouteComponent() {
     const { userId } = Route.useParams();

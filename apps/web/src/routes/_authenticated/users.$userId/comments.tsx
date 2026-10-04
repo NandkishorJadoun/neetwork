@@ -8,8 +8,8 @@ import { PostCardSkeleton } from "@/features/posts/components/post-skeleton";
 import { commentsByUserIdQueryOptions } from "@/features/users/queries";
 
 export const Route = createFileRoute("/_authenticated/users/$userId/comments")({
-  loader: async ({ context, params: { userId } }) => {
-    await context.queryClient.query(commentsByUserIdQueryOptions(userId));
+  loader: ({ context, params: { userId } }) => {
+    context.queryClient.query(commentsByUserIdQueryOptions(userId));
   },
   pendingComponent: () => (
     <>
