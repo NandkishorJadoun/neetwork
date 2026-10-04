@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { queryClient } from "@/libs/query";
-import { likePost, unlikePost } from "./api";
+import { createComment, createPost, likePost, unlikePost } from "./api";
 import { postByIdQueryOptions, postsQueryOptions } from "./queries";
 
 type UseLikePostArgs = {
@@ -48,4 +48,40 @@ export const useLikePost = ({ postId, isLiked }: UseLikePostArgs) => {
     isPending: mutation.isPending,
     error: mutation.error,
   };
+};
+
+export const useCreatePost = () => {
+  return useMutation({
+    mutationFn: createPost,
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: postsQueryOptions("all").queryKey,
+        }),
+        queryClient.invalidateQueries({
+          queryKey: postsQueryOptions("following").queryKey,
+        }),
+      ]);
+    },
+  });
+};
+
+export const useCreateComment = (postId: string) => {
+  return useMutation({
+    mutationFn: ({ content }: { content: string }) =>
+      createComment({ postId, content }),
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: postByIdQueryOptions(postId).queryKey,
+        }),
+        queryClient.invalidateQueries({
+          queryKey: postsQueryOptions("all").queryKey,
+        }),
+        queryClient.invalidateQueries({
+          queryKey: postsQueryOptions("following").queryKey,
+        }),
+      ]);
+    },
+  });
 };

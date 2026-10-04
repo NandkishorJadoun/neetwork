@@ -1,8 +1,8 @@
-import type { ValidationError } from "../types";
+import type { FieldError } from "@neetwork/contracts";
 
 type FormErrorsProps = {
   fieldName: string;
-  errors: null | ValidationError[];
+  errors: null | FieldError[];
 };
 
 export const FormErrors = ({ fieldName, errors }: FormErrorsProps) => {

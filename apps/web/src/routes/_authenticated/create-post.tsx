@@ -1,6 +1,10 @@
+import type { FieldError } from "@neetwork/contracts";
+import { CreatePostInputSchema, toFieldErrors } from "@neetwork/contracts";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { PageHeader } from "../../components/page-header";
+import { useCreatePost } from "../../features/posts/mutations";
+import { ApiValidationError } from "../../libs/api-error";
 
 export const Route = createFileRoute("/_authenticated/create-post")({
   component: RouteComponent,
@@ -8,44 +12,31 @@ export const Route = createFileRoute("/_authenticated/create-post")({
 
 function RouteComponent() {
   const [content, setContent] = useState("");
-  const [errors, setErrors] = useState<ValidationError[] | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [errors, setErrors] = useState<FieldError[] | null>(null);
   const navigate = useNavigate();
-  const { user } = Route.useRouteContext();
+  const { mutate, isPending } = useCreatePost();
 
-  const submitPostHandler = async (e: React.SubmitEvent) => {
+  const submitPostHandler = (e: React.SubmitEvent) => {
     e.preventDefault();
-    if (!content.trim())
-      return;
-    setIsLoading(true);
     setErrors(null);
 
-    const url = `${import.meta.env.VITE_API_URL}/posts/`;
-    const options = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${user?.token}`,
+    const parsed = CreatePostInputSchema.safeParse({ content });
+
+    if (!parsed.success) {
+      setErrors(toFieldErrors(parsed.error.issues));
+      return;
+    }
+
+    mutate(parsed.data, {
+      onSuccess: () => {
+        navigate({ to: "/home" });
       },
-      body: JSON.stringify({ content }),
-    };
-    try {
-      const res = await fetch(url, options);
-
-      if (!res.ok) {
-        const data = await res.json();
-        setErrors(data.errors ?? []);
-        return;
-      }
-
-      navigate({ to: "/home" });
-    }
-    catch (error) {
-      console.error(error);
-    }
-    finally {
-      setIsLoading(false);
-    }
+      onError: (error) => {
+        if (error instanceof ApiValidationError) {
+          setErrors(error.errors);
+        }
+      },
+    });
   };
 
   return (
@@ -70,7 +61,7 @@ function RouteComponent() {
           </span>
 
           <button
-            disabled={content.trim().length === 0 || isLoading}
+            disabled={content.trim().length === 0 || isPending}
             type="submit"
             className="
                 rounded-md border border-(--app-border)
@@ -82,7 +73,7 @@ function RouteComponent() {
                 disabled:opacity-50
                 "
           >
-            {isLoading ? "Posting..." : "Post"}
+            {isPending ? "Posting..." : "Post"}
           </button>
         </div>
 

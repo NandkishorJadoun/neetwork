@@ -1,5 +1,7 @@
 import type { FollowRecord } from "@neetwork/contracts";
 import { Link } from "@tanstack/react-router";
+import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { useProfileFollowAction } from "../mutations";
 
 type ProfileActionButtonProps = {
@@ -8,46 +10,46 @@ type ProfileActionButtonProps = {
   isOwnProfile: boolean;
 };
 
-const baseClass = "inline-flex items-center justify-center rounded-md border px-4 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50";
-
 export const ProfileActionButton = ({ profileUserId, followers, isOwnProfile }: ProfileActionButtonProps) => {
   const { handleAction, isPending } = useProfileFollowAction(profileUserId);
 
   if (isOwnProfile) {
     return (
-      <Link
-        to="/edit-profile"
-        className={`${baseClass} border-(--app-border) bg-transparent text-(--app-text) hover:bg-(--app-surface)`}
+      <Button
+        variant="outline"
+        size="sm"
+        render={<Link to="/edit-profile" />}
       >
         Edit profile
-      </Link>
+      </Button>
     );
   }
 
   if (followers.length === 0) {
     return (
-      <button
+      <Button
+        variant="outline"
+        size="sm"
         disabled={isPending}
         onClick={() => handleAction("follow")}
-        className={`${baseClass} border-(--app-border) bg-transparent text-(--app-text) hover:bg-(--app-surface)`}
       >
+        {isPending ? <Spinner /> : null}
         Follow
-      </button>
+      </Button>
     );
   }
 
   const isFollowing = followers[0].status === "ACCEPTED";
 
   return (
-    <button
+    <Button
+      variant={isFollowing ? "secondary" : "ghost"}
+      size="sm"
       disabled={isPending}
       onClick={() => handleAction("unfollow")}
-      className={`${baseClass} ${isFollowing
-        ? "border-(--app-border) bg-(--app-surface) text-(--app-text)"
-        : "border-(--app-border) bg-transparent text-(--app-text) hover:bg-(--app-surface)"
-      }`}
     >
+      {isPending ? <Spinner /> : null}
       {isFollowing ? "Following" : "Requested"}
-    </button>
+    </Button>
   );
 };

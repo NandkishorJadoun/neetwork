@@ -1,9 +1,14 @@
 import createConfig from "@neetwork/eslint-config/create-config";
+import { plugin as shadcn } from "@shadcn/lint";
 import pluginQuery from "@tanstack/eslint-plugin-query";
 import pluginRouter from "@tanstack/eslint-plugin-router";
 
 export default createConfig({
   react: true,
+}, {
+  plugins: {
+    shadcn,
+  },
 }, {
   rules: {
     "antfu/top-level-function": "off",
@@ -12,6 +17,12 @@ export default createConfig({
   ignores: ["src/routeTree.gen.ts"],
 }, {
   files: ["src/routes/**/*.{ts,tsx}"],
+  rules: {
+    "react-refresh/only-export-components": "off",
+    "unicorn/filename-case": "off",
+  },
+}, {
+  files: ["src/components/ui/**/*.{ts,tsx}"],
   rules: {
     "react-refresh/only-export-components": "off",
   },

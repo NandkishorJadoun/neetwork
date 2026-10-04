@@ -10,8 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
-import { Route as SigninRouteImport } from './routes/signin'
-import { Route as SignupRouteImport } from './routes/signup'
+import { Route as GuestRouteImport } from './routes/_guest'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
 import { Route as AuthenticatedAboutRouteImport } from './routes/_authenticated/about'
 import { Route as AuthenticatedCreatePostRouteImport } from './routes/_authenticated/create-post'
@@ -20,9 +19,14 @@ import { Route as AuthenticatedFollowRequestsRouteImport } from './routes/_authe
 import { Route as AuthenticatedFollowUsersRouteImport } from './routes/_authenticated/follow-users'
 import { Route as AuthenticatedHomeRouteImport } from './routes/_authenticated/home'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
+import { Route as GuestSigninRouteImport } from './routes/_guest/signin'
+import { Route as GuestSignupRouteImport } from './routes/_guest/signup'
 import { Route as AuthenticatedPostsPostIdRouteImport } from './routes/_authenticated/posts.$postId'
 import { Route as AuthenticatedUsersUserIdRouteImport } from './routes/_authenticated/users.$userId'
 import { Route as AuthenticatedPostsPostIdLikesRouteImport } from './routes/_authenticated/posts.$postId_.likes'
+import { Route as AuthenticatedUsersUserIdIndexRouteImport } from './routes/_authenticated/users.$userId/index'
+import { Route as AuthenticatedUsersUserIdCommentsRouteImport } from './routes/_authenticated/users.$userId/comments'
+import { Route as AuthenticatedUsersUserIdLikesRouteImport } from './routes/_authenticated/users.$userId/likes'
 import { Route as AuthenticatedUsersUserIdFollowersRouteImport } from './routes/_authenticated/users.$userId_.followers'
 import { Route as AuthenticatedUsersUserIdFollowingsRouteImport } from './routes/_authenticated/users.$userId_.followings'
 
@@ -30,14 +34,8 @@ const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SigninRoute = SigninRouteImport.update({
-  id: '/signin',
-  path: '/signin',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SignupRoute = SignupRouteImport.update({
-  id: '/signup',
-  path: '/signup',
+const GuestRoute = GuestRouteImport.update({
+  id: '/_guest',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
@@ -83,6 +81,16 @@ const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const GuestSigninRoute = GuestSigninRouteImport.update({
+  id: '/signin',
+  path: '/signin',
+  getParentRoute: () => GuestRoute,
+} as any)
+const GuestSignupRoute = GuestSignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => GuestRoute,
+} as any)
 const AuthenticatedPostsPostIdRoute =
   AuthenticatedPostsPostIdRouteImport.update({
     id: '/posts/$postId',
@@ -101,6 +109,24 @@ const AuthenticatedPostsPostIdLikesRoute =
     path: '/posts/$postId/likes',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedUsersUserIdIndexRoute =
+  AuthenticatedUsersUserIdIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedUsersUserIdRoute,
+  } as any)
+const AuthenticatedUsersUserIdCommentsRoute =
+  AuthenticatedUsersUserIdCommentsRouteImport.update({
+    id: '/comments',
+    path: '/comments',
+    getParentRoute: () => AuthenticatedUsersUserIdRoute,
+  } as any)
+const AuthenticatedUsersUserIdLikesRoute =
+  AuthenticatedUsersUserIdLikesRouteImport.update({
+    id: '/likes',
+    path: '/likes',
+    getParentRoute: () => AuthenticatedUsersUserIdRoute,
+  } as any)
 const AuthenticatedUsersUserIdFollowersRoute =
   AuthenticatedUsersUserIdFollowersRouteImport.update({
     id: '/users/$userId_/followers',
@@ -116,8 +142,6 @@ const AuthenticatedUsersUserIdFollowingsRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
-  '/signin': typeof SigninRoute
-  '/signup': typeof SignupRoute
   '/about': typeof AuthenticatedAboutRoute
   '/create-post': typeof AuthenticatedCreatePostRoute
   '/edit-profile': typeof AuthenticatedEditProfileRoute
@@ -125,15 +149,19 @@ export interface FileRoutesByFullPath {
   '/follow-users': typeof AuthenticatedFollowUsersRoute
   '/home': typeof AuthenticatedHomeRoute
   '/settings': typeof AuthenticatedSettingsRoute
+  '/signin': typeof GuestSigninRoute
+  '/signup': typeof GuestSignupRoute
   '/posts/$postId': typeof AuthenticatedPostsPostIdRoute
-  '/users/$userId': typeof AuthenticatedUsersUserIdRoute
+  '/users/$userId': typeof AuthenticatedUsersUserIdRouteWithChildren
   '/posts/$postId/likes': typeof AuthenticatedPostsPostIdLikesRoute
+  '/users/$userId/comments': typeof AuthenticatedUsersUserIdCommentsRoute
+  '/users/$userId/likes': typeof AuthenticatedUsersUserIdLikesRoute
   '/users/$userId/followers': typeof AuthenticatedUsersUserIdFollowersRoute
   '/users/$userId/followings': typeof AuthenticatedUsersUserIdFollowingsRoute
+  '/users/$userId/': typeof AuthenticatedUsersUserIdIndexRoute
 }
 export interface FileRoutesByTo {
-  '/signin': typeof SigninRoute
-  '/signup': typeof SignupRoute
+  '/': typeof AuthenticatedIndexRoute
   '/about': typeof AuthenticatedAboutRoute
   '/create-post': typeof AuthenticatedCreatePostRoute
   '/edit-profile': typeof AuthenticatedEditProfileRoute
@@ -141,18 +169,20 @@ export interface FileRoutesByTo {
   '/follow-users': typeof AuthenticatedFollowUsersRoute
   '/home': typeof AuthenticatedHomeRoute
   '/settings': typeof AuthenticatedSettingsRoute
-  '/': typeof AuthenticatedIndexRoute
+  '/signin': typeof GuestSigninRoute
+  '/signup': typeof GuestSignupRoute
   '/posts/$postId': typeof AuthenticatedPostsPostIdRoute
-  '/users/$userId': typeof AuthenticatedUsersUserIdRoute
   '/posts/$postId/likes': typeof AuthenticatedPostsPostIdLikesRoute
+  '/users/$userId/comments': typeof AuthenticatedUsersUserIdCommentsRoute
+  '/users/$userId/likes': typeof AuthenticatedUsersUserIdLikesRoute
   '/users/$userId/followers': typeof AuthenticatedUsersUserIdFollowersRoute
   '/users/$userId/followings': typeof AuthenticatedUsersUserIdFollowingsRoute
+  '/users/$userId': typeof AuthenticatedUsersUserIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_authenticated': typeof AuthenticatedRouteWithChildren
-  '/signin': typeof SigninRoute
-  '/signup': typeof SignupRoute
+  '/_guest': typeof GuestRouteWithChildren
   '/_authenticated/about': typeof AuthenticatedAboutRoute
   '/_authenticated/create-post': typeof AuthenticatedCreatePostRoute
   '/_authenticated/edit-profile': typeof AuthenticatedEditProfileRoute
@@ -160,19 +190,22 @@ export interface FileRoutesById {
   '/_authenticated/follow-users': typeof AuthenticatedFollowUsersRoute
   '/_authenticated/home': typeof AuthenticatedHomeRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
+  '/_guest/signin': typeof GuestSigninRoute
+  '/_guest/signup': typeof GuestSignupRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/posts/$postId': typeof AuthenticatedPostsPostIdRoute
-  '/_authenticated/users/$userId': typeof AuthenticatedUsersUserIdRoute
+  '/_authenticated/users/$userId': typeof AuthenticatedUsersUserIdRouteWithChildren
   '/_authenticated/posts/$postId_/likes': typeof AuthenticatedPostsPostIdLikesRoute
+  '/_authenticated/users/$userId/comments': typeof AuthenticatedUsersUserIdCommentsRoute
+  '/_authenticated/users/$userId/likes': typeof AuthenticatedUsersUserIdLikesRoute
   '/_authenticated/users/$userId_/followers': typeof AuthenticatedUsersUserIdFollowersRoute
   '/_authenticated/users/$userId_/followings': typeof AuthenticatedUsersUserIdFollowingsRoute
+  '/_authenticated/users/$userId/': typeof AuthenticatedUsersUserIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/signin'
-    | '/signup'
     | '/about'
     | '/create-post'
     | '/edit-profile'
@@ -180,15 +213,19 @@ export interface FileRouteTypes {
     | '/follow-users'
     | '/home'
     | '/settings'
+    | '/signin'
+    | '/signup'
     | '/posts/$postId'
     | '/users/$userId'
     | '/posts/$postId/likes'
+    | '/users/$userId/comments'
+    | '/users/$userId/likes'
     | '/users/$userId/followers'
     | '/users/$userId/followings'
+    | '/users/$userId/'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/signin'
-    | '/signup'
+    | '/'
     | '/about'
     | '/create-post'
     | '/edit-profile'
@@ -196,17 +233,19 @@ export interface FileRouteTypes {
     | '/follow-users'
     | '/home'
     | '/settings'
-    | '/'
+    | '/signin'
+    | '/signup'
     | '/posts/$postId'
-    | '/users/$userId'
     | '/posts/$postId/likes'
+    | '/users/$userId/comments'
+    | '/users/$userId/likes'
     | '/users/$userId/followers'
     | '/users/$userId/followings'
+    | '/users/$userId'
   id:
     | '__root__'
     | '/_authenticated'
-    | '/signin'
-    | '/signup'
+    | '/_guest'
     | '/_authenticated/about'
     | '/_authenticated/create-post'
     | '/_authenticated/edit-profile'
@@ -214,18 +253,22 @@ export interface FileRouteTypes {
     | '/_authenticated/follow-users'
     | '/_authenticated/home'
     | '/_authenticated/settings'
+    | '/_guest/signin'
+    | '/_guest/signup'
     | '/_authenticated/'
     | '/_authenticated/posts/$postId'
     | '/_authenticated/users/$userId'
     | '/_authenticated/posts/$postId_/likes'
+    | '/_authenticated/users/$userId/comments'
+    | '/_authenticated/users/$userId/likes'
     | '/_authenticated/users/$userId_/followers'
     | '/_authenticated/users/$userId_/followings'
+    | '/_authenticated/users/$userId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
-  SigninRoute: typeof SigninRoute
-  SignupRoute: typeof SignupRoute
+  GuestRoute: typeof GuestRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -237,18 +280,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/signin': {
-      id: '/signin'
-      path: '/signin'
-      fullPath: '/signin'
-      preLoaderRoute: typeof SigninRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/signup': {
-      id: '/signup'
-      path: '/signup'
-      fullPath: '/signup'
-      preLoaderRoute: typeof SignupRouteImport
+    '/_guest': {
+      id: '/_guest'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof GuestRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/': {
@@ -307,6 +343,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_guest/signin': {
+      id: '/_guest/signin'
+      path: '/signin'
+      fullPath: '/signin'
+      preLoaderRoute: typeof GuestSigninRouteImport
+      parentRoute: typeof GuestRoute
+    }
+    '/_guest/signup': {
+      id: '/_guest/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof GuestSignupRouteImport
+      parentRoute: typeof GuestRoute
+    }
     '/_authenticated/posts/$postId': {
       id: '/_authenticated/posts/$postId'
       path: '/posts/$postId'
@@ -328,6 +378,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPostsPostIdLikesRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/users/$userId/': {
+      id: '/_authenticated/users/$userId/'
+      path: '/'
+      fullPath: '/users/$userId/'
+      preLoaderRoute: typeof AuthenticatedUsersUserIdIndexRouteImport
+      parentRoute: typeof AuthenticatedUsersUserIdRoute
+    }
+    '/_authenticated/users/$userId/comments': {
+      id: '/_authenticated/users/$userId/comments'
+      path: '/comments'
+      fullPath: '/users/$userId/comments'
+      preLoaderRoute: typeof AuthenticatedUsersUserIdCommentsRouteImport
+      parentRoute: typeof AuthenticatedUsersUserIdRoute
+    }
+    '/_authenticated/users/$userId/likes': {
+      id: '/_authenticated/users/$userId/likes'
+      path: '/likes'
+      fullPath: '/users/$userId/likes'
+      preLoaderRoute: typeof AuthenticatedUsersUserIdLikesRouteImport
+      parentRoute: typeof AuthenticatedUsersUserIdRoute
+    }
     '/_authenticated/users/$userId_/followers': {
       id: '/_authenticated/users/$userId_/followers'
       path: '/users/$userId/followers'
@@ -345,6 +416,25 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedUsersUserIdRouteChildren {
+  AuthenticatedUsersUserIdCommentsRoute: typeof AuthenticatedUsersUserIdCommentsRoute
+  AuthenticatedUsersUserIdLikesRoute: typeof AuthenticatedUsersUserIdLikesRoute
+  AuthenticatedUsersUserIdIndexRoute: typeof AuthenticatedUsersUserIdIndexRoute
+}
+
+const AuthenticatedUsersUserIdRouteChildren: AuthenticatedUsersUserIdRouteChildren =
+  {
+    AuthenticatedUsersUserIdCommentsRoute:
+      AuthenticatedUsersUserIdCommentsRoute,
+    AuthenticatedUsersUserIdLikesRoute: AuthenticatedUsersUserIdLikesRoute,
+    AuthenticatedUsersUserIdIndexRoute: AuthenticatedUsersUserIdIndexRoute,
+  }
+
+const AuthenticatedUsersUserIdRouteWithChildren =
+  AuthenticatedUsersUserIdRoute._addFileChildren(
+    AuthenticatedUsersUserIdRouteChildren,
+  )
+
 interface AuthenticatedRouteChildren {
   AuthenticatedAboutRoute: typeof AuthenticatedAboutRoute
   AuthenticatedCreatePostRoute: typeof AuthenticatedCreatePostRoute
@@ -355,7 +445,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedPostsPostIdRoute: typeof AuthenticatedPostsPostIdRoute
-  AuthenticatedUsersUserIdRoute: typeof AuthenticatedUsersUserIdRoute
+  AuthenticatedUsersUserIdRoute: typeof AuthenticatedUsersUserIdRouteWithChildren
   AuthenticatedPostsPostIdLikesRoute: typeof AuthenticatedPostsPostIdLikesRoute
   AuthenticatedUsersUserIdFollowersRoute: typeof AuthenticatedUsersUserIdFollowersRoute
   AuthenticatedUsersUserIdFollowingsRoute: typeof AuthenticatedUsersUserIdFollowingsRoute
@@ -371,7 +461,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedPostsPostIdRoute: AuthenticatedPostsPostIdRoute,
-  AuthenticatedUsersUserIdRoute: AuthenticatedUsersUserIdRoute,
+  AuthenticatedUsersUserIdRoute: AuthenticatedUsersUserIdRouteWithChildren,
   AuthenticatedPostsPostIdLikesRoute: AuthenticatedPostsPostIdLikesRoute,
   AuthenticatedUsersUserIdFollowersRoute:
     AuthenticatedUsersUserIdFollowersRoute,
@@ -383,10 +473,21 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
   AuthenticatedRouteChildren,
 )
 
+interface GuestRouteChildren {
+  GuestSigninRoute: typeof GuestSigninRoute
+  GuestSignupRoute: typeof GuestSignupRoute
+}
+
+const GuestRouteChildren: GuestRouteChildren = {
+  GuestSigninRoute: GuestSigninRoute,
+  GuestSignupRoute: GuestSignupRoute,
+}
+
+const GuestRouteWithChildren = GuestRoute._addFileChildren(GuestRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
-  SigninRoute: SigninRoute,
-  SignupRoute: SignupRoute,
+  GuestRoute: GuestRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

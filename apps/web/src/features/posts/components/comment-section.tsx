@@ -1,127 +1,122 @@
-import type { Post } from "@neetwork/contracts";
+import type { CommentAuthor, FieldError } from "@neetwork/contracts";
+import { CreateCommentInputSchema, toFieldErrors } from "@neetwork/contracts";
+import { MessageCircle } from "lucide-react";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
+import { Field, FieldError as FieldErrorMessage } from "@/components/ui/field";
+import { Spinner } from "@/components/ui/spinner";
+import { Textarea } from "@/components/ui/textarea";
+import { ApiValidationError } from "@/libs/api-error";
+import { useCreateComment } from "../mutations";
 import { CommentCard } from "./comment-card";
 
+type CommentItem = {
+  id: string;
+  text: string;
+  author: CommentAuthor;
+};
+
 type CommentSectionProp = {
-  post: Post;
+  postId: string;
+  comments: CommentItem[];
   commentRef: React.RefObject<HTMLTextAreaElement | null>;
 };
 
-export const CommentSection = ({ post, commentRef }: CommentSectionProp) => {
-  const [errors, setErrors] = useState<ValidationError[] | null>(null);
+export const CommentSection = ({ postId, comments, commentRef }: CommentSectionProp) => {
+  const [errors, setErrors] = useState<FieldError[] | null>(null);
   const [comment, setComment] = useState("");
+  const { mutate, isPending } = useCreateComment(postId);
 
-  const commentHandler = async (e: React.SubmitEvent) => {
+  const commentHandler = (e: React.SubmitEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-    const url = `${import.meta.env.VITE_API_URL}/posts/${post.id}`;
-    const method = "POST";
-    const options = {
-      method,
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${user?.token}`,
-      },
-      body: JSON.stringify({ content: comment }),
-    };
+    setErrors(null);
 
-    try {
-      const res = await fetch(url, options);
-      if (!res.ok) {
-        const { errors } = await res.json();
-        setErrors(errors);
-        setIsLoading(false);
-        return;
-      }
-      setComment("");
-      setErrors(null);
-      setIsLoading(false);
-      router.invalidate();
+    const parsed = CreateCommentInputSchema.safeParse({ content: comment });
+
+    if (!parsed.success) {
+      setErrors(toFieldErrors(parsed.error.issues));
+      return;
     }
-    catch (error) {
-      console.error(error);
-    }
+
+    mutate(parsed.data, {
+      onSuccess: () => {
+        setComment("");
+        setErrors(null);
+      },
+      onError: (error) => {
+        if (error instanceof ApiValidationError) {
+          setErrors(error.errors);
+        }
+      },
+    });
   };
 
   return (
     <>
-      <div className="px-4 py-4 border-b border-(--app-border)">
+      <div className="px-4 py-4 border-b border-border">
         <form onSubmit={commentHandler} className="space-y-3">
-          <textarea
-            ref={commentRef}
-            name="content"
-            placeholder="Write a comment..."
-            rows={3}
-            required
-            value={comment}
-            onChange={(e) => { setComment(e.target.value); }}
-            maxLength={280}
-            className="
-              w-full resize-none rounded-xl
-              border border-(--app-border)
-              bg-transparent px-3 py-2
-              text-sm leading-relaxed text-(--app-text)
-              outline-none
-              placeholder:text-(--app-muted)
-              focus:border-(--app-accent)
-            "
-          />
+          <Field data-invalid={!!errors}>
+            <Textarea
+              ref={commentRef}
+              name="content"
+              placeholder="Write a comment..."
+              rows={3}
+              required
+              value={comment}
+              onChange={(e) => { setComment(e.target.value); }}
+              maxLength={280}
+              aria-invalid={!!errors}
+            />
+
+            <FieldErrorMessage errors={errors ?? undefined} />
+          </Field>
 
           <div className="flex items-center justify-between">
-            <span className="text-xs text-(--app-muted)">
+            <span className="text-xs text-muted-foreground">
               {comment.length}
               /280
             </span>
 
-            <button
-              disabled={comment.trim().length === 0 || isLoading}
+            <Button
+              size="sm"
+              disabled={comment.trim().length === 0 || isPending}
               type="submit"
-              className="
-                rounded-md border border-(--app-border)
-                px-4 py-2 text-sm font-medium
-                text-(--app-text)
-                transition-colors
-                hover:bg-(--app-surface)
-                disabled:cursor-not-allowed
-                disabled:opacity-50
-              "
             >
-              {isLoading ? "Posting..." : "Comment"}
-            </button>
+              {isPending ? <Spinner /> : null}
+              {isPending ? "Posting..." : "Comment"}
+            </Button>
           </div>
         </form>
-
-        {errors && (
-          <ul className="mt-3 rounded-md border border-red-500/20 bg-red-500/5 p-3 text-sm text-red-500">
-            {errors.map(error => (
-              <li key={`${error.fieldName}-${error.message}`}>{error.message}</li>
-            ))}
-          </ul>
-        )}
       </div>
 
       <div>
 
-        <div className="sticky top-0 text-start md:text-center border-b border-(--app-border) bg-(--app-bg)/80 px-4 py-3 font-bold backdrop-blur-md">
+        <div className="sticky top-0 text-start md:text-center border-b border-border bg-background/80 px-4 py-3 font-bold backdrop-blur-md">
           Comments
         </div>
 
-        <div className="divide-y divide-(--app-border) px-4">
-          {post.comments.length === 0
+        <div className="divide-y divide-border px-4">
+          {comments.length === 0
             ? (
-                <p className="py-6 text-center text-sm text-(--app-muted)">
-                  No comments yet
-                </p>
+                <Empty>
+                  <EmptyHeader>
+                    <EmptyMedia variant="icon">
+                      <MessageCircle />
+                    </EmptyMedia>
+                    <EmptyTitle>No comments yet</EmptyTitle>
+                    <EmptyDescription>
+                      Be the first to share your thoughts on this post.
+                    </EmptyDescription>
+                  </EmptyHeader>
+                </Empty>
               )
             : (
                 <>
-                  {post.comments.map((comment) => {
+                  {comments.map((comment) => {
                     const { id, text, author } = comment;
                     return <CommentCard key={id} text={text} author={author} />;
                   })}
-                  <p className="py-6 text-center text-xs text-(--app-muted)">
-                    End of list
-                  </p>
                 </>
               )}
         </div>

@@ -45,7 +45,7 @@ describe("GET /api/posts", () => {
   });
 });
 
-describe.todo("POST /api/posts", () => {
+describe("POST /api/posts", () => {
   it("should send 422 status with validation object error when post cant get past validation", async () => {
     const res = await request(app)
       .post("/api/posts")
@@ -63,6 +63,7 @@ describe.todo("POST /api/posts", () => {
       .send({ content: "This is a post!" });
 
     assert.strictEqual(res.status, 201);
+    assert.strictEqual(res.body.success, true);
     assert.strictEqual(res.body.post.text, "This is a post!");
   });
 });
