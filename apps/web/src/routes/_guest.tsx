@@ -1,9 +1,8 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { GalleryVerticalEnd } from "lucide-react";
-import { SignupForm } from "@/components/signup-form";
 import { getSession } from "@/libs/auth-client";
 
-export const Route = createFileRoute("/signup")({
+export const Route = createFileRoute("/_guest")({
   beforeLoad: async () => {
     const { data } = await getSession();
     if (data) {
@@ -29,7 +28,7 @@ function RouteComponent() {
         </div>
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-xs">
-            <SignupForm />
+            <Outlet />
           </div>
         </div>
       </div>
