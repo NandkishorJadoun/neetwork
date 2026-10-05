@@ -65,6 +65,7 @@ export async function findAllFollowRequests(userId: string) {
     include: {
       sender: {
         select: {
+          id: true,
           image: true,
           name: true,
         },

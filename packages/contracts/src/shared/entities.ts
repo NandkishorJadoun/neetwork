@@ -54,7 +54,7 @@ export const FollowRecordWithReceiverSchema = FollowRecordSchema.extend({
 });
 
 export const FollowRequestWithSenderPreviewSchema = FollowRecordSchema.extend({
-  sender: AuthorPreviewSchema,
+  sender: UserPreviewSchema,
 });
 
 export type FollowRequestWithSenderPreview = z.infer<typeof FollowRequestWithSenderPreviewSchema>;
@@ -63,8 +63,8 @@ export const CommentAuthorSchema = z.strictObject({
   id: z.uuidv7(),
   name: z.string(),
   image: z.string().nullable(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
 });
 
 export type CommentAuthor = z.infer<typeof CommentAuthorSchema>;
@@ -72,7 +72,7 @@ export type CommentAuthor = z.infer<typeof CommentAuthorSchema>;
 export const CommentWithAuthorSchema = z.strictObject({
   id: z.uuidv7(),
   text: z.string(),
-  created_at: z.date(),
+  created_at: z.coerce.date(),
   userId: z.uuidv7(),
   postId: z.uuidv7(),
   author: CommentAuthorSchema,
