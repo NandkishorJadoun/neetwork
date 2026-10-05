@@ -38,7 +38,8 @@ describe("POST /api/posts/:postId/comment", () => {
       .send({ content: "" });
 
     assert.strictEqual(res.status, 422);
-    assert.ok(res.body.errors.some((e: { fieldName: string; message: string }) => e.fieldName === "content" && e.message === "Comment cannot be empty"));
+    assert.strictEqual(res.body.success, false);
+    assert.strictEqual(res.body.message, "Comment cannot be empty");
   });
 
   it("should create and successfully return comment with status 201 Created", async () => {

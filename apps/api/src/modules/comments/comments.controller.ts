@@ -4,7 +4,7 @@ import {
   CreateCommentInputSchema,
   CreateCommentSuccessSchema,
   PostIdParamsSchema,
-  toFieldErrors,
+  toValidationMessage,
 } from "@neetwork/contracts";
 import { Prisma } from "../../../generated/prisma/index.js";
 import { insertComment } from "./comments.service.js";
@@ -27,7 +27,8 @@ export async function createComment(req: Request, res: Response<CreateCommentRes
 
     if (!parsedBody.success) {
       return res.status(422).json({
-        errors: toFieldErrors(parsedBody.error.issues),
+        success: false,
+        message: toValidationMessage(parsedBody.error.issues),
       });
     }
 

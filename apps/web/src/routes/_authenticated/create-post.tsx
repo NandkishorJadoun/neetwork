@@ -1,10 +1,9 @@
-import type { FieldError } from "@neetwork/contracts";
-import { CreatePostInputSchema, toFieldErrors } from "@neetwork/contracts";
+import { CreatePostInputSchema, toValidationMessage } from "@neetwork/contracts";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
+import { Field, FieldError } from "@/components/ui/field";
 import { PageHeader } from "../../components/page-header";
 import { useCreatePost } from "../../features/posts/mutations";
-import { ApiValidationError } from "../../libs/api-error";
 
 export const Route = createFileRoute("/_authenticated/create-post")({
   component: RouteComponent,
@@ -12,18 +11,18 @@ export const Route = createFileRoute("/_authenticated/create-post")({
 
 function RouteComponent() {
   const [content, setContent] = useState("");
-  const [errors, setErrors] = useState<FieldError[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   const { mutate, isPending } = useCreatePost();
 
   const submitPostHandler = (e: React.SubmitEvent) => {
     e.preventDefault();
-    setErrors(null);
+    setError(null);
 
     const parsed = CreatePostInputSchema.safeParse({ content });
 
     if (!parsed.success) {
-      setErrors(toFieldErrors(parsed.error.issues));
+      setError(toValidationMessage(parsed.error.issues));
       return;
     }
 
@@ -32,9 +31,7 @@ function RouteComponent() {
         navigate({ to: "/home" });
       },
       onError: (error) => {
-        if (error instanceof ApiValidationError) {
-          setErrors(error.errors);
-        }
+        setError(error.message);
       },
     });
   };
@@ -77,13 +74,11 @@ function RouteComponent() {
           </button>
         </div>
 
-        {errors
+        {error
           && (
-            <ul className="mt-4 border border-red-500/20 bg-red-500/5 p-3 text-sm text-red-500">
-              {errors.map(error => (
-                <li key={`${error.fieldName}-${error.message}`}>{error.message}</li>
-              ))}
-            </ul>
+            <Field>
+              <FieldError>{error}</FieldError>
+            </Field>
           )}
       </form>
     </>

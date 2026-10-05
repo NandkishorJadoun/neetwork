@@ -1,16 +1,14 @@
-import type { FieldError } from "@neetwork/contracts";
-import { toFieldErrors, UpdateProfileInputSchema } from "@neetwork/contracts";
+import { toValidationMessage, UpdateProfileInputSchema } from "@neetwork/contracts";
 import {
   createFileRoute,
   useNavigate,
   useRouter,
 } from "@tanstack/react-router";
 import { useState } from "react";
-import { FormErrors } from "../../components/form-errors";
+import { Field, FieldError } from "@/components/ui/field";
 import { PageHeader } from "../../components/page-header";
 import { fetchUserProfile } from "../../features/users/api";
 import { useUpdateProfile } from "../../features/users/mutations";
-import { ApiValidationError } from "../../libs/api-error";
 
 export const Route = createFileRoute("/_authenticated/edit-profile")({
   loader: async ({ context }) => {
@@ -33,17 +31,17 @@ function RouteComponent() {
     fullname: user.name,
     about: user.about ?? "",
   });
-  const [errors, setErrors] = useState<FieldError[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const { mutate, isPending } = useUpdateProfile();
 
   const formSubmitHandler = (e: React.SubmitEvent) => {
     e.preventDefault();
-    setErrors(null);
+    setError(null);
 
     const parsed = UpdateProfileInputSchema.safeParse(formData);
 
     if (!parsed.success) {
-      setErrors(toFieldErrors(parsed.error.issues));
+      setError(toValidationMessage(parsed.error.issues));
       return;
     }
 
@@ -52,9 +50,7 @@ function RouteComponent() {
         navigate({ to: "/users/$userId", params: { userId: updated.id } });
       },
       onError: (error) => {
-        if (error instanceof ApiValidationError) {
-          setErrors(error.errors);
-        }
+        setError(error.message);
       },
     });
   };
@@ -91,7 +87,6 @@ function RouteComponent() {
               }}
               className="rounded-md w-full border border-(--app-border) bg-transparent px-3 py-2 text-sm text-(--app-text) outline-none placeholder:text-(--app-muted) focus:border-(--app-accent)"
             />
-            <FormErrors fieldName="fullname" errors={errors} />
           </div>
 
           <div className="space-y-1">
@@ -111,8 +106,13 @@ function RouteComponent() {
               }}
               className="w-full rounded-md resize-none border border-(--app-border) bg-transparent px-3 py-2 text-sm text-(--app-text) outline-none placeholder:text-(--app-muted) focus:border-(--app-accent)"
             />
-            <FormErrors fieldName="about" errors={errors} />
           </div>
+
+          {error && (
+            <Field>
+              <FieldError>{error}</FieldError>
+            </Field>
+          )}
 
           <div className="flex items-center gap-3 pt-2">
             <button

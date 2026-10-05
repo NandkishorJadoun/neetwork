@@ -11,7 +11,7 @@ import {
   GetAllPostsSuccessSchema,
   GetPostByIdSuccessSchema,
   PostIdParamsSchema,
-  toFieldErrors,
+  toValidationMessage,
 } from "@neetwork/contracts";
 import { z } from "zod/v4";
 import { Prisma } from "../../../generated/prisma/index.js";
@@ -70,7 +70,8 @@ export async function createPost(req: Request, res: Response<CreatePostResponse>
 
     if (!parsedBody.success) {
       return res.status(422).json({
-        errors: toFieldErrors(parsedBody.error.issues),
+        success: false,
+        message: toValidationMessage(parsedBody.error.issues),
       });
     }
 

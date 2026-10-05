@@ -2,7 +2,7 @@ import type { GetUserProfileResponse, UpdateProfileResponse } from "@neetwork/co
 import type { NextFunction, Request, Response } from "express";
 import {
   GetUserProfileSuccessSchema,
-  toFieldErrors,
+  toValidationMessage,
   UpdateProfileInputSchema,
   UpdateProfileSuccessSchema,
 } from "@neetwork/contracts";
@@ -48,7 +48,8 @@ export async function updateUserAccount(req: Request, res: Response, next: NextF
 
     if (!parsedBody.success) {
       return res.status(422).json({
-        errors: toFieldErrors(parsedBody.error.issues),
+        success: false,
+        message: toValidationMessage(parsedBody.error.issues),
       });
     }
 

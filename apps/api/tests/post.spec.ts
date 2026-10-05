@@ -53,7 +53,8 @@ describe("POST /api/posts", () => {
       .send({ content: "" });
 
     assert.strictEqual(res.status, 422);
-    assert.ok(res.body.errors.some((e: { fieldName: string; message: string }) => e.fieldName === "content" && e.message === "Post cannot be empty"));
+    assert.strictEqual(res.body.success, false);
+    assert.strictEqual(res.body.message, "Post cannot be empty");
   });
 
   it("should create and successfully return post with status 201 Created", async () => {

@@ -37,10 +37,9 @@ describe("PATCH /api/account", () => {
       .set("Cookie", cookie)
       .send({ fullname: "", about: "Lorem ipsum" });
 
-    const fullnameError = res.body.errors.find((e: { fieldName: string }) => e.fieldName === "fullname");
-
     assert.strictEqual(res.status, 422);
-    assert.strictEqual(fullnameError.message, "Name field can't be empty");
+    assert.strictEqual(res.body.success, false);
+    assert.strictEqual(res.body.message, "Name field can't be empty");
   });
 
   it("should respond with 200 OK and return the updated user profile when valid JSON data is provided", async () => {

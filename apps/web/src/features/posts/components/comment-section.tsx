@@ -1,5 +1,5 @@
-import type { CommentAuthor, FieldError } from "@neetwork/contracts";
-import { CreateCommentInputSchema, toFieldErrors } from "@neetwork/contracts";
+import type { CommentAuthor } from "@neetwork/contracts";
+import { CreateCommentInputSchema, toValidationMessage } from "@neetwork/contracts";
 import { MessageCircle } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -7,7 +7,6 @@ import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/
 import { Field, FieldError as FieldErrorMessage } from "@/components/ui/field";
 import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
-import { ApiValidationError } from "@/libs/api-error";
 import { useCreateComment } from "../mutations";
 import { CommentCard } from "./comment-card";
 
@@ -24,30 +23,28 @@ type CommentSectionProp = {
 };
 
 export const CommentSection = ({ postId, comments, commentRef }: CommentSectionProp) => {
-  const [errors, setErrors] = useState<FieldError[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [comment, setComment] = useState("");
   const { mutate, isPending } = useCreateComment(postId);
 
   const commentHandler = (e: React.SubmitEvent) => {
     e.preventDefault();
-    setErrors(null);
+    setError(null);
 
     const parsed = CreateCommentInputSchema.safeParse({ content: comment });
 
     if (!parsed.success) {
-      setErrors(toFieldErrors(parsed.error.issues));
+      setError(toValidationMessage(parsed.error.issues));
       return;
     }
 
     mutate(parsed.data, {
       onSuccess: () => {
         setComment("");
-        setErrors(null);
+        setError(null);
       },
       onError: (error) => {
-        if (error instanceof ApiValidationError) {
-          setErrors(error.errors);
-        }
+        setError(error.message);
       },
     });
   };
@@ -56,7 +53,7 @@ export const CommentSection = ({ postId, comments, commentRef }: CommentSectionP
     <>
       <div className="px-4 py-4 border-b border-border">
         <form onSubmit={commentHandler} className="space-y-3">
-          <Field data-invalid={!!errors}>
+          <Field data-invalid={Boolean(error)}>
             <Textarea
               ref={commentRef}
               name="content"
@@ -66,10 +63,10 @@ export const CommentSection = ({ postId, comments, commentRef }: CommentSectionP
               value={comment}
               onChange={(e) => { setComment(e.target.value); }}
               maxLength={280}
-              aria-invalid={!!errors}
+              aria-invalid={Boolean(error)}
             />
 
-            <FieldErrorMessage errors={errors ?? undefined} />
+            {error && <FieldErrorMessage>{error}</FieldErrorMessage>}
           </Field>
 
           <div className="flex items-center justify-between">

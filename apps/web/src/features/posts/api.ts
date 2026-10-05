@@ -1,6 +1,5 @@
 import type { ActiveTab } from "./queries";
-import { CreateCommentInputSchema, CreateCommentSchema, CreatePostInputSchema, CreatePostSchema, GetAllPostsSchema, GetLikesByPostIdSchema, GetPostByIdSchema, LikePostSchema, toFieldErrors, UnlikePostSchema, ValidationErrorsSchema } from "@neetwork/contracts";
-import { ApiValidationError } from "@/libs/api-error";
+import { CreateCommentInputSchema, CreateCommentSchema, CreatePostInputSchema, CreatePostSchema, GetAllPostsSchema, GetLikesByPostIdSchema, GetPostByIdSchema, LikePostSchema, toValidationMessage, UnlikePostSchema } from "@neetwork/contracts";
 
 type FetchPostsArgs = {
   activeTab: ActiveTab;
@@ -147,7 +146,7 @@ export const createPost = async (input: { content: string }) => {
   const parsedInput = CreatePostInputSchema.safeParse(input);
 
   if (!parsedInput.success) {
-    throw new ApiValidationError(toFieldErrors(parsedInput.error.issues));
+    throw new Error(toValidationMessage(parsedInput.error.issues));
   }
 
   const response = await fetch("/api/posts/", {
@@ -158,16 +157,6 @@ export const createPost = async (input: { content: string }) => {
   });
 
   const json: unknown = await response.json();
-
-  if (!response.ok) {
-    const errResult = ValidationErrorsSchema.safeParse(json);
-
-    if (errResult.success) {
-      throw new ApiValidationError(errResult.data.errors);
-    }
-
-    throw new Error(`Request failed: ${response.status}`);
-  }
 
   const result = CreatePostSchema.safeParse(json);
 
@@ -188,7 +177,7 @@ export const createComment = async (input: { postId: string; content: string }) 
   const parsedInput = CreateCommentInputSchema.safeParse({ content: input.content });
 
   if (!parsedInput.success) {
-    throw new ApiValidationError(toFieldErrors(parsedInput.error.issues));
+    throw new Error(toValidationMessage(parsedInput.error.issues));
   }
 
   const response = await fetch(`/api/posts/${input.postId}/comment`, {
@@ -199,16 +188,6 @@ export const createComment = async (input: { postId: string; content: string }) 
   });
 
   const json: unknown = await response.json();
-
-  if (!response.ok) {
-    const errResult = ValidationErrorsSchema.safeParse(json);
-
-    if (errResult.success) {
-      throw new ApiValidationError(errResult.data.errors);
-    }
-
-    throw new Error(`Request failed: ${response.status}`);
-  }
 
   const result = CreateCommentSchema.safeParse(json);
 

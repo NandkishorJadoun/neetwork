@@ -1,4 +1,4 @@
-import type { AcceptFollowRequestResponse, GetAllFollowRequestsResponse, RejectFollowRequestResponse, RemoveFollowerResponse, SendFollowRequestResponse, unfollowUserByIdResponse } from "@neetwork/contracts";
+import type { AcceptFollowRequestResponse, GetAllFollowRequestsResponse, RejectFollowRequestResponse, RemoveFollowerResponse, SendFollowRequestResponse, UnfollowUserByIdResponse } from "@neetwork/contracts";
 import type { NextFunction, Request, Response } from "express";
 import {
   GetAllFollowRequestsSuccessSchema,
@@ -45,7 +45,7 @@ export async function sendFollowRequest(req: Request, res: Response<SendFollowRe
   }
 }
 
-export async function unfollowUserById(req: Request, res: Response<unfollowUserByIdResponse>, next: NextFunction) {
+export async function unfollowUserById(req: Request, res: Response<UnfollowUserByIdResponse>, next: NextFunction) {
   if (!req.user) {
     return res.status(401).json({ success: false, message: "Unauthorized" });
   }

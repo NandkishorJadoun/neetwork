@@ -10,13 +10,11 @@ import {
   GetUserProfileResponseSchema,
   RemoveFollowerSchema,
   SendFollowRequestSchema,
-  toFieldErrors,
+  toValidationMessage,
   UnfollowUserByIdSchema,
   UpdateProfileInputSchema,
   UpdateProfileSchema,
-  ValidationErrorsSchema,
 } from "@neetwork/contracts";
-import { ApiValidationError } from "@/libs/api-error";
 
 type fetchFollowersArgs = {
   userId: string;
@@ -277,9 +275,8 @@ export const fetchUserProfile = async ({ signal }: { signal: AbortSignal }) => {
 
 export const updateProfile = async (input: UpdateProfileInput) => {
   const parsedInput = UpdateProfileInputSchema.safeParse(input);
-
   if (!parsedInput.success) {
-    throw new ApiValidationError(toFieldErrors(parsedInput.error.issues));
+    throw new Error(toValidationMessage(parsedInput.error.issues));
   }
 
   const response = await fetch("/api/account", {
@@ -288,30 +285,15 @@ export const updateProfile = async (input: UpdateProfileInput) => {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(parsedInput.data),
   });
-
   const json: unknown = await response.json();
 
-  if (!response.ok) {
-    const errResult = ValidationErrorsSchema.safeParse(json);
-
-    if (errResult.success) {
-      throw new ApiValidationError(errResult.data.errors);
-    }
-
-    throw new Error(`Request failed: ${response.status}`);
-  }
-
   const result = UpdateProfileSchema.safeParse(json);
-
   if (!result.success) {
     throw new Error(`Invalid response: ${response.status}`);
   }
-
   if (!result.data.success) {
     throw new Error(result.data.message);
   }
 
-  return {
-    user: result.data.user,
-  };
+  return { user: result.data.user };
 };
