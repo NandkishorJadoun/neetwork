@@ -60,15 +60,27 @@ export async function getUserById(req: Request, res: Response<GetUserByIdRespons
   const { userId: viewerId } = params.data;
 
   try {
-    const user = await findUserProfile(userId, viewerId);
+    const profile = await findUserProfile(userId, viewerId);
 
-    if (!user) {
+    if (!profile) {
       return res
         .status(404)
         .json({ success: false, message: `User not found` });
     }
 
-    const response = GetUserByIdSuccessSchema.parse({ success: true, user });
+    const { followers, ...user } = profile;
+
+    const followRecord = followers[0];
+    let followStatus: "none" | "pending" | "accepted" = "none";
+
+    if (followRecord) {
+      followStatus = followRecord.status === "ACCEPTED" ? "accepted" : "pending";
+    }
+
+    const response = GetUserByIdSuccessSchema.parse({
+      success: true,
+      user: { ...user, followStatus },
+    });
 
     return res.status(200).json(response);
   }
@@ -97,7 +109,7 @@ export async function getPostsByUserId(req: Request, res: Response<GetPostsByUse
     const posts = rawPosts.map(({ likes, ...post }) => ({
       ...post,
       is_liked_by_user: likes.length > 0,
-    }))
+    }));
 
     const response = GetPostsByUserIdSuccessSchema.parse({
       success: true,

@@ -3,6 +3,7 @@ import { createFileRoute, Link, linkOptions, Outlet, useMatchRoute } from "@tans
 import { PageHeader } from "@/components/page-header";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ProfileActionButton } from "@/features/users/components/profile-action-button";
 import { userByIdQueryOptions } from "@/features/users/queries";
@@ -81,11 +82,22 @@ export const Route = createFileRoute("/_authenticated/users/$userId")({
             </div>
 
             <div className="mt-4">
-              <ProfileActionButton
-                profileUserId={user.id}
-                followers={user.followers}
-                isOwnProfile={isOwnProfile}
-              />
+              {isOwnProfile
+                ? (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      render={<Link to="/edit-profile" />}
+                    >
+                      Edit profile
+                    </Button>
+                  )
+                : (
+                    <ProfileActionButton
+                      profileUserId={user.id}
+                      followStatus={user.followStatus}
+                    />
+                  )}
             </div>
           </div>
         </section>

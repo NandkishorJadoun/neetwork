@@ -2,13 +2,13 @@ import { z } from "zod/v4";
 import { apiResponse } from "../shared/api-response.js";
 import {
   CommentWithAuthorAndPostSchema,
-  FollowRecordSchema,
   FollowRecordWithReceiverSchema,
   FollowRecordWithSenderSchema,
   LikedPostSchema,
   PostCardSchema,
   UserFollowCountsSchema,
   UserPreviewSchema,
+  ViewerFollowStatusSchema,
 } from "../shared/entities.js";
 
 export const GetAllNonFollowingUsersSuccessSchema = z.strictObject({
@@ -32,7 +32,7 @@ export const GetUserByIdSuccessSchema = z.strictObject({
     image: z.string().nullable(),
     about: z.string().nullable(),
     _count: UserFollowCountsSchema,
-    followers: z.array(FollowRecordSchema),
+    followStatus: ViewerFollowStatusSchema,
   }),
 });
 

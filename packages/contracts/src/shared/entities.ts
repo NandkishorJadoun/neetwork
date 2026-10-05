@@ -32,6 +32,10 @@ export type Post = z.infer<typeof PostCardSchema>;
 
 export const FollowStatusSchema = z.enum(["PENDING", "ACCEPTED"]);
 
+export const ViewerFollowStatusSchema = z.enum(["none", "pending", "accepted"]);
+
+export type ViewerFollowStatus = z.infer<typeof ViewerFollowStatusSchema>;
+
 export const FollowRecordSchema = z.strictObject({
   id: z.uuidv7(),
   senderId: z.uuidv7(),

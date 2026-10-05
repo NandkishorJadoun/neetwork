@@ -1,31 +1,17 @@
-import type { FollowRecord } from "@neetwork/contracts";
-import { Link } from "@tanstack/react-router";
+import type { ViewerFollowStatus } from "@neetwork/contracts";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { useProfileFollowAction } from "../mutations";
 
 type ProfileActionButtonProps = {
   profileUserId: string;
-  followers: FollowRecord[];
-  isOwnProfile: boolean;
+  followStatus: ViewerFollowStatus;
 };
 
-export const ProfileActionButton = ({ profileUserId, followers, isOwnProfile }: ProfileActionButtonProps) => {
+export const ProfileActionButton = ({ profileUserId, followStatus }: ProfileActionButtonProps) => {
   const { handleAction, isPending } = useProfileFollowAction(profileUserId);
 
-  if (isOwnProfile) {
-    return (
-      <Button
-        variant="outline"
-        size="sm"
-        render={<Link to="/edit-profile" />}
-      >
-        Edit profile
-      </Button>
-    );
-  }
-
-  if (followers.length === 0) {
+  if (followStatus === "none") {
     return (
       <Button
         variant="outline"
@@ -39,7 +25,7 @@ export const ProfileActionButton = ({ profileUserId, followers, isOwnProfile }: 
     );
   }
 
-  const isFollowing = followers[0].status === "ACCEPTED";
+  const isFollowing = followStatus === "accepted";
 
   return (
     <Button
