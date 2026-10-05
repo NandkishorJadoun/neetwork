@@ -3,7 +3,6 @@ import path from "node:path";
 import { toNodeHandler } from "better-auth/node";
 import cors from "cors";
 import express from "express";
-import helmet from "helmet";
 import { auth } from "./configs/auth.js";
 import { env } from "./configs/env.js";
 import { httpLogger, logger } from "./configs/logger.js";
@@ -12,7 +11,6 @@ import { appRouter } from "./routes/index.js";
 const app = express();
 
 app.use(httpLogger);
-app.use(helmet());
 
 if (env.NODE_ENV === "development") {
   app.use(cors({
