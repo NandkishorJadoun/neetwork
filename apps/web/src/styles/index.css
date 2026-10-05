@@ -9,14 +9,6 @@ html {
   scrollbar-gutter: stable;
 }
 
-/* :root[data-background="slate"] {
-  --app-bg: var(--color-slate-950);
-  --app-surface: var(--color-slate-900);
-  --app-text: var(--color-slate-200);
-  --app-muted: var(--color-slate-400);
-  --app-border: var(--color-slate-800);
-} */
-
 @theme inline {
   --font-heading: var(--font-sans);
   --font-sans: "Inter Variable", sans-serif;
