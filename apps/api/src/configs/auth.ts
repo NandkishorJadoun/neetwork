@@ -6,10 +6,14 @@ import { env } from "./env.js";
 import { prisma } from "./prisma.js";
 
 export const baseAuthConfig = {
+  baseURL: env.BETTER_AUTH_URL,
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),
-  trustedOrigins: ["http://localhost:5173"],
+  trustedOrigins:
+    env.NODE_ENV === "production"
+      ? [env.BETTER_AUTH_URL, "https://*.vercel.app"]
+      : ["http://localhost:5173", "http://localhost:3000", env.BETTER_AUTH_URL],
   advanced: {
     database: {
       generateId: false,
