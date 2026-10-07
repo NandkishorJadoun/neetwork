@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
 import { z } from "zod/v4";
 import { HomePageHeader } from "@/components/home-page-header";
+import { CreatePostForm } from "@/features/posts/components/create-post-form";
 import { PostCard } from "@/features/posts/components/post-card";
 import { PostCardSkeleton } from "@/features/posts/components/post-skeleton";
 import { postsQueryOptions } from "@/features/posts/queries";
@@ -34,6 +35,9 @@ export const Route = createFileRoute("/_authenticated/home")({
     return (
       <div className="flex flex-col">
         <HomePageHeader tab={activeTab} />
+        <div className="border-b border-border p-4">
+          <CreatePostForm />
+        </div>
         <div>
           {
             data?.pages.flatMap(page => page.posts).map(post => (

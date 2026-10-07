@@ -1,7 +1,7 @@
 import type { User } from "better-auth/client";
 import type { LucideIcon } from "lucide-react";
 import { Link } from "@tanstack/react-router";
-import { Home, Pencil, UserRound, UserRoundPlus, UserRoundSearch } from "lucide-react";
+import { Home, UserRound, UserRoundPlus, UserRoundSearch } from "lucide-react";
 import { useScrollListener } from "../hooks/use-scroll-listener";
 
 type BottomNavItem = {
@@ -16,7 +16,6 @@ export const MobileBottomNav = ({ user }: { user: User }) => {
   const bottomNavItems: BottomNavItem[] = [
     { to: "/home", icon: Home },
     { to: "/follow-requests", icon: UserRoundPlus },
-    { to: "/create-post", icon: Pencil },
     { to: "/follow-users", icon: UserRoundSearch },
     { to: `/users/${user.id}`, icon: UserRound },
   ];
