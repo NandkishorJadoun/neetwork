@@ -12,8 +12,8 @@ export const baseAuthConfig = {
   }),
   trustedOrigins:
     env.NODE_ENV === "production"
-      ? [env.BETTER_AUTH_URL, "https://*.vercel.app"]
-      : ["http://localhost:5173", "http://localhost:3000", env.BETTER_AUTH_URL],
+      ? [env.BETTER_AUTH_URL, "https://*.nandkishor.dev"]
+      : ["http://localhost:5173", env.BETTER_AUTH_URL],
   advanced: {
     database: {
       generateId: false,

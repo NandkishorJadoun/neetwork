@@ -11,7 +11,6 @@ import { appRouter } from "./routes/index.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-// Works both in dev (src/) and prod (dist/): apps/api/src -> apps/api/public, apps/api/dist -> apps/api/public
 const publicPath = path.resolve(__dirname, "../public");
 
 const app = express();
@@ -33,8 +32,6 @@ app.use(express.urlencoded({ extended: false }));
 app.get("/api/health", (_req, res) => res.json({ message: env.NODE_ENV }));
 app.use("/api/", appRouter);
 
-// Serve Vite static build (JS/CSS/assets). Must come before SPA fallback,
-// otherwise /assets/* would return index.html.
 app.use(express.static(publicPath));
 
 app.get("/{*splat}", (req, res, next) => {
