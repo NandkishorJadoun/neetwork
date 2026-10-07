@@ -1,5 +1,5 @@
 import { linkOptions } from "@tanstack/react-router";
-import { Home, Info, Pencil, UserRound, UserRoundCog, UserRoundPen, UserRoundPlus, UserRoundSearch } from "lucide-react";
+import { Home, Info, UserRound, UserRoundCog, UserRoundPen, UserRoundPlus, UserRoundSearch } from "lucide-react";
 
 export const getNavItems = (userId: string) =>
   linkOptions([
@@ -11,7 +11,6 @@ export const getNavItems = (userId: string) =>
       icon: UserRound,
     },
     { to: "/edit-profile", name: "Edit Profile", icon: UserRoundPen },
-    { to: "/create-post", name: "Create Post", icon: Pencil },
     { to: "/follow-requests", name: "Follow Requests", icon: UserRoundPlus },
     { to: "/follow-users", name: "Follow Users", icon: UserRoundSearch },
     { to: "/settings", name: "Settings", icon: UserRoundCog },

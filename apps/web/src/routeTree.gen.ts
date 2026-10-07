@@ -13,7 +13,6 @@ import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as GuestRouteImport } from './routes/_guest'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
 import { Route as AuthenticatedAboutRouteImport } from './routes/_authenticated/about'
-import { Route as AuthenticatedCreatePostRouteImport } from './routes/_authenticated/create-post'
 import { Route as AuthenticatedEditProfileRouteImport } from './routes/_authenticated/edit-profile'
 import { Route as AuthenticatedFollowRequestsRouteImport } from './routes/_authenticated/follow-requests'
 import { Route as AuthenticatedFollowUsersRouteImport } from './routes/_authenticated/follow-users'
@@ -46,11 +45,6 @@ const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
 const AuthenticatedAboutRoute = AuthenticatedAboutRouteImport.update({
   id: '/about',
   path: '/about',
-  getParentRoute: () => AuthenticatedRoute,
-} as any)
-const AuthenticatedCreatePostRoute = AuthenticatedCreatePostRouteImport.update({
-  id: '/create-post',
-  path: '/create-post',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedEditProfileRoute =
@@ -143,7 +137,6 @@ const AuthenticatedUsersUserIdFollowingsRoute =
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
   '/about': typeof AuthenticatedAboutRoute
-  '/create-post': typeof AuthenticatedCreatePostRoute
   '/edit-profile': typeof AuthenticatedEditProfileRoute
   '/follow-requests': typeof AuthenticatedFollowRequestsRoute
   '/follow-users': typeof AuthenticatedFollowUsersRoute
@@ -163,7 +156,6 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof AuthenticatedIndexRoute
   '/about': typeof AuthenticatedAboutRoute
-  '/create-post': typeof AuthenticatedCreatePostRoute
   '/edit-profile': typeof AuthenticatedEditProfileRoute
   '/follow-requests': typeof AuthenticatedFollowRequestsRoute
   '/follow-users': typeof AuthenticatedFollowUsersRoute
@@ -184,7 +176,6 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/_guest': typeof GuestRouteWithChildren
   '/_authenticated/about': typeof AuthenticatedAboutRoute
-  '/_authenticated/create-post': typeof AuthenticatedCreatePostRoute
   '/_authenticated/edit-profile': typeof AuthenticatedEditProfileRoute
   '/_authenticated/follow-requests': typeof AuthenticatedFollowRequestsRoute
   '/_authenticated/follow-users': typeof AuthenticatedFollowUsersRoute
@@ -207,7 +198,6 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
-    | '/create-post'
     | '/edit-profile'
     | '/follow-requests'
     | '/follow-users'
@@ -227,7 +217,6 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
-    | '/create-post'
     | '/edit-profile'
     | '/follow-requests'
     | '/follow-users'
@@ -247,7 +236,6 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/_guest'
     | '/_authenticated/about'
-    | '/_authenticated/create-post'
     | '/_authenticated/edit-profile'
     | '/_authenticated/follow-requests'
     | '/_authenticated/follow-users'
@@ -299,13 +287,6 @@ declare module '@tanstack/react-router' {
       path: '/about'
       fullPath: '/about'
       preLoaderRoute: typeof AuthenticatedAboutRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
-    '/_authenticated/create-post': {
-      id: '/_authenticated/create-post'
-      path: '/create-post'
-      fullPath: '/create-post'
-      preLoaderRoute: typeof AuthenticatedCreatePostRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/edit-profile': {
@@ -437,7 +418,6 @@ const AuthenticatedUsersUserIdRouteWithChildren =
 
 interface AuthenticatedRouteChildren {
   AuthenticatedAboutRoute: typeof AuthenticatedAboutRoute
-  AuthenticatedCreatePostRoute: typeof AuthenticatedCreatePostRoute
   AuthenticatedEditProfileRoute: typeof AuthenticatedEditProfileRoute
   AuthenticatedFollowRequestsRoute: typeof AuthenticatedFollowRequestsRoute
   AuthenticatedFollowUsersRoute: typeof AuthenticatedFollowUsersRoute
@@ -453,7 +433,6 @@ interface AuthenticatedRouteChildren {
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAboutRoute: AuthenticatedAboutRoute,
-  AuthenticatedCreatePostRoute: AuthenticatedCreatePostRoute,
   AuthenticatedEditProfileRoute: AuthenticatedEditProfileRoute,
   AuthenticatedFollowRequestsRoute: AuthenticatedFollowRequestsRoute,
   AuthenticatedFollowUsersRoute: AuthenticatedFollowUsersRoute,
