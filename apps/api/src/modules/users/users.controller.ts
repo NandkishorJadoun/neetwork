@@ -138,7 +138,15 @@ export async function getCommentsByUserId(req: Request, res: Response<GetComment
   const { userId: viewerId } = params.data;
 
   try {
-    const comments = await findCommentsByUserId(userId, viewerId);
+    const rawComments = await findCommentsByUserId(userId, viewerId);
+
+    const comments = rawComments.map(({ post: { likes, ...post }, ...comment }) => ({
+      ...comment,
+      post: {
+        ...post,
+        is_liked_by_user: likes.length > 0,
+      },
+    }));
 
     const response = GetCommentsByUserIdSuccessSchema.parse({
       success: true,
@@ -167,7 +175,15 @@ export async function getLikedPostsByUserId(req: Request, res: Response<GetLiked
   const { userId: viewerId } = params.data;
 
   try {
-    const likes = await findLikedPostsByUserId(userId, viewerId);
+    const rawLikes = await findLikedPostsByUserId(userId, viewerId);
+
+    const likes = rawLikes.map(({ post: { likes: postLikes, ...post }, ...like }) => ({
+      ...like,
+      post: {
+        ...post,
+        is_liked_by_user: postLikes.length > 0,
+      },
+    }));
 
     const response = GetLikedPostsByUserIdSuccessSchema.parse({
       success: true,
