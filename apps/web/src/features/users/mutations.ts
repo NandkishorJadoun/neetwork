@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { queryClient } from "@/libs/query";
 import { removeFollower, sendFollowRequest, unfollowUserById, updateProfile } from "./api";
-import { followersByUserIdQueryOptions, followingsByUserIdQueryOptions, nonFollowingUsersQueryOptions, userByIdQueryOptions } from "./queries";
+import { accountMeQueryOptions, followersByUserIdQueryOptions, followingsByUserIdQueryOptions, nonFollowingUsersQueryOptions, userByIdQueryOptions } from "./queries";
 
 export const useUnfollowUser = (listUserId: string, targetId: string) => {
   const { mutate, isPending, error } = useMutation({
@@ -32,6 +32,12 @@ export const useRemoveFollower = (listUserId: string, targetId: string) => {
 export const useUpdateProfile = () => {
   return useMutation({
     mutationFn: updateProfile,
+    onSuccess: async ({ user }) => {
+      await queryClient.invalidateQueries({ queryKey: accountMeQueryOptions().queryKey });
+      await queryClient.invalidateQueries({
+        queryKey: userByIdQueryOptions(user.id).queryKey,
+      });
+    },
   });
 };
 

@@ -1,5 +1,6 @@
 import type { UpdateProfileInput } from "@neetwork/contracts";
 import {
+  AvatarSignatureResponseSchema,
   GetAllNonFollowingUsersSchema,
   GetCommentsByUserIdSchema,
   GetFollowersByUserIdSchema,
@@ -15,6 +16,7 @@ import {
   UpdateProfileInputSchema,
   UpdateProfileSchema,
 } from "@neetwork/contracts";
+import { z } from "zod/v4";
 
 type fetchFollowersArgs = {
   userId: string;
@@ -296,4 +298,65 @@ export const updateProfile = async (input: UpdateProfileInput) => {
   }
 
   return { user: result.data.user };
+};
+
+export const fetchAvatarSignature = async () => {
+  const response = await fetch("/api/account/avatar-signature", {
+    method: "POST",
+    credentials: "include",
+  });
+
+  const json: unknown = await response.json();
+
+  const result = AvatarSignatureResponseSchema.safeParse(json);
+  if (!result.success) {
+    throw new Error(`Invalid response: ${response.status}`);
+  }
+  if (!result.data.success) {
+    throw new Error(result.data.message);
+  }
+
+  return result.data;
+};
+
+type AvatarSignature = Awaited<ReturnType<typeof fetchAvatarSignature>>;
+
+const CloudinaryUploadSuccessSchema = z.object({
+  secure_url: z.url(),
+});
+
+export const uploadAvatarToCloudinary = async (file: File, signature: AvatarSignature) => {
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("api_key", signature.apiKey);
+  formData.append("timestamp", String(signature.timestamp));
+  formData.append("signature", signature.signature);
+  formData.append("folder", signature.folder);
+  formData.append("public_id", signature.public_id);
+  formData.append("overwrite", signature.overwrite);
+  formData.append("invalidate", signature.invalidate);
+
+  const response = await fetch(`https://api.cloudinary.com/v1_1/${signature.cloudName}/image/upload`, {
+    method: "POST",
+    body: formData,
+  });
+
+  const json: unknown = await response.json();
+
+  if (!response.ok) {
+    if (import.meta.env.DEV) {
+      console.error("[cloudinary upload]", response.status, json);
+    }
+    throw new Error("Avatar upload failed");
+  }
+
+  const result = CloudinaryUploadSuccessSchema.safeParse(json);
+  if (!result.success) {
+    if (import.meta.env.DEV) {
+      console.error("[cloudinary upload]", result.error.issues, json);
+    }
+    throw new Error("Avatar upload failed");
+  }
+
+  return { secureUrl: result.data.secure_url };
 };

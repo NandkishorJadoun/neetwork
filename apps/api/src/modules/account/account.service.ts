@@ -14,7 +14,7 @@ export async function findUserProfile(userId: string) {
   });
 }
 
-export async function updateUserInfo(userId: string, fullname: string, about: string | null) {
+export async function updateUserInfo(userId: string, fullname: string, about: string | null, image?: string | null) {
   return prisma.user.update({
     where: {
       id: userId,
@@ -22,6 +22,7 @@ export async function updateUserInfo(userId: string, fullname: string, about: st
     data: {
       name: fullname,
       about,
+      ...(image === undefined ? {} : { image }),
     },
     select: {
       id: true,

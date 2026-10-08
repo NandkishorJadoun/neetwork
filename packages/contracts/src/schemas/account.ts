@@ -30,6 +30,12 @@ export const UpdateProfileInputSchema = z.strictObject({
     .max(100, { message: "About must be at most 100 characters long" })
     .transform(val => (val.length === 0 ? null : val))
     .nullable(),
+
+  image: z
+    .url({ error: "Invalid avatar URL" })
+    .max(500, { error: "Avatar URL too long" })
+    .nullable()
+    .optional(),
 });
 
 export type UpdateProfileInput = z.infer<typeof UpdateProfileInputSchema>;
@@ -49,3 +55,19 @@ export const UpdateProfileSuccessSchema = z.strictObject({
 export const UpdateProfileSchema = apiResponse(UpdateProfileSuccessSchema);
 
 export type UpdateProfileResponse = z.infer<typeof UpdateProfileSchema>;
+
+export const AvatarSignatureSuccessSchema = z.strictObject({
+  success: z.literal(true),
+  signature: z.string(),
+  timestamp: z.number(),
+  folder: z.string(),
+  public_id: z.string(),
+  overwrite: z.string(),
+  invalidate: z.string(),
+  apiKey: z.string(),
+  cloudName: z.string(),
+});
+
+export const AvatarSignatureResponseSchema = apiResponse(AvatarSignatureSuccessSchema);
+
+export type AvatarSignatureResponse = z.infer<typeof AvatarSignatureResponseSchema>;

@@ -1,11 +1,14 @@
-import type { GetUserProfileResponse, UpdateProfileResponse } from "@neetwork/contracts";
+import type { AvatarSignatureResponse, GetUserProfileResponse, UpdateProfileResponse } from "@neetwork/contracts";
 import type { NextFunction, Request, Response } from "express";
 import {
+  AvatarSignatureSuccessSchema,
   GetUserProfileSuccessSchema,
   toValidationMessage,
   UpdateProfileInputSchema,
   UpdateProfileSuccessSchema,
 } from "@neetwork/contracts";
+import { createAvatarSignature } from "../../configs/cloudinary.js";
+import { env } from "../../configs/env.js";
 import { findUserProfile, updateUserInfo } from "./account.service.js";
 
 export async function getUserAccount(req: Request, res: Response<GetUserProfileResponse>, next: NextFunction) {
@@ -53,9 +56,21 @@ export async function updateUserAccount(req: Request, res: Response, next: NextF
       });
     }
 
-    const { about, fullname } = parsedBody.data;
+    const { about, fullname, image } = parsedBody.data;
 
-    const user = await updateUserInfo(req.user.id, fullname, about);
+    if (typeof image === "string") {
+      const allowed = new RegExp(
+        `^https://res\\.cloudinary\\.com/${env.CLOUDINARY_CLOUD_NAME}/image/upload/.+skypaglu/avatars/.+$`,
+      );
+      if (!allowed.test(image)) {
+        return res.status(422).json({
+          success: false,
+          message: "Invalid avatar URL",
+        });
+      }
+    }
+
+    const user = await updateUserInfo(req.user.id, fullname, about, image);
 
     const response: UpdateProfileResponse = UpdateProfileSuccessSchema.parse({
       success: true,
@@ -68,3 +83,23 @@ export async function updateUserAccount(req: Request, res: Response, next: NextF
     next(error);
   }
 };
+
+export async function getAvatarSignature(req: Request, res: Response<AvatarSignatureResponse>, next: NextFunction) {
+  if (!req.user) {
+    return res.status(401).json({ success: false, message: "Unauthorized" });
+  }
+
+  try {
+    const payload = createAvatarSignature(req.user.id);
+
+    const response = AvatarSignatureSuccessSchema.parse({
+      success: true,
+      ...payload,
+    });
+
+    return res.status(200).json(response);
+  }
+  catch (error) {
+    next(error);
+  }
+}

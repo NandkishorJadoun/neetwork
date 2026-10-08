@@ -1,5 +1,5 @@
 import { queryOptions } from "@tanstack/react-query";
-import { fetchCommentsByUserId, fetchFollowersByUserId, fetchFollowingsByUserId, fetchLikedPostsByUserId, fetchNonFollowingUsers, fetchPostsByUserId, fetchUserById } from "./api";
+import { fetchCommentsByUserId, fetchFollowersByUserId, fetchFollowingsByUserId, fetchLikedPostsByUserId, fetchNonFollowingUsers, fetchPostsByUserId, fetchUserById, fetchUserProfile } from "./api";
 
 export const followersByUserIdQueryOptions = (userId: string) =>
   queryOptions({
@@ -23,6 +23,12 @@ export const userByIdQueryOptions = (userId: string) =>
   queryOptions({
     queryKey: ["user-profile", { userId }],
     queryFn: ({ signal }) => fetchUserById({ userId, signal }),
+  });
+
+export const accountMeQueryOptions = () =>
+  queryOptions({
+    queryKey: ["account", "me"],
+    queryFn: ({ signal }) => fetchUserProfile({ signal }),
   });
 
 export const postsByUserIdQueryOptions = (userId: string) =>

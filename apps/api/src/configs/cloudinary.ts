@@ -1,4 +1,3 @@
-import type { Buffer } from "node:buffer";
 import { v2 as cloudinary } from "cloudinary";
 import { env } from "./env.js";
 
@@ -9,12 +8,22 @@ cloudinary.config({
   secure: true,
 });
 
-export async function uploadOnCloudinary(file: { buffer: Buffer; mimetype: string }) {
-  const b64 = file.buffer.toString("base64");
-  const dataURI = `data:${file.mimetype};base64,${b64}`;
-  const res = await cloudinary.uploader.upload(dataURI, {
-    folder: "neetwork",
-    resource_type: "image",
-  });
-  return res;
+export const AVATAR_FOLDER = "skypaglu/avatars";
+
+export function createAvatarSignature(userId: string) {
+  const timestamp = Math.floor(Date.now() / 1000);
+  const paramsToSign = {
+    timestamp,
+    folder: AVATAR_FOLDER,
+    public_id: userId,
+    overwrite: "true",
+    invalidate: "true",
+  };
+  const signature = cloudinary.utils.api_sign_request(paramsToSign, env.CLOUDINARY_API_SECRET);
+  return {
+    ...paramsToSign,
+    signature,
+    apiKey: env.CLOUDINARY_API_KEY,
+    cloudName: env.CLOUDINARY_CLOUD_NAME,
+  };
 }
